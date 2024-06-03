@@ -32,6 +32,7 @@
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
+          :items="link.menuitems"
           v-bind="link"
         />
       </q-list>
@@ -53,47 +54,100 @@ defineOptions({
 
 const linksList = [
   {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: '/home'
-  },
-  {
-    title: 'Github',
+    title: 'Settings',
+    menuitems :[
+      {
+      title :" Status",
+      caption: 'quasar.dev',
+      icon: 'status',
+      link: '/status'
+      },
+       {
+     title :" Doc 2",
     caption: 'github.com/quasarframework',
     icon: 'code',
     link: '/dashboard'
   },
   {
-    title: 'Discord Chat Channel',
+    title :" Doc 3",
     caption: 'chat.quasar.dev',
     icon: 'chat',
     link: 'https://chat.quasar.dev'
   },
   {
-    title: 'Forum',
+    title :" Doc 4",
     caption: 'forum.quasar.dev',
     icon: 'record_voice_over',
     link: 'https://forum.quasar.dev'
   },
   {
-    title: 'Twitter',
+    title :" Doc 5",
     caption: '@quasarframework',
     icon: 'rss_feed',
     link: 'https://twitter.quasar.dev'
   },
   {
-    title: 'Facebook',
+    title :" Doc 6",
     caption: '@QuasarFramework',
     icon: 'public',
     link: 'https://facebook.quasar.dev'
   },
   {
-    title: 'Quasar Awesome',
+    title :" Doc 7",
     caption: 'Community Quasar projects',
     icon: 'favorite',
     link: 'https://awesome.quasar.dev'
   }
+    ]
+  },
+  {
+    title: 'Operations',
+    menuitems :[
+      {
+      title :" Doc",
+      caption: 'quasar.dev',
+      icon: 'school',
+      link: '/home'
+      },
+       {
+     title :" Doc 2",
+    caption: 'github.com/quasarframework',
+    icon: 'code',
+    link: '/dashboard'
+  },
+  {
+    title :" Doc 3",
+    caption: 'chat.quasar.dev',
+    icon: 'chat',
+    link: 'https://chat.quasar.dev'
+  },
+  {
+    title :" Doc 4",
+    caption: 'forum.quasar.dev',
+    icon: 'record_voice_over',
+    link: 'https://forum.quasar.dev'
+  },
+  {
+    title :" Doc 5",
+    caption: '@quasarframework',
+    icon: 'rss_feed',
+    link: 'https://twitter.quasar.dev'
+  },
+  {
+    title :" Doc 6",
+    caption: '@QuasarFramework',
+    icon: 'public',
+    link: 'https://facebook.quasar.dev'
+  },
+  {
+    title :" Doc 7",
+    caption: 'Community Quasar projects',
+    icon: 'favorite',
+    link: 'https://awesome.quasar.dev'
+  }
+    ]
+  }
+ 
 ]
 
 const leftDrawerOpen = ref(false)

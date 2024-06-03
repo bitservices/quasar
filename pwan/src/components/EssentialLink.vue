@@ -1,24 +1,34 @@
 <template>
-  <q-item
+ <div class="q-pa-md" style="max-width: 50px">
+ <q-menu auto-close>
+  <q-list style="min-width: 100px" bordered separator>
+    <q-list-section>
+  <q-item  v-for="link in props.menuitems"
+          :key="link.title"
+          :items="link.menuitems"
     clickable
     tag="a"
     target="_blank" 
-     @click="handleClick(props.link)"
+     @click="handleClick(link.link)"
   >
     <q-item-section
-      v-if="props.icon"
+      v-if="link.icon"
       avatar
     >
       <q-icon :name="props.icon" />
     </q-item-section>
 
     <q-item-section>
-      <q-item-label>{{ props.title }}</q-item-label>
-      <q-item-label caption>{{ props.caption }}</q-item-label>
+      <q-item-label>{{ link.title }} </q-item-label>
+      <q-item-label caption>{{ link.caption }}</q-item-label>
     </q-item-section>
   </q-item>
-</template>
-
+    </q-list-section>
+  </q-list>
+</q-menu>
+ {{ props.title }}
+ </div>
+</template> 
 <script setup>
 import { useRouter } from 'vue-router';
 const router = useRouter();
@@ -31,21 +41,27 @@ const props = defineProps({
     type: String,
     required: true
   },
+  menuitems:{
+    type : Array,
+    required: true,
+    default : () =>[{
+       caption: {
+        type: String,
+        default: ''
+      },
 
-  caption: {
-    type: String,
-    default: ''
-  },
+      link: {
+        type: String,
+        default: '#'
+      },
 
-  link: {
-    type: String,
-    default: '#'
-  },
-
-  icon: {
-    type: String,
-    default: ''
+      icon: {
+        type: String,
+        default: ''
+      }
+        }]
   }
+ 
 });
 
 const handleClick =(prop) =>{
