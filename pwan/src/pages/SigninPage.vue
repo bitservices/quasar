@@ -58,23 +58,22 @@
 import { ref } from "vue";
 import axios from "axios";
 import { LocalStorage, SessionStorage } from "quasar";
-import router from "src/router/routes";
+//import router from "src/router/routes";
+import { useRouter } from 'vue-router';
 export default {
-  data() {
-    return {
-      formData: {
-        username: "",
-        password: "",
-      },
-    };
-  },
-  methods: {
-    async handleSubmit() {
+  
+  setup() {
+    const router = useRouter();
+    const formData = ref({
+      username: '',
+      password: ''
+    });
+    const handleSubmit = async  () => {
       try {
-        console.log(this.formData);
+        console.log("formData>>>>>>>",formData.value);
         const response = await axios.post(
           "http://localhost:8000/api/token/",
-          this.formData
+          formData.value
         );
         if (response.data) {
           const authenticated = response.data["access"];
@@ -82,20 +81,18 @@ export default {
           console.log(authenticated);
           if (authenticated) {
             // Redirect to the homepage or intended route
-            console.log("redirecting to the Home Page", router);
-            router.push("/home");
+            console.log(router);
+             router.push({ path: '/home' });
           }
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    },
-  },
-  setup() {
-    return {
-      password: ref(""),
-      isPwd: ref(true),
-      username: ref(""),
+    };
+    return { 
+      isPwd: ref(true), 
+      formData,
+      handleSubmit,
     };
   },
 };

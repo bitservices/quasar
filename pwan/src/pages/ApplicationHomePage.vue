@@ -1,13 +1,11 @@
 <template>
-  <q-page padding class="flex flex-center"> Home Page </q-page>
+  <q-page>
+    <h1>Application Home  Page</h1>
+  </q-page>
 </template>
 
 <script>
-import { ref } from "vue";
-import axios from "axios";
-import { LocalStorage, SessionStorage } from "quasar";
-
 export default {
-  name: "ApplicationHomePage",
+  name: 'ApplicationHomePage',
 };
 </script>

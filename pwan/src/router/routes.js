@@ -10,7 +10,10 @@ const routes = [
   {
     path: "/home",
     name: "HomePage",
-    component: ApplicationHomePage,
+    component:  () => import("layouts/MainLayout.vue"),
+    children: [
+      { path: "", component: () => import("src/pages/ApplicationHomePage.vue") },
+    ],
     meta: {
       requiresAuth: true, // Example of a protected route
     },
