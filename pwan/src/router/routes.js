@@ -13,6 +13,7 @@ const routes = [
     component:  () => import("layouts/MainLayout.vue"),
     children: [
       { path: "", component: () => import("src/pages/ApplicationHomePage.vue") },
+      { path: "/dashboard", component: () => import("src/pages/DashBoardPage.vue") },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

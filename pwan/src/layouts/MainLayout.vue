@@ -26,7 +26,7 @@
         <q-item-label
           header
         >
-          Essential Links
+          MENU
         </q-item-label>
 
         <EssentialLink
@@ -56,13 +56,13 @@ const linksList = [
     title: 'Docs',
     caption: 'quasar.dev',
     icon: 'school',
-    link: 'https://quasar.dev'
+    link: '/home'
   },
   {
     title: 'Github',
     caption: 'github.com/quasarframework',
     icon: 'code',
-    link: 'https://github.com/quasarframework'
+    link: '/dashboard'
   },
   {
     title: 'Discord Chat Channel',

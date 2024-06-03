@@ -1,31 +1,11 @@
 <template>
-  <q-page padding class="flex flex-center">
-    
-      Home Page
+  <q-page>
+    <h1>Dash Baord  Page</h1>
   </q-page>
 </template>
 
 <script>
-import { ref } from 'vue'
-import axios from 'axios';
-import { LocalStorage, SessionStorage } from 'quasar';
- 
 export default {
-
-
-  data() {
-    return { 
-    };
-  },
-  methods: {
-   
-   
-  },
-  setup () {
-    return { 
-    }
-    
-  }  
-  
-}
+  name: 'DashBoardPage',
+};
 </script>
