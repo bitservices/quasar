@@ -1,5 +1,5 @@
 <template>
- <q-page padding class="ftable">
+ <q-page padding>
   <div class="q-pa-md">
     <q-table
       class="my-sticky-header-table"
@@ -15,10 +15,17 @@
         <template v-slot:top >
          <q-label>Status</q-label>
         <q-space /> 
-         <q-icon name="add" @click="addItem" size="sm" rounded/>
-         <q-space />  
+         <q-btn
+              rounded color="green" icon="add"
+              size="sm"   @click="addItem" 
+            />
+             <q-btn
+              rounded color="blue" icon="edit"
+              size="sm"   @click="editItem" 
+            /> 
+           <StandingDataFormDialog v-model="showFormDialog" :onClick="saveRecord" label="Status"/>
           <q-btn
-              flat dense color="red" icon="delete"
+              rounded color="red" icon="delete"
               size="sm"   @click="showDialog" 
             >
               <q-dialog
@@ -50,9 +57,13 @@
 import { SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
+import StandingDataFormDialog from 'src/components/StandingDataFormDialog.vue';
 
 
 export default {
+  components: {
+    StandingDataFormDialog
+  },
   setup () {
     const headers= SessionStorage.getItem("headers");
     const columns = [
@@ -68,7 +79,8 @@ export default {
   { name: 'aame', align: 'center', label: 'Name', field: row =>row.name, sortable: true }, 
   
 ]
-
+    const showFormDialog = ref(false)
+    const action = ref("")
     const rows = ref([])
     const selected = ref([])
     const medium_dialog =  ref(false)
@@ -83,6 +95,17 @@ export default {
         console.error("Error submitting form:", error);
       }
     }; 
+    const saveRecord = (record) => {
+      try {  
+        console.log("calling saveRecord from Child Component")
+        const response = axios.post("http://localhost:8000/api/pwanproperties/status/save/",record, headers);
+        if (response.data) {
+             fetchData()
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    }; 
     const showDialog = ()=>{ 
       if(selected.value.length > 0 ){
         medium_dialog.value = true
@@ -91,7 +114,18 @@ export default {
       }
     }
     const addItem = () =>{ 
+
+       showFormDialog.value = true
+       action.value = "add" 
+
     };
+    const editItem = ()=>{
+      if(selected.value.length > 0){
+        showFormDialog.value = true 
+      } 
+       action.value = "edit"
+      console.log("edit Item clicked", showFormDialog)
+    }
     const deleteItem = async  () => { 
       try { 
         const data = selected.value 
@@ -106,7 +140,9 @@ export default {
     
     return {
       fetchData,
+      saveRecord,
       addItem,
+      editItem,
       deleteItem,
       showDialog,
       selected,
@@ -114,6 +150,9 @@ export default {
       rows,
       headers,
       medium_dialog,
+      action,
+      showFormDialog,
+
       
     }
   },
