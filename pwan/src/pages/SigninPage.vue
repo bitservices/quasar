@@ -69,8 +69,7 @@ export default {
       password: ''
     });
     const handleSubmit = async  () => {
-      try {
-        console.log("formData>>>>>>>",formData.value);
+      try { 
         const response = await axios.post(
           "http://localhost:8000/api/token/",
           formData.value
@@ -78,6 +77,11 @@ export default {
         if (response.data) {
           const authenticated = response.data["access"];
           LocalStorage.set("token", response.data);
+          const headers = {
+            "Authentication": "Bearer "+response.data["access"]
+          }
+          console.log(headers)
+          SessionStorage.set("headers", headers)
           console.log(authenticated);
           if (authenticated) {
             // Redirect to the homepage or intended route
