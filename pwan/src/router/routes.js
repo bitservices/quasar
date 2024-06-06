@@ -10,12 +10,18 @@ const routes = [
   {
     path: "/home",
     name: "HomePage",
-    component:  () => import("layouts/MainLayout.vue"),
+    component: () => import("layouts/MainLayout.vue"),
     children: [
-      { path: "", component: () => import("src/pages/ApplicationHomePage.vue") },
-      { path: "/dashboard", component: () => import("src/pages/DashBoardPage.vue") },
+      {
+        path: "",
+        component: () => import("src/pages/ApplicationHomePage.vue"),
+      },
+      {
+        path: "/dashboard",
+        component: () => import("src/pages/DashBoardPage.vue"),
+      },
       { path: "/status", component: () => import("src/pages/StatusPage.vue") },
-      
+      { path: "/gender", component: () => import("src/pages/GenderPage.vue") },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Status"
+        title="Gender"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,25 +14,14 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Status</q-label>
+          <q-label>Gender</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
           <StandingDataFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="Status"
-            :dataProp="parentData"
-            :action="action"
-          />
-          <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            label="Gender"
           />
           <q-btn
             rounded
@@ -42,7 +31,7 @@
             @click="showDialog"
           >
             <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
+              <q-card style="width: 700px; max-width: 80vw" class="danger">
                 <q-card-section>
                   <div class="text-h6">Delete Item(s)</div>
                 </q-card-section>
@@ -50,22 +39,16 @@
                 <q-card-section class="q-pt-none">
                   Are you sure you want to delete selected item(s)
                 </q-card-section>
+
                 <q-card-actions align="center" class="bg-white text-teal">
                   <q-btn
                     @click="deleteItem"
                     flat
                     label="Yes"
                     v-close-popup
-                    class="bg-negative text-white"
-                    rounded
+                    color="red"
                   />
-                  <q-btn
-                    flat
-                    label="No"
-                    class="bg-secondary text-white"
-                    v-close-popup
-                    rounded
-                  />
+                  <q-btn flat label="No" v-close-popup />
                 </q-card-actions>
               </q-card>
             </q-dialog>
@@ -81,18 +64,16 @@ import { SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue";
 
 export default {
   components: {
     StandingDataFormDialog,
-    ResponseDialog,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
     const columns = [
       {
-        name: "code",
+        name: "Code",
         required: false,
         label: "Code",
         align: "left",
@@ -101,36 +82,22 @@ export default {
         sortable: true,
       },
       {
-        name: "name",
+        name: "aame",
         align: "center",
         label: "Name",
         field: (row) => row.name,
         sortable: true,
       },
     ];
-    const parentData = ref({
-      code: "",
-      name: "",
-    });
     const showFormDialog = ref(false);
-    const showMessageDialog = ref(false);
     const action = ref("");
     const rows = ref([]);
     const selected = ref([]);
     const medium_dialog = ref(false);
-    const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
-      data: {},
-    });
-
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/status/",
+          "http://localhost:8000/api/pwanproperties/gender/",
           headers
         );
         if (response.data) {
@@ -141,91 +108,22 @@ export default {
         console.error("Error submitting form:", error);
       }
     };
+    const handleChildEvent = (record) => {
+      this.saveRecord(record);
+    };
     const saveRecord = (record) => {
-      if (action.value == "add") {
-        createRecord(record);
-      } else if (action.value == "edit") {
-        updateRecord(record);
-      }
-    };
-    const createRecord = (record) => {
       try {
-        console.log("calling Create Record from Child Component", record);
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
+        console.log("calling saveRecord from Child Component");
+        const response = axios.post(
+          "http://localhost:8000/api/pwanproperties/gender/save/",
           record,
           headers
         );
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            showMessageDialog.value = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            showMessageDialog.value = true;
-          });
+        if (response.data) {
+          fetchData();
+        }
       } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-    const updateRecord = (record) => {
-      try {
-        console.log("calling Update Record from Child Component", record);
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
-          record,
-          headers
-        );
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            showMessageDialog.value = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            showMessageDialog.value = true;
-          });
-      } catch (error) {
-        console.error("Error:", error);
+        console.error("Error submitting form:", error);
       }
     };
     const showDialog = () => {
@@ -242,13 +140,9 @@ export default {
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        parentData.value = {
-          code: selected.value[0]["code"],
-          name: selected.value[0]["name"],
-        };
-        action.value = "edit";
-        console.log(">>>>>>>>>>parentData>>>>>>", parentData.value);
       }
+      action.value = "edit";
+      console.log("edit Item clicked", showFormDialog);
     };
     const deleteItem = async () => {
       try {
@@ -269,14 +163,11 @@ export default {
     return {
       fetchData,
       saveRecord,
-      createRecord,
-      updateRecord,
       addItem,
       editItem,
       deleteItem,
       showDialog,
-      showMessageDialog,
-      childRef,
+      handleChildEvent,
       selected,
       columns,
       rows,
@@ -299,7 +190,6 @@ export default {
     console.log("mounted");
     this.fetchData();
   },
-  updated() {},
 };
 </script>
 
