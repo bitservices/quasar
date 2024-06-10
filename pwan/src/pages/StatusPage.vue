@@ -152,7 +152,7 @@ export default {
       try {
         console.log("calling Create Record from Child Component", record);
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
+          "http://localhost:8000/api/pwanproperties/status/save/",
           record,
           headers
         );
@@ -192,7 +192,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
+          "http://localhost:8000/api/pwanproperties/status/save/",
           record,
           headers
         );
