@@ -22,6 +22,46 @@ const routes = [
       },
       { path: "/status", component: () => import("src/pages/StatusPage.vue") },
       { path: "/gender", component: () => import("src/pages/GenderPage.vue") },
+      {
+        path: "/maritalstatus",
+        component: () => import("src/pages/MaritalStatus.vue"),
+      },
+      {
+        path: "/paymentstatus",
+        component: () => import("src/pages/PaymentStatus.vue"),
+      },
+      {
+        path: "/paymentmode",
+        component: () => import("src/pages/PaymentMode.vue"),
+      },
+      {
+        path: "/productstatus",
+        component: () => import("src/pages/ProductStaytus.vue"),
+      },
+      {
+        path: "/country",
+        component: () => import("src/pages/CountryPage.vue"),
+      },
+      {
+        path: "/state",
+        component: () => import("src/pages/StatePage.vue"),
+      },
+      {
+        path: "/county",
+        component: () => import("src/pages/CountyPage.vue"),
+      },
+      {
+        path: "/membershiptype",
+        component: () => import("src/pages/MemberShipType.vue"),
+      },
+      {
+        path: "/client",
+        component: () => import("src/pages/ClientPage.vue"),
+      },
+      {
+        path: "/prospect",
+        component: () => import("src/pages/ProspectCustomer.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

@@ -10,18 +10,27 @@
 
       <q-card-section>
         <q-form>
+          <q-input type="hidden" v-model="formData.email" />
+
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
+            v-model="formData.phoneNumber"
+            label="Phone Number"
             :dense="dense"
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
+            v-model="formData.prospectName"
+            label="Prospect Name"
+            :dense="dense"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.prospectEmail"
+            label="Prospect Email"
             :dense="dense"
           />
         </q-form>
@@ -50,12 +59,12 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 
 export default {
-  name: "StandingDataFormDialog",
+  name: "ProspectCustomerFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -95,8 +104,11 @@ export default {
     const dialogHeight = controlHeight + "px";
 
     const formData = ref({
-      code: "",
-      name: "",
+      id: "",
+      prospectName: "",
+      prospectEmail: "",
+      phoneNumber: "",
+      email: "",
     });
     const form = ref({
       label: "",
@@ -115,6 +127,7 @@ export default {
   },
   methods: {
     saveRecord() {
+      this.formData.email = LocalStorage.getItem("userEmail");
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
       this.$emit("formDataSubmitted", this.formData);
@@ -136,7 +149,13 @@ export default {
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    this.formData = {
+      id: "",
+      prospectName: "",
+      prospectEmail: "",
+      phoneNumber: "",
+      email: "",
+    };
   },
   updated() {
     const headers = SessionStorage.getItem("headers");
@@ -147,7 +166,7 @@ export default {
       try {
         const requestParams = {
           params: {
-            code: this.searchValue,
+            id: this.searchValue,
           },
         };
         const promise = axios.get(this.urlLink, requestParams, headers);
@@ -168,7 +187,13 @@ export default {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = {
+        id: "",
+        prospectName: "",
+        prospectEmail: "",
+        phoneNumber: "",
+        email: "",
+      };
     }
   },
 };

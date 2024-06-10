@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Gender"
+        title="County"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Gender</q-label>
+          <q-label>County</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -25,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <StandingDataFormDialog
+          <CountyFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Gender"
+            label="County"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -89,12 +89,12 @@
 import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import CountyFormDialog from "src/components/CountyFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 
 export default {
   components: {
-    StandingDataFormDialog,
+    CountyFormDialog,
     ResponseDialog,
   },
   setup() {
@@ -116,13 +116,34 @@ export default {
         field: (row) => row.name,
         sortable: true,
       },
+      {
+        name: "state",
+        align: "center",
+        label: "State",
+        field: (row) => row.stateCode.name,
+        sortable: true,
+      },
+      {
+        name: "country",
+        align: "center",
+        label: "Country",
+        field: (row) => row.countryCode.name,
+        sortable: true,
+      },
+      {
+        name: "status",
+        align: "center",
+        label: "Status",
+        field: (row) => row.status.name,
+        sortable: true,
+      },
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
     const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/gender/search/"
+      "http://localhost:8000/api/pwanproperties/state/search/"
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -145,10 +166,11 @@ export default {
       try {
         Loading.show();
         const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/gender/",
+          "http://localhost:8000/api/pwanproperties/county/",
           headers
         );
         if (response.data) {
+          console.log("response data >>>>>>", response.data);
           rows.value = response.data;
           selected.value = [];
           Loading.hide();
@@ -167,7 +189,7 @@ export default {
     const createRecord = (record) => {
       try {
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/save/",
+          "http://localhost:8000/api/pwanproperties/county/save/",
           record,
           headers
         );
@@ -207,7 +229,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/gender/update/",
+          "http://localhost:8000/api/pwanproperties/county/update/",
           record,
           headers
         );
@@ -276,7 +298,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/remove/",
+          "http://localhost:8000/api/pwanproperties/county/remove/",
           data,
           headers
         );

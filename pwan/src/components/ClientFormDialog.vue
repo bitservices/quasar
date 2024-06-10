@@ -17,11 +17,28 @@
             label="Code"
             :dense="dense"
           />
+          <div>
+            <q-checkbox v-model="isChecked" label="Is an Affilate" />
+          </div>
           <q-input
             filled
             bottom-slots
             v-model="formData.name"
             label="Name"
+            :dense="dense"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.website"
+            label="Web Site"
+            :dense="dense"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.email"
+            label="Email"
             :dense="dense"
           />
         </q-form>
@@ -50,7 +67,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 
@@ -97,6 +114,9 @@ export default {
     const formData = ref({
       code: "",
       name: "",
+      website: "",
+      isAnAffilate: false,
+      email: LocalStorage.getItem("userEmail"),
     });
     const form = ref({
       label: "",
@@ -108,6 +128,7 @@ export default {
     return {
       formData,
       showDialog,
+      isChecked: false,
       form,
       dialogWidth,
       dialogHeight,
@@ -115,8 +136,15 @@ export default {
   },
   methods: {
     saveRecord() {
+      console.log(">>>>>>>this.isChecked>>>>>>>>", this.isChecked);
+      if (this.isChecked) {
+        this.formData.isAnAffilate = true;
+      } else {
+        this.formData.isAnAffilate = false;
+      }
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
+
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -136,7 +164,13 @@ export default {
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    this.formData = {
+      code: "",
+      name: "",
+      website: "",
+      isAnAffilate: false,
+      email: "",
+    };
   },
   updated() {
     const headers = SessionStorage.getItem("headers");
@@ -159,6 +193,7 @@ export default {
             console.log(">>>>>>>>result>>>>>>>", result.data);
             if (result.success) {
               this.formData = result.data[0];
+              this.isChecked = this.formData.isAnAffilate;
             }
           })
           .catch((error) => {
@@ -168,7 +203,13 @@ export default {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = {
+        code: "",
+        name: "",
+        website: "",
+        isAnAffilate: false,
+        email: "",
+      };
     }
   },
 };

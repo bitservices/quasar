@@ -18,13 +18,22 @@
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn
+            rounded
+            color="info"
+            icon="visibility"
+            size="sm"
+            @click="viewItem"
+          />
           <StandingDataFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
             label="Status"
-            :dataProp="parentData"
+            :searchValue="searchValue"
             :action="action"
+            :actionLabel="actionLabel"
+            :urlLink="urlLink"
           />
           <ResponseDialog
             v-model="showMessageDialog"
@@ -77,7 +86,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
@@ -112,11 +121,16 @@ export default {
       code: "",
       name: "",
     });
+    const urlLink = ref(
+      "http://localhost:8000/api/pwanproperties/status/search/"
+    );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
+    const searchValue = ref("");
     const rows = ref([]);
     const selected = ref([]);
+    const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
     const childRef = ref({
       label: "",
@@ -129,6 +143,7 @@ export default {
 
     const fetchData = async () => {
       try {
+        Loading.show();
         const response = await axios.get(
           "http://localhost:8000/api/pwanproperties/status/",
           headers
@@ -136,6 +151,7 @@ export default {
         if (response.data) {
           rows.value = response.data;
           selected.value = [];
+          Loading.hide();
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -150,9 +166,8 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        console.log("calling Create Record from Child Component", record);
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
+          "http://localhost:8000/api/pwanproperties/status/save/",
           record,
           headers
         );
@@ -191,8 +206,8 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save1/",
+        const promise = axios.put(
+          "http://localhost:8000/api/pwanproperties/status/update/",
           record,
           headers
         );
@@ -200,6 +215,7 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
+            console.log(result);
             if (result.success) {
               fetchData();
             }
@@ -238,16 +254,22 @@ export default {
     const addItem = () => {
       showFormDialog.value = true;
       action.value = "add";
+      actionLabel.value = "Submit";
     };
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        parentData.value = {
-          code: selected.value[0]["code"],
-          name: selected.value[0]["name"],
-        };
+        searchValue.value = selected.value[0]["code"];
         action.value = "edit";
-        console.log(">>>>>>>>>>parentData>>>>>>", parentData.value);
+        actionLabel.value = "Update";
+      }
+    };
+    const viewItem = () => {
+      if (selected.value.length > 0) {
+        showFormDialog.value = true;
+        searchValue.value = selected.value[0]["code"];
+        action.value = "view";
+        actionLabel.value = "Done";
       }
     };
     const deleteItem = async () => {
@@ -273,8 +295,12 @@ export default {
       updateRecord,
       addItem,
       editItem,
+      viewItem,
       deleteItem,
       showDialog,
+      urlLink,
+      actionLabel,
+      searchValue,
       showMessageDialog,
       childRef,
       selected,

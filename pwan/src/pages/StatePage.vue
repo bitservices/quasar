@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Gender"
+        title="State"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Gender</q-label>
+          <q-label>State</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -25,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <StandingDataFormDialog
+          <StateFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Gender"
+            label="State"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -89,12 +89,13 @@
 import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import StateFormDialog from "src/components/StateFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
+import path from "src/router/urlpath";
 
 export default {
   components: {
-    StandingDataFormDialog,
+    StateFormDialog,
     ResponseDialog,
   },
   setup() {
@@ -116,14 +117,19 @@ export default {
         field: (row) => row.name,
         sortable: true,
       },
+      {
+        name: "country",
+        align: "center",
+        label: "Country",
+        field: (row) => row.countryCode.name,
+        sortable: true,
+      },
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
-    const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/gender/search/"
-    );
+    const urlLink = ref(path.STATE_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -145,10 +151,11 @@ export default {
       try {
         Loading.show();
         const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/gender/",
+          "http://localhost:8000/api/pwanproperties/state/",
           headers
         );
         if (response.data) {
+          console.log("response data >>>>>>", response.data);
           rows.value = response.data;
           selected.value = [];
           Loading.hide();
@@ -166,11 +173,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/save/",
-          record,
-          headers
-        );
+        const promise = axios.post(path.STATE_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -207,7 +210,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/gender/update/",
+          "http://localhost:8000/api/pwanproperties/state/update/",
           record,
           headers
         );
@@ -276,7 +279,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/remove/",
+          "http://localhost:8000/api/pwanproperties/state/remove/",
           data,
           headers
         );

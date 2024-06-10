@@ -11,11 +11,11 @@
               filled
               bottom-slots
               v-model="formData.username"
-              label="Email"
+              label="User Name"
               :dense="dense"
             >
               <template v-slot:prepend>
-                <q-icon name="email" />
+                <q-icon name="user" />
               </template>
               <template v-slot:append>
                 <q-icon
@@ -43,6 +43,13 @@
                 />
               </template>
             </q-input>
+            <q-input
+              filled
+              bottom-slots
+              v-model="formData.clientId"
+              label="Client Id"
+              :dense="dense"
+            ></q-input>
           </q-form>
         </div>
       </q-card-section>
@@ -59,17 +66,16 @@ import { ref } from "vue";
 import axios from "axios";
 import { LocalStorage, SessionStorage } from "quasar";
 //import router from "src/router/routes";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 export default {
-  
   setup() {
     const router = useRouter();
     const formData = ref({
-      username: '',
-      password: ''
+      username: "",
+      password: "",
     });
-    const handleSubmit = async  () => {
-      try { 
+    const handleSubmit = async () => {
+      try {
         const response = await axios.post(
           "http://localhost:8000/api/token/",
           formData.value
@@ -77,24 +83,25 @@ export default {
         if (response.data) {
           const authenticated = response.data["access"];
           LocalStorage.set("token", response.data);
+          LocalStorage.set("userEmail", formData.value.username);
           const headers = {
-            "Authentication": "Bearer "+response.data["access"]
-          }
-          console.log(headers)
-          SessionStorage.set("headers", headers)
+            Authentication: "Bearer " + response.data["access"],
+          };
+          console.log(headers);
+          SessionStorage.set("headers", headers);
           console.log(authenticated);
           if (authenticated) {
             // Redirect to the homepage or intended route
             console.log(router);
-             router.push({ path: '/home' });
+            router.push({ path: "/home" });
           }
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     };
-    return { 
-      isPwd: ref(true), 
+    return {
+      isPwd: ref(true),
       formData,
       handleSubmit,
     };

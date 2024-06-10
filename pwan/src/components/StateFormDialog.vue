@@ -24,6 +24,23 @@
             label="Name"
             :dense="dense"
           />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.countryCode"
+            :options="countries"
+            label="Select Country"
+            @input="handleChange"
+            :dense="dense"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.status"
+            :options="statusOptions"
+            label="Select Status"
+            :dense="dense"
+          />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -53,9 +70,10 @@
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
+import path from "src/router/urlpath";
 
 export default {
-  name: "StandingDataFormDialog",
+  name: "StateFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -97,6 +115,10 @@ export default {
     const formData = ref({
       code: "",
       name: "",
+      countryCode: "",
+      status: {
+        code: "I",
+      },
     });
     const form = ref({
       label: "",
@@ -111,10 +133,20 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
+      countries: [],
+      statusOptions: [],
     };
   },
   methods: {
     saveRecord() {
+      this.formData.countryCode = {
+        id: this.formData.countryCode.value,
+        name: this.formData.countryCode.label,
+      };
+      this.formData.status = {
+        id: this.formData.status.value,
+        name: this.formData.status.label,
+      };
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
       this.$emit("formDataSubmitted", this.formData);
@@ -132,7 +164,33 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    console.log("mounted");
+    console.log(">>>>>>>>>>>>mounted");
+    axios
+      .get(path.COUNTRY_ALL)
+      .then((response) => {
+        console.log("country Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.countries = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.countries >>>>>>>>>>>>", this.countries);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+
+    axios
+      .get(path.STATUS_ALL)
+      .then((response) => {
+        this.statusOptions = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
