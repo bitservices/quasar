@@ -117,16 +117,16 @@ const linksList = [
         link: "/prospect",
       },
       {
-        title: " Doc 5",
+        title: " Menu ",
         caption: "@quasarframework",
         icon: "rss_feed",
-        link: "https://twitter.quasar.dev",
+        link: "/menu",
       },
       {
-        title: " Doc 6",
+        title: " Turnel ",
         caption: "@QuasarFramework",
         icon: "public",
-        link: "https://facebook.quasar.dev",
+        link: "/turnel",
       },
       {
         title: " Doc 7",

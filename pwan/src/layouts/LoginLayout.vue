@@ -2,9 +2,9 @@
   <q-layout view="hHh Lpr lFf">
     <q-header elevated class="pwan-blue">
       <q-toolbar>
-        <q-toolbar-title> Elite App </q-toolbar-title>
+        <q-toolbar-title> PWAN App </q-toolbar-title>
 
-        <div>Elite App v{{ $q.version }}</div>
+        <div>PWAN App v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 

@@ -24,6 +24,18 @@ const path = {
   STATE_SEARCH: APP_PATH + "state/search",
 
   STATUS_ALL: APP_PATH + "status/",
+
+  MENU_CREATE: APP_PATH + "menu/create/",
+  MENU_UPDATE: APP_PATH + "menu/update/",
+  MENU_SEARCH: APP_PATH + "menu/search/",
+  MENU_SEARCH_ALL: APP_PATH + "menu/",
+  MENU_REMOVE: APP_PATH + "menu/remove/",
+
+  USER_PROFILE: APP_PATH + "user/profiles/",
+
+  ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
+
+  ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveuseclient/",
 };
 
 export default path;
