@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf">
     <q-header elevated class="pwan-blue">
       <q-toolbar>
         <q-btn
@@ -58,34 +58,34 @@ const linksList = [
         link: "/gender",
       },
       {
-        title: " Doc 3",
-        caption: "chat.quasar.dev",
+        title: " Marital Status",
+        caption: "Marital Status Page",
         icon: "chat",
-        link: "https://chat.quasar.dev",
+        link: "/maritalstatus",
       },
       {
-        title: " Doc 4",
-        caption: "forum.quasar.dev",
+        title: " Product Status",
+        caption: "Product Status Page",
         icon: "record_voice_over",
-        link: "https://forum.quasar.dev",
+        link: "/productstatus",
       },
       {
-        title: " Doc 5",
-        caption: "@quasarframework",
+        title: " Payment Mode",
+        caption: "Paymet Mode Page",
         icon: "rss_feed",
-        link: "https://twitter.quasar.dev",
+        link: "/paymentmode",
       },
       {
-        title: " Doc 6",
+        title: " Country",
         caption: "@QuasarFramework",
-        icon: "public",
-        link: "https://facebook.quasar.dev",
+        icon: "country",
+        link: "/country",
       },
       {
-        title: " Doc 7",
-        caption: "Community Quasar projects",
+        title: " State",
+        caption: "State Definition",
         icon: "favorite",
-        link: "https://awesome.quasar.dev",
+        link: "/state",
       },
     ],
   },
@@ -93,28 +93,28 @@ const linksList = [
     title: "Operations",
     menuitems: [
       {
-        title: " Doc",
-        caption: "quasar.dev",
+        title: " County ",
+        caption: "County Definition",
         icon: "school",
-        link: "/home",
+        link: "/county",
       },
       {
-        title: " Doc 2",
-        caption: "github.com/quasarframework",
+        title: " MemberShip Tyoe",
+        caption: "MemberShip Type",
         icon: "code",
-        link: "/dashboard",
+        link: "/membershiptype",
       },
       {
-        title: " Doc 3",
-        caption: "chat.quasar.dev",
+        title: " Client",
+        caption: "Client Definition",
         icon: "chat",
-        link: "https://chat.quasar.dev",
+        link: "/client",
       },
       {
-        title: " Doc 4",
-        caption: "forum.quasar.dev",
+        title: " Prospecting Customer",
+        caption: "Prospecting Customers",
         icon: "record_voice_over",
-        link: "https://forum.quasar.dev",
+        link: "/prospect",
       },
       {
         title: " Doc 5",

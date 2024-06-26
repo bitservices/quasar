@@ -24,6 +24,13 @@
             label="Name"
             :dense="dense"
           />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.status"
+            label="Status"
+            :dense="dense"
+          />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -55,7 +62,7 @@ import { onUnmounted, ref } from "vue";
 import axios from "axios";
 
 export default {
-  name: "StandingDataFormDialog",
+  name: "CountryFormDialog",
   props: {
     onClick: {
       type: Function,

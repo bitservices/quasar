@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Gender"
+        title="Client"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Gender</q-label>
+          <q-label>Client</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -25,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <StandingDataFormDialog
+          <ClientFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Gender"
+            label="Client"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -86,19 +86,20 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import ClientFormDialog from "src/components/ClientFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
-
+import path from "src/router/urlpath";
 export default {
   components: {
-    StandingDataFormDialog,
+    ClientFormDialog,
     ResponseDialog,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
+    const userEmail = "";
     const columns = [
       {
         name: "code",
@@ -116,14 +117,26 @@ export default {
         field: (row) => row.name,
         sortable: true,
       },
+      {
+        name: "isAnAffilate",
+        align: "center",
+        label: "Is An Affilate",
+        field: (row) => row.isAnAffilate,
+        sortable: true,
+      },
+      {
+        name: "website",
+        align: "center",
+        label: "Web Site",
+        field: (row) => row.website,
+        sortable: true,
+      },
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
-    const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/gender/search/"
-    );
+    const urlLink = ref(path.CLIENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -144,8 +157,13 @@ export default {
     const fetchData = async () => {
       try {
         Loading.show();
-        const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/gender/",
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          createdBy: userEmail,
+        };
+        const response = await axios.post(
+          path.CLIENT_FIND_BY_CREATOR,
+          requestParam,
           headers
         );
         if (response.data) {
@@ -166,11 +184,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/save/",
-          record,
-          headers
-        );
+        const promise = axios.post(path.CLIENT_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -206,16 +220,11 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/gender/update/",
-          record,
-          headers
-        );
+        const promise = axios.put(path.CLIENT_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(result);
             if (result.success) {
               fetchData();
             }
@@ -275,11 +284,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/remove/",
-          data,
-          headers
-        );
+        const response = await axios.post(path.CLIENT_REMOVE, data, headers);
         if (response.data.success) {
           fetchData();
         }
@@ -306,6 +311,7 @@ export default {
       selected,
       columns,
       rows,
+      userEmail,
       headers,
       medium_dialog,
       action,
@@ -320,6 +326,7 @@ export default {
   },
   beforeMount() {
     console.log("beforeMount");
+    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
     console.log("mounted");

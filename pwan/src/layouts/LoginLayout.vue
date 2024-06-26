@@ -1,13 +1,10 @@
 <template>
-  <q-layout view="hHh Lpr lFf" >
+  <q-layout view="hHh Lpr lFf">
     <q-header elevated class="pwan-blue">
-      <q-toolbar> 
+      <q-toolbar>
+        <q-toolbar-title> Elite App </q-toolbar-title>
 
-        <q-toolbar-title>
-          Pwan Group App
-        </q-toolbar-title>
-
-        <div>Pwan Group App v{{ $q.version }}</div>
+        <div>Elite App v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -18,16 +15,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref } from "vue";
 
 defineOptions({
-  name: 'MainLayout'
-})
+  name: "MainLayout",
+});
 
+const leftDrawerOpen = ref(false);
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+function toggleLeftDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>

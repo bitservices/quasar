@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Gender"
+        title="MemberShip Type"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Gender</q-label>
+          <q-label>Prospect Customer</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -25,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <StandingDataFormDialog
+          <ProspectCustomerFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Gender"
+            label="Prospect Customer"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -86,34 +86,42 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import ProspectCustomerFormDialog from "src/components/ProspectCustomerFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
-
+import path from "src/router/urlpath";
 export default {
   components: {
-    StandingDataFormDialog,
+    ProspectCustomerFormDialog,
     ResponseDialog,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
+    const userEmail = "";
     const columns = [
       {
-        name: "code",
+        name: "prospectName",
         required: false,
-        label: "Code",
+        label: "Prospect Name",
         align: "left",
-        field: (row) => row.code,
+        field: (row) => row.prospectName,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "name",
+        name: "phoneNumber",
         align: "center",
-        label: "Name",
-        field: (row) => row.name,
+        label: "Phone Number",
+        field: (row) => row.phoneNumber,
+        sortable: true,
+      },
+      {
+        name: "prospectEmail",
+        align: "center",
+        label: "Email",
+        field: (row) => row.prospectEmail,
         sortable: true,
       },
     ];
@@ -121,9 +129,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/gender/search/"
-    );
+    const urlLink = ref(path.PROSPECT_CUSTOMER_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -144,8 +150,15 @@ export default {
     const fetchData = async () => {
       try {
         Loading.show();
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            email: userEmail,
+          },
+        };
         const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/gender/",
+          path.PROSPECT_CUSTOMER_FIND_BY_USER,
+          requestParam,
           headers
         );
         if (response.data) {
@@ -167,7 +180,7 @@ export default {
     const createRecord = (record) => {
       try {
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/save/",
+          path.PROSPECT_CUSTOMER_CREATE,
           record,
           headers
         );
@@ -207,7 +220,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/gender/update/",
+          path.PROSPECT_CUSTOMER_UPATE,
           record,
           headers
         );
@@ -259,7 +272,7 @@ export default {
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
+        searchValue.value = selected.value[0]["id"];
         action.value = "edit";
         actionLabel.value = "Update";
       }
@@ -276,7 +289,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/gender/remove/",
+          path.PROSPECT_CUSTOMER_REMOVE,
           data,
           headers
         );
@@ -306,6 +319,7 @@ export default {
       selected,
       columns,
       rows,
+      userEmail,
       headers,
       medium_dialog,
       action,
@@ -320,6 +334,7 @@ export default {
   },
   beforeMount() {
     console.log("beforeMount");
+    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
     console.log("mounted");
