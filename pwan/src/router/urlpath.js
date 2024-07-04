@@ -35,7 +35,9 @@ const path = {
 
   ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
 
-  ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveuseclient/",
+  ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveorganisationuser/",
+
+  USER_PROFILES: APP_PATH + "user/profiles/",
 };
 
 export default path;

@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Payment Mode"
+        title="Gender"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Payment Mode</q-label>
+          <q-label>Gender</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -29,7 +29,7 @@
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Status"
+            label="Gender"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -122,7 +122,7 @@ export default {
       name: "",
     });
     const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/paymentmode/search/"
+      "http://localhost:8000/api/pwanproperties/bank/search/"
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -145,7 +145,7 @@ export default {
       try {
         Loading.show();
         const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/paymentmode/",
+          "http://localhost:8000/api/pwanproperties/gender/",
           headers
         );
         if (response.data) {
@@ -167,7 +167,7 @@ export default {
     const createRecord = (record) => {
       try {
         const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/save/",
+          "http://localhost:8000/api/pwanproperties/gender/save/",
           record,
           headers
         );
@@ -207,7 +207,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/paymentmode/update/",
+          "http://localhost:8000/api/pwanproperties/gender/update/",
           record,
           headers
         );
@@ -276,7 +276,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/remove/",
+          "http://localhost:8000/api/pwanproperties/gender/remove/",
           data,
           headers
         );
