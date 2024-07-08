@@ -6,10 +6,9 @@
           filled
           bottom-slots
           v-model="formData.client"
+          @input="handleClientChange"
           :options="clients"
           label="Select Client"
-          @change="handleClientChange"
-          :dense="dense"
         />
         <q-select
           filled
@@ -17,7 +16,6 @@
           v-model="formData.organisation"
           :options="organisations"
           label="Select Organisation"
-          :dense="dense"
         />
         <q-btn class="pwan-button" @click="handleTurnelling" rounded>
           Turnel
@@ -33,95 +31,140 @@ import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
 export default {
-  setup() {
+  data() {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail");
     const clients = ref([]);
     const organisations = ref([]);
+    const menus = ref([]);
     const formData = ref({
       client: null,
       organisation: null,
     });
-    const loadUserClients = async () => {
-      try {
-        console.log(">>>>>calling LoadUserClients>>>>>>>>>", userEmail);
-        Loading.show();
-        const requestParam = {
-          params: {
-            email: "lubemimoko@gmail.com",
-          },
-        };
-        const response = await axios.get(
-          path.ACTIVE_USER_CLIENT_SEARCH,
-          requestParam,
-          headers
-        );
-        const result = response.data;
-        console.log(">>>>>result>>>>>>>>", result);
-        console.log(">>>>>result data>>>>>>>>", result.data);
-        if (result.success) {
-          clients.value = result.data.map((option) => ({
-            label: option.client.name,
-            value: option.client.code,
-          }));
-          console.log("clients>>>>>>>>", clients);
-        }
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    };
-
-    const handleClientChange = async (value) => {
-      console.log(">>>>>>>>>handle Client Change>>>>>>>>", value);
-
-      try {
-        Loading.show();
-        const selectedClient = value;
-
-        const requestParam = {
-          params: {
-            email: userEmail,
-            client: selectedClient.value,
-          },
-        };
-        const response = await axios.get(
-          path.ACTIVE_ORG_USER_SEARCH,
-          requestParam,
-          headers
-        );
-        if (response.data) {
-          organisations.value = response.data.map((option) => ({
-            label: option.organisation.name,
-            value: option.organisation.code,
-          }));
-        }
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    };
-
     return {
       formData,
       clients,
       organisations,
+      menus,
       headers,
       userEmail,
-      loadUserClients,
-      handleClientChange,
     };
+  },
+  methods: {
+    loadUserClients() {
+      try {
+        console.log(">>>>>calling LoadUserClients>>>>>>>>>", this.userEmail);
+        const requestParam = {
+          params: {
+            email: this.userEmail,
+          },
+        };
+        axios
+          .get(path.ACTIVE_USER_CLIENT_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            this.clients = response.data.data.map((option) => ({
+              label: option.client.name,
+              value: option.client.code,
+            }));
+            console.log("this.clients >>>>>>>>>>>>", this.clients);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+    handleClientChange(value) {
+      try {
+        console.log(">>>>>calling handleClientChange>>>>>>>>>", value);
+        const requestParam = {
+          params: {
+            client: value,
+            email: this.userEmail,
+          },
+        };
+        axios
+          .get(path.ACTIVE_ORG_USER_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            console.log(
+              "organisations Response >>>>>>>>>>>>",
+              response.data.data
+            );
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            this.organisations = response.data.data.map((option) => ({
+              label: option.organisation.name,
+              value: option.organisation.code,
+            }));
+            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+    handleTurnelling() {
+      const turnelParams = {
+        email: this.userEmail,
+        client: this.formData.client.value,
+        organisation: this.formData.organisation.value,
+      };
+      SessionStorage.set("turnelParams", turnelParams);
+      try {
+        const requestParam = {
+          params: turnelParams,
+        };
+        axios
+          .get(path.USER_PROFILES, requestParam, this.headers)
+          .then((response) => {
+            this.menus = response.data.data;
+            let updatedMenu = [];
+            Object.keys(this.menus).forEach((key) => {
+              let menuSection = { title: key };
+              let sectionItems = this.menus[key];
+              let menuitems = [];
+              sectionItems.forEach(function (menu, index) {
+                let menuitem = {
+                  title: menu.name,
+                  caption: menu.code,
+                  icon: menu.code,
+                  link: menu.url,
+                };
+                menuitems.push(menuitem);
+              });
+              menuSection["menuitems"] = menuitems;
+              updatedMenu.push(menuSection);
+            });
+            this.$emit("update-menu", updatedMenu);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
   },
   beforeCreate() {
     console.log("beforeCreate");
   },
   created() {
     console.log("created");
-    this.loadUserClients();
   },
   beforeMount() {
     console.log("beforeMount");
   },
   mounted() {
+    this.loadUserClients();
     console.log(">>>>>>>>mounted>>>>>>>>>>");
+    this.handleClientChange("Cl");
+  },
+  beforeUpdate() {
+    console.log(">>>>>>>>before updated>>>>>>>>>>");
   },
   updated() {
     console.log(">>>>>>>>updated>>>>>>>>>>");

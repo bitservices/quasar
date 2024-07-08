@@ -27,7 +27,7 @@
           <ResponseDialog
             v-model="showMessageDialog"
             v-bind:class="childRef.class"
-            :text="childRef.textClass"
+            :textClass="childRef.textClass"
             :label="childRef.label"
             :message="childRef.message"
           />

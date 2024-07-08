@@ -22,6 +22,7 @@ const routes = [
       },
       { path: "/status", component: () => import("src/pages/StatusPage.vue") },
       { path: "/gender", component: () => import("src/pages/GenderPage.vue") },
+      { path: "/banks", component: () => import("src/pages/BankPage.vue") },
       {
         path: "/maritalstatus",
         component: () => import("src/pages/MaritalStatus.vue"),

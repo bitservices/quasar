@@ -28,7 +28,7 @@
       </q-list>
     </q-drawer>
     <q-page-container>
-      <router-view />
+      <router-view @update-menu="handleUpdateMenu" />
     </q-page-container>
   </q-layout>
 </template>
@@ -40,10 +40,10 @@ import EssentialLink from "components/EssentialLink.vue";
 defineOptions({
   name: "MainLayout",
 });
-
-const linksList = [
+let linksList = [];
+let defaultList = [
   {
-    title: "Settings",
+    title: "Default 1",
     menuitems: [
       {
         title: " Status",
@@ -90,7 +90,7 @@ const linksList = [
     ],
   },
   {
-    title: "Operations",
+    title: "Default 2",
     menuitems: [
       {
         title: " County ",
@@ -139,7 +139,19 @@ const linksList = [
 ];
 
 const leftDrawerOpen = ref(false);
-
+linksList = defaultList;
+function handleUpdateMenu(updatedMenuItems) {
+  console.log("updated Menu>>>>>>>>>", updatedMenuItems);
+  linksList = [];
+  console.log("linksList>>>>>>>>>", linksList);
+  defaultList.forEach(function (menu, index) {
+    linksList.push(menu);
+  });
+  updatedMenuItems.forEach(function (menu, index) {
+    linksList.push(menu);
+  });
+  console.log("linksList new >>>>>>>>>", linksList);
+}
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
