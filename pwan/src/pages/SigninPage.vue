@@ -11,11 +11,11 @@
               filled
               bottom-slots
               v-model="formData.username"
-              label="User Name"
+              label="Email"
               :dense="dense"
             >
               <template v-slot:prepend>
-                <q-icon name="user" />
+                <q-icon name="email" />
               </template>
               <template v-slot:append>
                 <q-icon
@@ -43,13 +43,6 @@
                 />
               </template>
             </q-input>
-            <q-input
-              filled
-              bottom-slots
-              v-model="formData.clientId"
-              label="Client Id"
-              :dense="dense"
-            ></q-input>
           </q-form>
         </div>
       </q-card-section>
