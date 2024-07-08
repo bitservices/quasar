@@ -17,6 +17,7 @@
           :options="organisations"
           label="Select Organisation"
         />
+        <GoogleMap/>
         <q-btn class="pwan-button" @click="handleTurnelling" rounded>
           Turnel
         </q-btn>
@@ -30,7 +31,11 @@ import { LocalStorage, SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
+import GoogleMap from 'components/GoogleMap.vue';
 export default {
+   components: {
+    GoogleMap
+  },
   data() {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail");

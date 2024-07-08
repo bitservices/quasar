@@ -71,6 +71,10 @@ const routes = [
         path: "/turnel",
         component: () => import("src/pages/TurnelPages.vue"),
       },
+      {
+        path: "/menuitem",
+        component: () => import("src/pages/MenuItemPage.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

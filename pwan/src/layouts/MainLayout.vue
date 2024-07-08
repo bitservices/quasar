@@ -123,6 +123,12 @@ let defaultList = [
         link: "/menu",
       },
       {
+        title: " Menu Item ",
+        caption: "@quasarframework",
+        icon: "rss_feed",
+        link: "/menuitem",
+      },
+      {
         title: " Turnel ",
         caption: "@QuasarFramework",
         icon: "public",

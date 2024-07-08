@@ -31,6 +31,12 @@ const path = {
   MENU_SEARCH_ALL: APP_PATH + "menu/",
   MENU_REMOVE: APP_PATH + "menu/remove/",
 
+  MENUITEM_CREATE: APP_PATH + "menuitem/create/",
+  MENUITEM_UPDATE: APP_PATH + "menuitem/update/",
+  MENUITEM_SEARCH: APP_PATH + "menuitem/search/", 
+  MENUITEM_SEARCH_ALL: APP_PATH + "menuitem/",
+  MENUITEM_REMOVE: APP_PATH + "menuitem/remove/",
+
   USER_PROFILE: APP_PATH + "user/profiles/",
 
   ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
