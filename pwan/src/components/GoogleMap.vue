@@ -1,20 +1,29 @@
-<!-- src/components/GoogleMap.vue -->
 <template>
-  <GmapMap
-    :center="{lat: 10, lng: 10}"
-    :zoom="7"
-    style="width: 100%; height: 500px"
-  >
-    <GmapMarker
-      :position="{lat: 10, lng: 10}"
-      :clickable="true"
-      :draggable="true"
-    />
+  <GmapMap :center="center" :zoom="zoom" style="width: 100%; height: 400px">
+    <!-- Add other map components or markers here if needed -->
   </GmapMap>
 </template>
 
 <script>
+import { gmapApi } from "@fawmi/vue-google-maps";
+
 export default {
-  name: 'GoogleMap'
-}
+  data() {
+    return {
+      center: { lat: 0, lng: 0 }, // Initial map center
+      zoom: 10, // Initial zoom level
+    };
+  },
+  mounted() {
+    // Example of reading user's current location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.center = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+      });
+    }
+  },
+};
 </script>

@@ -32,7 +32,7 @@
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Menu"
+            label="Menu Item"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import MenuItemFormDialog from "src/components/MenuItemFormDialog.vue";
@@ -132,7 +132,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.MENU_SEARCH);
+    const urlLink = ref(path.MENUITEM_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -187,7 +187,6 @@ export default {
     },
     fetchData() {
       try {
-        Loading.show();
         const promise = axios.get(path.MENUITEM_SEARCH_ALL, this.headers);
         console.log("promise in the Fetch Data>>>>>>>>>>", promise);
         promise
@@ -195,7 +194,6 @@ export default {
             // Extract data from the response
             this.rows = response.data;
             this.selected = [];
-            Loading.hide();
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -337,7 +335,11 @@ export default {
     async deleteItem() {
       try {
         const data = this.selected;
-        const response = await axios.post(path.MENUITEM_REMOVE, data, this.headers);
+        const response = await axios.post(
+          path.MENUITEM_REMOVE,
+          data,
+          this.headers
+        );
         if (response.data.success) {
           this.fetchData();
         }

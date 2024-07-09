@@ -1,75 +1,71 @@
 <template>
- <div class="q-pa-md" style="max-width: 50px">
- <q-menu auto-close>
-  <q-list style="min-width: 100px" bordered separator>
-    <q-list-section>
-  <q-item  v-for="link in props.menuitems"
-          :key="link.title"
-          :items="link.menuitems"
-    clickable
-    tag="a"
-    target="_blank" 
-     @click="handleClick(link.link)"
-  >
-    <q-item-section
-      v-if="link.icon"
-      avatar
-    >
-      <q-icon :name="props.icon" />
-    </q-item-section>
+  <div class="q-pa-md" style="max-width: 50px">
+    <q-menu auto-close>
+      <q-list style="min-width: 100px" bordered separator>
+        <q-list-section>
+          <q-item
+            v-for="link in props.menuitems"
+            :key="link.title"
+            :items="link.menuitems"
+            clickable
+            tag="a"
+            target="_blank"
+            @click="handleClick(link.link)"
+          >
+            <q-item-section v-if="link.icon" avatar>
+              <q-icon :name="props.icon" />
+            </q-item-section>
 
-    <q-item-section>
-      <q-item-label>{{ link.title }} </q-item-label>
-      <q-item-label caption>{{ link.caption }}</q-item-label>
-    </q-item-section>
-  </q-item>
-    </q-list-section>
-  </q-list>
-</q-menu>
- {{ props.title }}
- </div>
-</template> 
+            <q-item-section>
+              <q-item-label>{{ link.title }} </q-item-label>
+              <q-item-label caption>{{ link.caption }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list-section>
+      </q-list>
+    </q-menu>
+    {{ props.title }}
+  </div>
+</template>
 <script setup>
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 const router = useRouter();
 defineOptions({
-  name: 'EssentialLink'
-})
+  name: "EssentialLink",
+});
 
 const props = defineProps({
   title: {
     type: String,
-    required: true
-  },
-  menuitems:{
-    type : Array,
     required: true,
-    default : () =>[{
-       caption: {
-        type: String,
-        default: ''
-      },
+  },
+  menuitems: {
+    type: Array,
+    required: true,
+    default: () => [
+      {
+        caption: {
+          type: String,
+          default: "",
+        },
 
-      link: {
-        type: String,
-        default: '#'
-      },
+        link: {
+          type: String,
+          default: "#",
+        },
 
-      icon: {
-        type: String,
-        default: ''
-      }
-        }]
-  }
- 
+        icon: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
+  },
 });
 
-const handleClick =(prop) =>{
-  console.log(prop)
-  console.log(router)
-  router.push(prop)
-}
-
-
-
+const handleClick = (prop) => {
+  console.log(prop.trim());
+  console.log(router);
+  router.push(prop.trim());
+};
 </script>

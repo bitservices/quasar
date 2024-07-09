@@ -24,6 +24,13 @@
             label="Name"
             :dense="dense"
           />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.url"
+            label="Url"
+            :dense="dense"
+          />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -98,6 +105,7 @@ export default {
     const formData = ref({
       code: "",
       name: "",
+      url: "",
     });
     const form = ref({
       label: "",
@@ -149,7 +157,7 @@ export default {
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    this.formData = { code: "", name: "", url: "" };
   },
   updated() {
     const headers = SessionStorage.getItem("headers");
@@ -181,7 +189,7 @@ export default {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = { code: "", name: "", url: "" };
     }
   },
 };

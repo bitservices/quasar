@@ -33,7 +33,7 @@ const path = {
 
   MENUITEM_CREATE: APP_PATH + "menuitem/create/",
   MENUITEM_UPDATE: APP_PATH + "menuitem/update/",
-  MENUITEM_SEARCH: APP_PATH + "menuitem/search/", 
+  MENUITEM_SEARCH: APP_PATH + "menuitem/search/",
   MENUITEM_SEARCH_ALL: APP_PATH + "menuitem/",
   MENUITEM_REMOVE: APP_PATH + "menuitem/remove/",
 
@@ -44,6 +44,12 @@ const path = {
   ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveorganisationuser/",
 
   USER_PROFILES: APP_PATH + "user/profiles/",
+
+  SALES_CREATE: APP_PATH + "sales/create/",
+  SALES_UPDATE: APP_PATH + "sales/update/",
+  SALES_SEARCH: APP_PATH + "sales/search/",
+  SALES_SEARCH_ALL: APP_PATH + "sales/",
+  SALES_REMOVE: APP_PATH + "sales/remove/",
 };
 
 export default path;

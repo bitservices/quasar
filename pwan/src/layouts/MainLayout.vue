@@ -129,6 +129,12 @@ let defaultList = [
         link: "/menuitem",
       },
       {
+        title: " Sales Transction ",
+        caption: "@quasarframework",
+        icon: "rss_feed",
+        link: "/sales",
+      },
+      {
         title: " Turnel ",
         caption: "@QuasarFramework",
         icon: "public",
