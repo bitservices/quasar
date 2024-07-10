@@ -82,25 +82,11 @@
           <q-icon name="attachment"  />
         </template>
       </q-file>
-      <q-input
-        filled
-        v-model="time"
-        label="Select Time"
-        mask="HH:mm:ss"
-        :rules="[ val => !!val || 'Time is required' ]"
-      >
-        <template v-slot:append>
-          <q-icon name="access_time" @click="showTimePopup" />
-        </template>
-        <q-popup-proxy ref="timePopup" transition-show="scale" transition-hide="scale">
-          <q-time
-            v-model="time"
+      <q-time
+            v-model="formData.inspectionTime"
             format24h
-            mask="HH:mm:ss"
-            @blur="hideTimePopup"
+            mask="HH:mm:ss" bordered model-value="formData.inspectionTime"
           />
-        </q-popup-proxy>
-      </q-input>
       <q-select
             filled
             bottom-slots
@@ -273,7 +259,11 @@ export default {
       this.formData.createdBy = this.profile.email; 
       this.formData.productType = this.formData.productType.value
       this.formData.dimension = this.formData.dimension.value
+       this.formData.code = this.formData.productStatus.value
       this.formData.productStatus = this.formData.productStatus.value
+      this.formData.county = this.formData.county.value
+      this.formData.country = this.formData.country.value
+      this.formData.state = this.formData.state.value
       this.formData.inspectionTime = this.time
       console.log(">>>>>>>>>>>>>>>formData>>>>>>>>>>",this.formData)
       this.$emit("formDataSubmitted", this.formData);
