@@ -64,7 +64,7 @@ const props = defineProps({
 });
 
 const handleClick = (prop) => {
-  console.log(prop.trim());
+  console.log(">>>>>>prop>>>>>>",prop.trim());
   console.log(router);
   router.push(prop.trim());
 };

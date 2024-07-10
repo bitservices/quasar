@@ -5,19 +5,16 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Sales"
+        title="Payment Status"
         :rows="rows"
         :columns="columns"
-        row-key="code"
+        row-key="name"
+        :selected-rows-label="getSelectedString"
         selection="multiple"
-        @row-click="handleRowClick"
         v-model:selected="selected"
       >
-        <template v-slot:body-cell-checkbox="props">
-          <q-checkbox v-model="props.selected" />
-        </template>
         <template v-slot:top>
-          <q-label>Sales Transaction</q-label>
+          <q-label>Product</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -28,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <SalesTransactionFormDialog
+          <ProductTypeFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Sales Transaction"
+            label="Product Type"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -89,20 +86,21 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
+import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import SalesTransactionFormDialog from "src/components/SalesTransactionFormDialog.vue";
+import ProductTypeFormDialog from "src/components/ProductTypeFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
+
+
 export default {
   components: {
-    SalesTransactionFormDialog,
+    ProductTypeFormDialog,
     ResponseDialog,
   },
-  data() {
+  setup() {
     const headers = SessionStorage.getItem("headers");
-    const userEmail = "";
     const columns = [
       {
         name: "code",
@@ -120,24 +118,18 @@ export default {
         field: (row) => row.name,
         sortable: true,
       },
-      {
-        name: "parentmenu",
-        align: "center",
-        label: "Parent",
-        field: (row) => row.menuCode.name,
-        sortable: true,
-      },
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
-    const urlLink = ref(path.SALES_SEARCH);
+    const urlLink = ref( 
+          path.PRODUCTTYPE_SEARCH,
+    );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
     const searchValue = ref("");
-    const actionBtn = ref("done");
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref("Submit");
@@ -151,122 +143,53 @@ export default {
       data: {},
     });
 
-    return {
-      urlLink,
-      actionLabel,
-      searchValue,
-      showMessageDialog,
-      childRef,
-      selected,
-      columns,
-      rows,
-      userEmail,
-      headers,
-      medium_dialog,
-      action,
-      showFormDialog,
-      actionBtn,
-    };
-  },
-  methods: {
-    handleRowClicks(event, row) {
-      // Handle row click event
-      console.log("Row clicked:", row);
-
-      // Access checkbox status from row data
-      console.log("Checkbox status:", this.row.selected);
-
-      // You can perform actions based on the checkbox status and row data
-      if (row.selected) {
-        console.log("Checkbox is checked");
-        // Perform actions when checkbox is checked
-      } else {
-        console.log("Checkbox is unchecked");
-        // Perform actions when checkbox is unchecked
-      }
-    },
-    fetchData() {
-      try {
-        const promise = axios.get(path.SALES_SEARCH_SEARCH_ALL, this.headers);
-        console.log("promise in the Fetch Data>>>>>>>>>>", promise);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            this.rows = response.data;
-            this.selected = [];
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            this.childRef = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog.value = true;
-          });
+    const turnelParams = SessionStorage.getItem("turnelParams");
+     const requestParams = {
+          params: {
+            client: turnelParams.client,
+            organisation:turnelParams.organisation,
+            email : turnelParams.email,
+          },
+        };
+        
+    const fetchData = async () => {
+      try { 
+       const response = await axios.get(path.PRODUCTTYPE_SEARCH,requestParams,
+          headers
+        );
+        if (response.data) {
+          console.log("response>>>>>>",response.data.data)
+          rows.value = response.data.data;
+          selected.value = []; 
+        }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    },
-    saveRecord(record) {
-      console.log("action clicked>>>>>>>>>", this.action);
-      if (this.action == "add") {
-        this.createRecord(record);
-      } else if (this.action == "edit") {
-        this.updateRecord(record);
+    };
+    const saveRecord = (record) => {
+      if (action.value == "add") {
+        createRecord(record);
+      } else if (action.value == "edit") {
+        updateRecord(record);
       }
-    },
-    createRecord(record) {
+    };
+    const createRecord = (record) => {
       try {
-        const promise = axios.post(path.MENUITEM_CREATE, record, this.headers);
+        const promise = axios.post(
+          path.PRODUCTTYPE_CREATE,
+          record,
+          headers
+        );
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
+            console.log(">>>>>>>>>result>>>>>>",result)
             if (result.success) {
-              this.fetchData();
+              fetchData();
             }
 
-            this.childRef = {
-              message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            this.childRef = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog.value = true;
-          });
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    },
-    updateRecord(record) {
-      try {
-        console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(path.MENUITEM_UPDATE, record, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            console.log("result after savings >>>>>", result);
-            if (result.success) {
-              this.fetchData();
-            }
-
-            this.childRef = {
+            childRef.value = {
               message: result.message,
               label: "Success",
               cardClass: "bg-positive text-white",
@@ -277,76 +200,129 @@ export default {
             // You can access properties of the response data as needed
           })
           .catch((error) => {
-            this.childRef = {
+            childRef.value = {
               message: error.message,
               label: "Error",
               cardClass: "bg-negative text-white error",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
-            this.showMessageDialog.value = true;
+            showMessageDialog.value = true;
           });
       } catch (error) {
         console.error("Error:", error);
       }
-    },
-    showDialog() {
-      if (this.selected.length > 0) {
-        this.medium_dialog = true;
-      } else {
-        this.medium_dialog = false;
-      }
-    },
-    addItem() {
-      this.showFormDialog = true;
-      this.action = "add";
-      this.actionLabel = "Submit";
-    },
-    editItem() {
-      if (this.selected.length > 0) {
-        this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
-        this.action = "edit";
-        this.actionLabel = "Update";
-      }
-    },
-    viewItem() {
-      if (this.selected.length > 0) {
-        this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
-        this.action = "view";
-        this.actionLabel = "Done";
-      }
-    },
-    handleRowClick(event, row) {
-      console.log("Row clicked:", row, "  >>>selected>>>>>", this.selected);
-      if (this.row.status.code == "A") {
-        this.actionBtn = "clear";
-      } else {
-        this.actionBtn = "done";
-      }
-      console.log(">>>>>>>>>selected.value.target>>>>>", this.selected.target);
-      selected.value = row;
-    },
-    getSelectedString(row) {
-      // Example function to return label for selected row (if needed)
-      return row ? row.name : "No client selected";
-    },
-    async deleteItem() {
+    };
+    const updateRecord = (record) => {
       try {
-        const data = this.selected;
-        const response = await axios.post(
-          path.MENUITEM_REMOVE,
+        console.log("calling Update Record from Child Component", record);
+        const promise = axios.put(
+          path.PRODUCTTYPE_UPDATE,
+          record,
+          headers
+        );
+        promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+            console.log(result);
+            if (result.success) {
+              fetchData();
+            }
+
+            childRef.value = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
+            // You can access properties of the response data as needed
+          })
+          .catch((error) => {
+            childRef.value = {
+              message: error.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    const showDialog = () => {
+      if (selected.value.length > 0) {
+        medium_dialog.value = true;
+      } else {
+        medium_dialog.value = false;
+      }
+    };
+    const addItem = () => {
+      showFormDialog.value = true;
+      action.value = "add";
+      actionLabel.value = "Submit";
+    };
+    const editItem = () => {
+      if (selected.value.length > 0) {
+        showFormDialog.value = true;
+        searchValue.value = selected.value[0]["code"];
+        console.log("searchValue >>>>>",searchValue.value)
+
+        action.value = "edit";
+        actionLabel.value = "Update";
+      }
+    };
+    const viewItem = () => {
+      if (selected.value.length > 0) {
+        showFormDialog.value = true;
+        searchValue.value = selected.value[0]["code"];
+        action.value = "view";
+        actionLabel.value = "Done";
+      }
+    };
+    const deleteItem = async () => {
+      try {
+        const data = selected.value;
+        const response = await axios.post(          
+          path.PRODUCTTYPE_REMOVE,
           data,
-          this.headers
+          headers
         );
         if (response.data.success) {
-          this.fetchData();
+          fetchData();
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    },
+    };
+
+    return {
+      fetchData,
+      saveRecord,
+      createRecord,
+      updateRecord,
+      addItem,
+      editItem,
+      viewItem,
+      deleteItem,
+      showDialog,
+      urlLink,
+      actionLabel,
+      searchValue,
+      showMessageDialog,
+      childRef,
+      selected,
+      columns,
+      rows,
+      headers,
+      medium_dialog,
+      action,
+      showFormDialog,
+    };
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -356,7 +332,6 @@ export default {
   },
   beforeMount() {
     console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
     console.log("mounted");

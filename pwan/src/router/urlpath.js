@@ -23,6 +23,8 @@ const path = {
   STATE_REMOVE: APP_PATH + "state/remove",
   STATE_SEARCH: APP_PATH + "state/search",
 
+  
+
   STATUS_ALL: APP_PATH + "status/",
 
   MENU_CREATE: APP_PATH + "menu/create/",
@@ -50,6 +52,42 @@ const path = {
   SALES_SEARCH: APP_PATH + "sales/search/",
   SALES_SEARCH_ALL: APP_PATH + "sales/",
   SALES_REMOVE: APP_PATH + "sales/remove/",
+
+
+  PRODUCTTYPE_CREATE: APP_PATH + "producttype/create/",
+  PRODUCTTYPE_UPDATE: APP_PATH + "producttype/update/",
+  PRODUCTTYPE_SEARCH: APP_PATH + "producttype/search/", 
+  PRODUCTTYPE_REMOVE: APP_PATH + "producttype/remove/",
+
+
+  
+  PRODUCTDEF_CREATE: APP_PATH + "productdef/create/",
+  PRODUCTDEF_UPDATE: APP_PATH + "productdef/update/",
+  PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/", 
+  PRODUCTDEF_REMOVE: APP_PATH + "productdef/remove/",
+
+
+  DIMENSION_CREATE: APP_PATH + "dimension/create/",
+  DIMENSION_UPDATE: APP_PATH + "dimension/update/",
+  DIMENSION_SEARCH: APP_PATH + "dimension/search/", 
+  DIMENSION_REMOVE: APP_PATH + "dimension/remove/", 
+  DIMENSION_SEARCH_ALL: APP_PATH + "dimension/",
+
+
+
+  PRODUCTSTATUS_SEARCH_ALL: APP_PATH + "productstatus/",
+
+
+  COUNTY_ALL: APP_PATH + "county/",
+  COUNTY_CREATE: APP_PATH + "county/create/",
+  COUNTY_UPDATE: APP_PATH + "county/update/",
+  COUNTY_REMOVE: APP_PATH + "county/remove",
+  COUNTY_SEARCH: APP_PATH + "county/search",
+
+  
+  
+
+
 };
 
 export default path;

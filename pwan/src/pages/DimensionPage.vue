@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Sales"
+        title="Menu"
         :rows="rows"
         :columns="columns"
         row-key="code"
@@ -17,7 +17,7 @@
           <q-checkbox v-model="props.selected" />
         </template>
         <template v-slot:top>
-          <q-label>Sales Transaction</q-label>
+          <q-label>Menu</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -28,11 +28,11 @@
             size="sm"
             @click="viewItem"
           />
-          <SalesTransactionFormDialog
+          <MenuFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Sales Transaction"
+            label="Dimension"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -89,15 +89,15 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import SalesTransactionFormDialog from "src/components/SalesTransactionFormDialog.vue";
+import MenuFormDialog from "src/components/MenuFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
 export default {
   components: {
-    SalesTransactionFormDialog,
+    MenuFormDialog,
     ResponseDialog,
   },
   data() {
@@ -120,19 +120,12 @@ export default {
         field: (row) => row.name,
         sortable: true,
       },
-      {
-        name: "parentmenu",
-        align: "center",
-        label: "Parent",
-        field: (row) => row.menuCode.name,
-        sortable: true,
-      },
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
-    const urlLink = ref(path.SALES_SEARCH);
+    const urlLink = ref(path.DIMENSION_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -187,13 +180,15 @@ export default {
     },
     fetchData() {
       try {
-        const promise = axios.get(path.SALES_SEARCH_SEARCH_ALL, this.headers);
+        Loading.show();
+        const promise = axios.get(path.DIMENSION_SEARCH_ALL, this.headers);
         console.log("promise in the Fetch Data>>>>>>>>>>", promise);
         promise
           .then((response) => {
             // Extract data from the response
             this.rows = response.data;
             this.selected = [];
+            Loading.hide();
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -220,7 +215,7 @@ export default {
     },
     createRecord(record) {
       try {
-        const promise = axios.post(path.MENUITEM_CREATE, record, this.headers);
+        const promise = axios.post(path.DIMENSION_CREATE, record, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -256,7 +251,7 @@ export default {
     updateRecord(record) {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(path.MENUITEM_UPDATE, record, this.headers);
+        const promise = axios.put(path.DIMENSION_UPDATE, record, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -335,11 +330,7 @@ export default {
     async deleteItem() {
       try {
         const data = this.selected;
-        const response = await axios.post(
-          path.MENUITEM_REMOVE,
-          data,
-          this.headers
-        );
+        const response = await axios.post(path.DIMENSION_REMOVE, data, this.headers);
         if (response.data.success) {
           this.fetchData();
         }

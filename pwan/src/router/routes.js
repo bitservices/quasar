@@ -79,6 +79,18 @@ const routes = [
         path: "/sales",
         component: () => import("src/pages/SalesTransactionPage.vue"),
       },
+      {
+        path: "/producttype",
+        component: () => import("src/pages/ProductType.vue"),
+      },
+      {
+        path: "/productdef",
+        component: () => import("src/pages/ProductTypeDefinition.vue"),
+      },
+      {
+        path: "/dimension",
+        component: () => import("src/pages/DimensionPage.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

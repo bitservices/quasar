@@ -24,22 +24,6 @@
             label="Name"
             :dense="dense"
           />
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.url"
-            label="Url"
-            :dense="dense"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.menuCode"
-            :options="menus"
-            label="Select Parent Menu"
-            @input="handleChange"
-            :dense="dense"
-          />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -68,11 +52,10 @@
 <script>
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
-import axios from "axios";
-import path from "src/router/urlpath";
+import axios from "axios"; 
 
 export default {
-  name: "MenuItemFormDialog",
+  name: "ProductTypeFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -111,10 +94,13 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
 
+   const profile = SessionStorage.getItem("turnelParams"); 
     const formData = ref({
       code: "",
-      name: "",
-      url: "",
+      name: "", 
+      client : "",
+      organisation : "" ,
+      createdBy : "",
     });
     const form = ref({
       label: "",
@@ -129,15 +115,17 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
-      menus: [],
-      statusOptions: [],
+      profile,
     };
   },
   methods: {
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.formData.menuCode = this.formData.menuCode.value
+      
       //this.onClick(formData.value);
+      this.formData.client = this.profile.client;
+      this.formData.organisation =  this.profile.organisation;
+      this.formData.createdBy = this.profile.email;
+      console.log(">>>>>>>thisis inside handle Save,", this.formData);
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -153,26 +141,11 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
-     axios
-      .get(path.MENU_SEARCH_ALL)
-      .then((response) => {
-        console.log("menuitem Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.menus = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        console.log("this.countries >>>>>>>>>>>>", this.menus);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      }); 
-     
+    console.log("mounted");
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "", url: "" };
+    this.formData = { code: "", name: "" };
   },
   updated() {
     const headers = SessionStorage.getItem("headers");
@@ -181,24 +154,22 @@ export default {
     this.form.height = this.dialogHeight;
     if (this.action == "edit" || this.action == "view") {
       try {
+      
         const requestParams = {
           params: {
             code: this.searchValue,
+             client : this.profile.client,
+             organisation : this.profile.organisation, 
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
-              this.formData.menuCode= {
-               value : result.data[0].menuCode.code,
-               label : result.data[0].menuCode.name
-              } 
+              console.log("formData>>>>>>>",this.formData)
             }
           })
           .catch((error) => {
@@ -208,7 +179,10 @@ export default {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "", url: "" };
+      this.formData = { code: "", name: "" , 
+      client : "",
+      organisation : "" ,
+      createdBy : "",};
     }
   },
 };

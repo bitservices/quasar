@@ -36,6 +36,7 @@
 <script setup>
 import { ref } from "vue";
 import EssentialLink from "components/EssentialLink.vue";
+import { LocalStorage } from "quasar";
 
 defineOptions({
   name: "MainLayout",
@@ -150,19 +151,26 @@ let defaultList = [
   },
 ];
 
-const leftDrawerOpen = ref(false);
-linksList = defaultList;
+const leftDrawerOpen = ref(false); 
+let profiles = LocalStorage.getItem("profiles")
+  if(profiles!= null){
+    linksList = profiles 
+  }else{
+    linksList = defaultList;
+    LocalStorage.set("profiles", linksList)
+  }
+
 function handleUpdateMenu(updatedMenuItems) {
   console.log("updated Menu>>>>>>>>>", updatedMenuItems);
-  linksList = [];
-  console.log("linksList>>>>>>>>>", linksList);
+  linksList = [];  
+  
   defaultList.forEach(function (menu, index) {
     linksList.push(menu);
   });
   updatedMenuItems.forEach(function (menu, index) {
     linksList.push(menu);
   });
-  console.log("linksList new >>>>>>>>>", linksList);
+  LocalStorage.set("profiles", linksList)
 }
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
