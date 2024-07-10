@@ -166,6 +166,7 @@ import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios"; 
 import path from "src/router/urlpath";
+import debug from "src/router/debugger";
 
 export default {
   name: "ProductTypeFormDialog",
@@ -246,10 +247,9 @@ export default {
       this.$refs.timePopup.hide();
     },
     handleCountryChange(value) {
-       console.log(">>>>>>counry value>>>>>>>",value)
+       debug(">>>>>>counry value>>>>>>>",value)
     },
-     handleStateChange(value) {
-       console.log(">>>>>>State value>>>>>>>",value)
+     handleStateChange(value) { 
     },
     saveRecord() {
       
@@ -264,18 +264,17 @@ export default {
       this.formData.county = this.formData.county.value
       this.formData.country = this.formData.country.value
       this.formData.state = this.formData.state.value
-      this.formData.inspectionTime = this.time
-      console.log(">>>>>>>>>>>>>>>formData>>>>>>>>>>",this.formData)
+      this.formData.inspectionTime = this.time 
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
-      console.log(this.showDialog);
+      debug(this.showDialog);
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    debug("beforeCreate");
   },
   created() {
-    console.log("created");
+    debug("created");
   },
   beforeMount() {
     console.log("before Mount");
@@ -293,13 +292,13 @@ export default {
      axios
       .get(path.COUNTRY_ALL)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
+       debug("country Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.countries = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.countries);
+        debug("this.countries >>>>>>>>>>>>", this.countries);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -308,13 +307,13 @@ export default {
       axios
       .get(path.STATE_ALL)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
+        debug("country Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.states = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.states);
+        debug("this.countries >>>>>>>>>>>>", this.states);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -324,13 +323,13 @@ export default {
      axios
       .get(path.COUNTY_ALL)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
+        debug("country Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.counties = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.counties);
+        debug("this.countries >>>>>>>>>>>>", this.counties);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -339,13 +338,13 @@ export default {
      axios
       .get(path.PRODUCTTYPE_SEARCH,requestParams, this.headers)
       .then((response) => {
-        console.log("menuitem Response >>>>>>>>>>>>", response.data);
+        debug("Product Type Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.productTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.productTypes);
+        debug("this.Product Type >>>>>>>>>>>>", this.productTypes);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -354,13 +353,13 @@ export default {
        axios
       .get(path.PRODUCTSTATUS_SEARCH_ALL, this.headers)
       .then((response) => {
-        console.log("productStatusList Response >>>>>>>>>>>>", response.data);
+        debug("productStatusList Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.productStatusList = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.productStatusList >>>>>>>>>>>>", this.productStatusList);
+        debug("this.productStatusList >>>>>>>>>>>>", this.productStatusList);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -369,13 +368,13 @@ export default {
      axios
       .get(path.DIMENSION_SEARCH_ALL, this.headers)
       .then((response) => {
-        console.log("productStatusList Response >>>>>>>>>>>>", response.data);
+        debug("productStatusList Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.dimensions = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.dimensions >>>>>>>>>>>>", this.dimensions);
+        debug("this.dimensions >>>>>>>>>>>>", this.dimensions);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -383,7 +382,7 @@ export default {
      
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    debug("Calling unmounted>>>>>>>>>>");
     this.formData = { code: "", name: "" };
   },
   updated() {
@@ -408,11 +407,11 @@ export default {
             const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
-              console.log("formData>>>>>>>",this.formData)
+              debug("formData>>>>>>>",this.formData)
             }
           })
           .catch((error) => {
-            console.log(error);
+            debug(error);
           });
       } catch (error) {
         console.error("Error:", error);
