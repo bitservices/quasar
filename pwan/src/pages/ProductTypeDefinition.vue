@@ -8,7 +8,7 @@
         title="Product Type Definition"
         :rows="rows"
         :columns="columns"
-        row-key="name" 
+        row-key="name"
         selection="multiple"
         v-model:selected="selected"
       >
@@ -91,7 +91,7 @@ import { ref } from "vue";
 import ProductTypeDefinitionFormDialog from "src/components/ProductTypeDefinitionFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
-
+import debug from "src/router/debugger";
 
 export default {
   components: {
@@ -99,7 +99,7 @@ export default {
     ResponseDialog,
   },
   setup() {
-    const headers = SessionStorage.getItem("headers");
+    let headers = SessionStorage.getItem("headers");
     const columns = [
       {
         name: "code",
@@ -122,9 +122,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref( 
-          path.PRODUCTDEF_SEARCH,
-    );
+    const urlLink = ref(path.PRODUCTDEF_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -143,23 +141,25 @@ export default {
     });
 
     const turnelParams = SessionStorage.getItem("turnelParams");
-     const requestParams = {
-          params: {
-            client: turnelParams.client,
-            organisation:turnelParams.organisation,
-            email : turnelParams.email,
-          },
-        };
-        
+    const requestParams = {
+      params: {
+        client: turnelParams.client,
+        organisation: turnelParams.organisation,
+        email: turnelParams.email,
+      },
+    };
+
     const fetchData = async () => {
-      try { 
-       const response = await axios.get(path.PRODUCTDEF_SEARCH,requestParams,
+      try {
+        const response = await axios.get(
+          path.PRODUCTDEF_SEARCH,
+          requestParams,
           headers
         );
         if (response.data) {
-          console.log("response>>>>>>",response.data.data)
+          console.log("response>>>>>>", response.data.data);
           rows.value = response.data.data;
-          selected.value = []; 
+          selected.value = [];
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -174,16 +174,15 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          path.PRODUCTDEF_CREATE,
-          record,
-          headers
-        );
+        headers["Content-Type"] = "multipart/form-data";
+        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
+
+        const promise = axios.post(path.PRODUCTDEF_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>>result>>>>>>",result)
+            console.log(">>>>>>>>>result>>>>>>", result);
             if (result.success) {
               fetchData();
             }
@@ -215,11 +214,9 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          path.PRODUCTDEF_UPDATE,
-          record,
-          headers
-        );
+        headers["Content-Type"] = "multipart/form-data";
+        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
+        const promise = axios.put(path.PRODUCTDEF_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -269,7 +266,7 @@ export default {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
         searchValue.value = selected.value[0]["code"];
-        console.log("searchValue >>>>>",searchValue.value)
+        console.log("searchValue >>>>>", searchValue.value);
 
         action.value = "edit";
         actionLabel.value = "Update";
@@ -286,7 +283,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(          
+        const response = await axios.post(
           path.PRODUCTDEF_REMOVE,
           data,
           headers
