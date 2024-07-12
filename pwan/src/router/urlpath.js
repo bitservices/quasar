@@ -23,8 +23,6 @@ const path = {
   STATE_REMOVE: APP_PATH + "state/remove",
   STATE_SEARCH: APP_PATH + "state/search",
 
-  
-
   STATUS_ALL: APP_PATH + "status/",
 
   MENU_CREATE: APP_PATH + "menu/create/",
@@ -53,30 +51,23 @@ const path = {
   SALES_SEARCH_ALL: APP_PATH + "sales/",
   SALES_REMOVE: APP_PATH + "sales/remove/",
 
-
   PRODUCTTYPE_CREATE: APP_PATH + "producttype/create/",
   PRODUCTTYPE_UPDATE: APP_PATH + "producttype/update/",
-  PRODUCTTYPE_SEARCH: APP_PATH + "producttype/search/", 
+  PRODUCTTYPE_SEARCH: APP_PATH + "producttype/search/",
   PRODUCTTYPE_REMOVE: APP_PATH + "producttype/remove/",
 
-
-  
   PRODUCTDEF_CREATE: APP_PATH + "productdef/create/",
   PRODUCTDEF_UPDATE: APP_PATH + "productdef/update/",
-  PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/", 
+  PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/",
   PRODUCTDEF_REMOVE: APP_PATH + "productdef/remove/",
-
 
   DIMENSION_CREATE: APP_PATH + "dimension/create/",
   DIMENSION_UPDATE: APP_PATH + "dimension/update/",
-  DIMENSION_SEARCH: APP_PATH + "dimension/search/", 
-  DIMENSION_REMOVE: APP_PATH + "dimension/remove/", 
+  DIMENSION_SEARCH: APP_PATH + "dimension/search/",
+  DIMENSION_REMOVE: APP_PATH + "dimension/remove/",
   DIMENSION_SEARCH_ALL: APP_PATH + "dimension/",
 
-
-
   PRODUCTSTATUS_SEARCH_ALL: APP_PATH + "productstatus/",
-
 
   COUNTY_ALL: APP_PATH + "county/",
   COUNTY_CREATE: APP_PATH + "county/create/",
@@ -84,10 +75,23 @@ const path = {
   COUNTY_REMOVE: APP_PATH + "county/remove",
   COUNTY_SEARCH: APP_PATH + "county/search",
 
-  
-  
+  PAYMENTSTATUS_CREATE: APP_PATH + "paymentstatus/create/",
+  PAYMENTSTATUS_UPDATE: APP_PATH + "paymentstatus/update/",
+  PAYMENTSTATUS_SEARCH: APP_PATH + "paymentstatus/search/",
+  PAYMENTSTATUS_REMOVE: APP_PATH + "paymentstatus/remove/",
+  PAYMENTSTATUS_SEARCH_ALL: APP_PATH + "paymentstatus/",
 
+  SALESSTATUS_CREATE: APP_PATH + "salesstatus/create/",
+  SALESSTATUS_UPDATE: APP_PATH + "salesstatus/update/",
+  SALESSTATUS_SEARCH: APP_PATH + "salesstatus/search/",
+  SALESSTATUS_REMOVE: APP_PATH + "salesstatus/remove/",
+  SALESSTATUS_SEARCH_ALL: APP_PATH + "salesstatus/",
 
+  SALESTRANS_CREATE: APP_PATH + "sales/create/",
+  SALESTRANS_UPDATE: APP_PATH + "sales/update/",
+  SALESTRANS_SEARCH: APP_PATH + "sales/search/",
+  SALESTRANS_REMOVE: APP_PATH + "sales/remove/",
+  USER_SEARCH_AUTOCOMPLETER: APP_PATH + "user/autocomplete/",
 };
 
 export default path;

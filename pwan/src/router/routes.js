@@ -37,7 +37,7 @@ const routes = [
       },
       {
         path: "/productstatus",
-        component: () => import("src/pages/ProductStaytus.vue"),
+        component: () => import("src/pages/ProductStatus.vue"),
       },
       {
         path: "/country",
@@ -90,6 +90,10 @@ const routes = [
       {
         path: "/dimension",
         component: () => import("src/pages/DimensionPage.vue"),
+      },
+      {
+        path: "/salesstatus",
+        component: () => import("src/pages/SalesStatus.vue"),
       },
     ],
     meta: {

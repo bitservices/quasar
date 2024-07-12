@@ -13,24 +13,94 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Saler"
+            v-model="formData.subscriber"
+            label="Client Name"
             :dense="dense"
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
+            v-model="formData.salersId"
+            label="Pwan Business Owner(PBO)"
             :dense="dense"
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.url"
-            label="Url"
+            v-model="formData.salerId"
+            @keyup="handleInput"
+            @keydown.enter="handleEnter"
+            placeholder="Search for PBO"
             :dense="dense"
           />
+          <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
+            <q-item
+              clickable
+              v-for="item in filteredSuggestions"
+              :key="item.email"
+              @click="selectRecord(item.email)"
+            >
+              <q-item-section>{{ item.name }}</q-item-section>
+              <q-item-section side>
+                <!-- Side content -->
+                <q-item-label caption lines="1">
+                  <img :src="item.image" />
+                </q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.productType"
+            :options="productTypes"
+            label="Select Product Type"
+            :dense="dense"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.amount"
+            label="Enter Amount"
+            type="number"
+            step="0.01"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.description"
+            label="Description"
+          />
+
+          <q-file
+            bottom-slots
+            filled
+            v-model="formData.paymentEvidence"
+            label="Payment Evidence"
+          >
+            <template v-slot:append>
+              <q-icon name="attachment" />
+            </template>
+          </q-file>
+
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.paymentStatus"
+            :options="paymentStatusList"
+            label="Select Paymet Status"
+            :dense="dense"
+          />
+
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.salesStatus"
+            :options="salesStatusList"
+            label="Select Paymet Plans"
+            :dense="dense"
+          />
+          <q-date v-model="formData.salesDate" mask="YYYY-MM-DD" />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -61,9 +131,10 @@ import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
+import debug from "src/router/debugger";
 
 export default {
-  name: "MenuItemFormDialog",
+  name: "SalesTransactionFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -102,10 +173,13 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
 
+    const profile = SessionStorage.getItem("turnelParams");
+    const headers = SessionStorage.getItem("headers");
     const formData = ref({
-      code: "",
-      name: "",
-      url: "",
+      client: "",
+      organisation: "",
+      createdBy: "",
+      salesDate: new Date(),
     });
     const form = ref({
       label: "",
@@ -120,47 +194,146 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
-      statusOptions: [],
+      profile,
+      headers,
+      dense: true,
+      salesStatusList: [],
+      paymentStatusList: [],
+      suggestions: [],
+      filteredSuggestions: [],
+      showSuggestions: false,
     };
   },
   methods: {
+    handleInput() {
+      if (this.formData.salerId === "" || this.formData.salerId.length < 4) {
+        this.filteredSuggestions = [];
+        this.showSuggestions = false;
+      } else {
+        const filter = {
+          params: {
+            term: this.formData.salerId,
+          },
+        };
+        axios
+          .get(path.USER_SEARCH_AUTOCOMPLETER, filter, this.headers)
+          .then((response) => {
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            debug(response.data.data);
+            this.filteredSuggestions = response.data.data.map((option) => ({
+              name:
+                option.last_name +
+                " " +
+                option.first_name +
+                " " +
+                option.middle_name,
+              email: option.email,
+              image: option.imageUrl,
+            }));
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
+        // this.filteredSuggestions = this.suggestions.filter((item) =>
+        //   item.toLowerCase().includes(this.inputValue.toLowerCase())
+        // );
+        this.showSuggestions = true;
+      }
+    },
+    handleEnter() {
+      if (this.filteredSuggestions.length > 0) {
+        this.selectRecord(this.filteredSuggestions[0]);
+      }
+    },
+    selectRecord(value) {
+      this.formData.salerId = value;
+      this.showSuggestions = false;
+      // Optionally, emit an event or perform other actions when a suggestion is selected
+    },
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
-      this.$emit("formDataSubmitted", this.formData);
+      let productType = this.formData.productType.value;
+      this.formData.client = this.profile.client;
+      this.formData.organisation = this.profile.organisation;
+      this.formData.createdBy = this.profile.email;
+      this.formData.productType = productType;
+      this.formData.paymentStatus = this.formData.paymentStatus.value;
+      this.formData.salesStatus = this.formData.salesStatus.value;
+      const requestData = new FormData();
+      for (let key in this.formData) {
+        requestData.append(key, this.formData[key]);
+      }
+      debug(">>>>>>>request data>>>>>>>", requestData);
+      this.$emit("formDataSubmitted", requestData);
       this.showDialog = true;
-      console.log(this.showDialog);
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    debug("beforeCreate");
   },
   created() {
-    console.log("created");
+    debug("created");
   },
   beforeMount() {
     console.log("before Mount");
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
+    const turnelParams = SessionStorage.getItem("turnelParams");
+    const requestParams = {
+      params: {
+        client: turnelParams.client,
+        organisation: turnelParams.organisation,
+        email: turnelParams.email,
+      },
+    };
+
     axios
-      .get(path.STATUS_ALL)
+      .get(path.PRODUCTDEF_SEARCH, requestParams, this.headers)
       .then((response) => {
-        this.statusOptions = response.data.map((option) => ({
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.productTypes = response.data.data.map((option) => ({
+          label: option.name,
+          value: option.id,
+        }));
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+
+    axios
+      .get(path.PAYMENTSTATUS_SEARCH_ALL, requestParams, this.headers)
+      .then((response) => {
+        debug("paymentStatusList Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.paymentStatusList = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
+        debug("this.paymentStatusList >>>>>>>>>>>>", this.salesStatusList);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+    axios
+      .get(path.SALESSTATUS_SEARCH_ALL, requestParams, this.headers)
+      .then((response) => {
+        debug("salesStatusList Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.salesStatusList = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        debug("this.salesStatusList >>>>>>>>>>>>", this.salesStatusList);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
       });
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "", url: "" };
+    debug("Calling unmounted>>>>>>>>>>");
+    this.formData = { code: "", name: "" };
   },
   updated() {
-    const headers = SessionStorage.getItem("headers");
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
@@ -169,27 +342,34 @@ export default {
         const requestParams = {
           params: {
             code: this.searchValue,
+            client: this.profile.client,
+            organisation: this.profile.organisation,
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
             if (result.success) {
               this.formData = result.data[0];
+              debug("formData>>>>>>>", this.formData);
             }
           })
           .catch((error) => {
-            console.log(error);
+            debug(error);
           });
       } catch (error) {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "", url: "" };
+      this.formData = {
+        code: "",
+        name: "",
+        client: "",
+        organisation: "",
+        createdBy: "",
+      };
     }
   },
 };

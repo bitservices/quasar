@@ -5,15 +5,16 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Sales Trancaction"
+        title="Sales Status"
         :rows="rows"
         :columns="columns"
         row-key="name"
+        :selected-rows-label="getSelectedString"
         selection="multiple"
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Sales Transaction</q-label>
+          <q-label>Sales Status</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -24,11 +25,11 @@
             size="sm"
             @click="viewItem"
           />
-          <SalesTransactionFormDialog
+          <StandingDataFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Sales Trancaction"
+            label="Sales Status"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -88,54 +89,32 @@
 import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import SalesTransactionFormDialog from "src/components/SalesTransactionFormDialog.vue";
+import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger";
-
 export default {
   components: {
-    SalesTransactionFormDialog,
+    StandingDataFormDialog,
     ResponseDialog,
   },
   setup() {
-    let headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem("headers");
     const columns = [
       {
-        name: "subscriber",
+        name: "code",
         required: false,
-        label: "Client Name",
+        label: "Code",
         align: "left",
-        field: (row) => row.subscriber,
+        field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "amount",
+        name: "name",
         align: "center",
-        label: "Amount",
-        field: (row) => row.amount,
-        sortable: true,
-      },
-      {
-        name: "organisation",
-        align: "center",
-        label: "Affilate/Company",
-        field: (row) => row.organisation.name,
-        sortable: true,
-      },
-      {
-        name: "Status",
-        align: "center",
-        label: "Sales Status",
-        field: (row) => row.salesStatus.name,
-        sortable: true,
-      },
-      {
-        name: "date",
-        align: "center",
-        label: "Date",
-        field: (row) => row.salesDate,
+        label: "Name",
+        field: (row) => row.name,
         sortable: true,
       },
     ];
@@ -143,7 +122,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.SALESTRANS_SEARCH);
+    const urlLink = ref(path.SALESSTATUS_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -161,26 +140,14 @@ export default {
       data: {},
     });
 
-    const turnelParams = SessionStorage.getItem("turnelParams");
-    const requestParams = {
-      params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
-        email: turnelParams.email,
-      },
-    };
-
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          path.SALESTRANS_SEARCH,
-          requestParams,
-          headers
-        );
+        Loading.show();
+        const response = await axios.get(path.SALESSTATUS_SEARCH_ALL, headers);
         if (response.data) {
-          console.log("response>>>>>>", response.data.data);
-          rows.value = response.data.data;
+          rows.value = response.data;
           selected.value = [];
+          Loading.hide();
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -195,15 +162,11 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        headers["Content-Type"] = "multipart/form-data";
-        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
-
-        const promise = axios.post(path.SALESTRANS_CREATE, record, headers);
+        const promise = axios.post(path.SALESSTATUS_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>>result>>>>>>", result);
             if (result.success) {
               fetchData();
             }
@@ -235,9 +198,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        headers["Content-Type"] = "multipart/form-data";
-        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
-        const promise = axios.put(path.SALESTRANS_UPDATE, record, headers);
+        const promise = axios.put(path.SALESSTATUS_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -287,8 +248,6 @@ export default {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
         searchValue.value = selected.value[0]["code"];
-        console.log("searchValue >>>>>", searchValue.value);
-
         action.value = "edit";
         actionLabel.value = "Update";
       }
@@ -305,7 +264,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          path.SALESTRANS_REMOVE,
+          path.SALESSTATUS_REMOVE,
           data,
           headers
         );
