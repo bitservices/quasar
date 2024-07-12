@@ -142,35 +142,35 @@ let defaultList = [
         link: "/turnel",
       },
       {
-        title: " Doc 7",
+        title: " Contact Info",
         caption: "Community Quasar projects",
         icon: "favorite",
-        link: "https://awesome.quasar.dev",
+        link: "/usercontact",
       },
     ],
   },
 ];
 
-const leftDrawerOpen = ref(false); 
-let profiles = LocalStorage.getItem("profiles")
-  if(profiles!= null){
-    linksList = profiles 
-  }else{
-    linksList = defaultList;
-    LocalStorage.set("profiles", linksList)
-  }
+const leftDrawerOpen = ref(false);
+let profiles = LocalStorage.getItem("profiles");
+if (profiles != null) {
+  linksList = profiles;
+} else {
+  linksList = defaultList;
+  LocalStorage.set("profiles", linksList);
+}
 
 function handleUpdateMenu(updatedMenuItems) {
   console.log("updated Menu>>>>>>>>>", updatedMenuItems);
-  linksList = [];  
-  
+  linksList = [];
+
   defaultList.forEach(function (menu, index) {
     linksList.push(menu);
   });
   updatedMenuItems.forEach(function (menu, index) {
     linksList.push(menu);
   });
-  LocalStorage.set("profiles", linksList)
+  LocalStorage.set("profiles", linksList);
 }
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;

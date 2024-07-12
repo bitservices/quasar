@@ -92,6 +92,11 @@ const path = {
   SALESTRANS_SEARCH: APP_PATH + "sales/search/",
   SALESTRANS_REMOVE: APP_PATH + "sales/remove/",
   USER_SEARCH_AUTOCOMPLETER: APP_PATH + "user/autocomplete/",
+
+  CONTACTINFO_CREATE: APP_PATH + "contactinfo/create/",
+  CONTACTINFO_UPDATE: APP_PATH + "contactinfo/update/",
+  CONTACTINFO_REMOVE: APP_PATH + "contactinfo/remove/",
+  CONTACTINFO_SEARCH: APP_PATH + "contactinfo/search/",
 };
 
 export default path;

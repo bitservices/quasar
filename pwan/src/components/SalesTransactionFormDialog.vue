@@ -20,13 +20,6 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.salersId"
-            label="Pwan Business Owner(PBO)"
-            :dense="dense"
-          />
-          <q-input
-            filled
-            bottom-slots
             v-model="formData.salerId"
             @keyup="handleInput"
             @keydown.enter="handleEnter"
