@@ -151,8 +151,9 @@ export default {
           requestParam,
           headers
         );
+        console.log("response data", response.data);
         if (response.data) {
-          rows.value = response.data;
+          rows.value = response.data.data;
           selected.value = [];
           Loading.hide();
         }
@@ -205,7 +206,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(path.CONTACTINFO_UPATE, record, headers);
+        const promise = axios.put(path.CONTACTINFO_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
