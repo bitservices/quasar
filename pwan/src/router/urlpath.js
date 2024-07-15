@@ -97,6 +97,16 @@ const path = {
   CONTACTINFO_UPDATE: APP_PATH + "contactinfo/update/",
   CONTACTINFO_REMOVE: APP_PATH + "contactinfo/remove/",
   CONTACTINFO_SEARCH: APP_PATH + "contactinfo/search/",
+
+
+
+  PRODUCTDEF_AUTOCOMPLETER: APP_PATH + "productdef/autocomplete/",
+
+  PRODUCTCONTACT_CREATE: APP_PATH + "produccontact/create/",
+  PRODUCTCONTACT_UPDATE: APP_PATH + "produccontact/update/",
+  PRODUCTCONTACT_SEARCH: APP_PATH + "produccontact/search/",
+  PRODUCTCONTACT_REMOVE: APP_PATH + "produccontact/remove/", 
+  
 };
 
 export default path;

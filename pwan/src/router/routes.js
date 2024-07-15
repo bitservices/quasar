@@ -99,6 +99,10 @@ const routes = [
         path: "/usercontact",
         component: () => import("src/pages/UserContactInfo.vue"),
       },
+      {
+        path: "/productcontact",
+        component: () => import("src/pages/ProductContact.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route
