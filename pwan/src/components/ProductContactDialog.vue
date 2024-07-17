@@ -260,8 +260,8 @@ export default {
     saveRecord() {
       //this.onClick(formData.value);
     debug(">>>>>>>>inside sav       e method>>>>>>>>", this.formData) 
-      this.formData.client = this.profile.client;
-      this.formData.organisation = this.profile.organisation;
+      //this.formData.client = this.profile.client;
+      //this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email; 
       this.$emit("formDataSubmitted", this.formData); 
     },
@@ -276,29 +276,8 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    const turnelParams = SessionStorage.getItem("turnelParams");
-    const requestParams = {
-      params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
-        email: turnelParams.email,
-      },
-    };
-
-    axios
-      .get(path.PRODUCTDEF_SEARCH, requestParams, this.headers)
-      .then((response) => {
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.productTypes = response.data.data.map((option) => ({
-          label: option.name,
-          value: option.id,
-        }));
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-
-     },
+    debug("Calling mounted>>>>>>>>>>");
+  },
   unmounted() {
     debug("Calling unmounted>>>>>>>>>>");
     this.formData = { code: "", name: "" };

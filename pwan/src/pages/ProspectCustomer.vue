@@ -79,6 +79,7 @@
               </q-card>
             </q-dialog>
           </q-btn>
+          <q-btn rounded color="yellow" icon="edit" size="sm" @click="convertItem" />
         </template>
       </q-table>
     </div>
@@ -300,12 +301,29 @@ export default {
         console.error("Error submitting form:", error);
       }
     };
+    const convertItem = async () => {
+      try {
+        const data = selected.value;
+        const response = await axios.post(
+          path.PROSPECT_CUSTOMER_CONVERT_TO_INVESTOR,
+          data,
+          headers
+        );
+        if (response.data.success) {
+          fetchData();
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+    
 
     return {
       fetchData,
       saveRecord,
       createRecord,
       updateRecord,
+      convertItem,
       addItem,
       editItem,
       viewItem,

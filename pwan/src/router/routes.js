@@ -64,6 +64,10 @@ const routes = [
         component: () => import("src/pages/ProspectCustomer.vue"),
       },
       {
+        path: "/investor",
+        component: () => import("src/pages/investorPage.vue"),
+      },
+      {
         path: "/menu",
         component: () => import("src/pages/MenuPage.vue"),
       },

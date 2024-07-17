@@ -117,6 +117,12 @@ let defaultList = [
         icon: "record_voice_over",
         link: "/prospect",
       },
+       {
+        title: " Investors",
+        caption: "Investors",
+        icon: "record_voice_over",
+        link: "/investor",
+      },
       {
         title: " Menu ",
         caption: "@quasarframework",

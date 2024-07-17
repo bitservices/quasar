@@ -102,40 +102,33 @@ export default {
     let headers = SessionStorage.getItem("headers");
     const columns = [
       {
-        name: "subscriber",
+        name: "product",
+        align: "center",
+        label: "Product Type",
+        field: (row) => row.productType.name,
+        sortable: true,
+      },
+      {
+        name: "name",
         required: false,
-        label: "Client Name",
+        label: "Contact Name",
         align: "left",
-        field: (row) => row.subscriber,
+        field: (row) => row.contactInfoId.name,
         format: (val) => `${val}`,
         sortable: true,
-      },
+      }, 
       {
-        name: "amount",
+        name: "phoneNumber",
         align: "center",
-        label: "Amount",
-        field: (row) => row.amount,
+        label: "Phone Number",
+        field: (row) => row.contactInfoId.phoneNumber,
         sortable: true,
       },
-      {
-        name: "organisation",
+       {
+        name: "whatsappNumber",
         align: "center",
-        label: "Affilate/Company",
-        field: (row) => row.organisation.name,
-        sortable: true,
-      },
-      {
-        name: "Status",
-        align: "center",
-        label: "Sales Status",
-        field: (row) => row.salesStatus.name,
-        sortable: true,
-      },
-      {
-        name: "date",
-        align: "center",
-        label: "Date",
-        field: (row) => row.salesDate,
+        label: "Whatsapp Number",
+        field: (row) => row.contactInfoId.whatsappNumber,
         sortable: true,
       },
     ];
@@ -163,9 +156,7 @@ export default {
 
     const turnelParams = SessionStorage.getItem("turnelParams");
     const requestParams = {
-      params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
+      params: { 
         email: turnelParams.email,
       },
     };
@@ -195,8 +186,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        headers["Content-Type"] = "multipart/form-data";
-        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
+        headers["Content-Type"] = "multipart/form-data"; 
 
         const promise = axios.post(path.PRODUCTCONTACT_CREATE, record, headers);
         promise
