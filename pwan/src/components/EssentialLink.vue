@@ -20,12 +20,12 @@
               <q-item-label>{{ link.title }} </q-item-label>
               <q-item-label caption>{{ link.caption }}</q-item-label>
             </q-item-section>
-          </q-item>
+          </q-item> 
         </q-list-section>
-      </q-list>
+      </q-list> 
     </q-menu>
     {{ props.title }}
-  </div>
+  </div> 
 </template>
 <script setup>
 import { useRouter } from "vue-router";
