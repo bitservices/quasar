@@ -26,10 +26,12 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
+import { useRouter } from "vue-router";
+const router = useRouter();
 export default {
   data() {
     const headers = SessionStorage.getItem("headers");

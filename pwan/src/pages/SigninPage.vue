@@ -74,9 +74,9 @@ export default {
           formData.value
         );
         if (response.data) {
+          LocalStorage.set("userEmail", formData.value.username);
           const authenticated = response.data["access"];
           LocalStorage.set("token", response.data);
-          LocalStorage.set("userEmail", formData.value.username);
           const headers = {
             Authentication: "Bearer " + response.data["access"],
           };
@@ -86,7 +86,7 @@ export default {
           if (authenticated) {
             // Redirect to the homepage or intended route
             console.log(router);
-            router.push({ path: "/home" });
+            router.push({ path: "/dashboard" });
           }
         }
       } catch (error) {

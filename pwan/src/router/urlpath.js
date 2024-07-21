@@ -15,7 +15,8 @@ const path = {
   PROSPECT_CUSTOMER_UPDATE: APP_PATH + "prospect/update/",
   PROSPECT_CUSTOMER_REMOVE: APP_PATH + "prospect/remove/",
   PROSPECT_CUSTOMER_SEARCH: APP_PATH + "prospect/search/",
-  PROSPECT_CUSTOMER_CONVERT_TO_INVESTOR: APP_PATH + "prospect/converttoinvestor/",
+  PROSPECT_CUSTOMER_CONVERT_TO_INVESTOR:
+    APP_PATH + "prospect/converttoinvestor/",
   COUNTRY_ALL: APP_PATH + "country/",
 
   STATE_ALL: APP_PATH + "state/",
@@ -99,19 +100,16 @@ const path = {
   CONTACTINFO_REMOVE: APP_PATH + "contactinfo/remove/",
   CONTACTINFO_SEARCH: APP_PATH + "contactinfo/search/",
 
-
-
   PRODUCTDEF_AUTOCOMPLETER: APP_PATH + "productdef/autocomplete/",
 
   PRODUCTCONTACT_CREATE: APP_PATH + "productcontact/create/",
   PRODUCTCONTACT_UPDATE: APP_PATH + "productcontact/update/",
   PRODUCTCONTACT_SEARCH: APP_PATH + "productcontact/search/",
-  PRODUCTCONTACT_REMOVE: APP_PATH + "productcontact/remove/", 
+  PRODUCTCONTACT_REMOVE: APP_PATH + "productcontact/remove/",
 
+  INVESTORS_FIND_BY_USER: APP_PATH + "investor/listbyuser/",
 
-  
-INVESTORS_FIND_BY_USER: APP_PATH + "investor/listbyuser/",
-  
+  DASHBOARD: APP_PATH + "user/dashboard/",
 };
 
 export default path;

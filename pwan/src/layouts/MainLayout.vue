@@ -17,25 +17,19 @@
     </q-header>
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
       <q-list>
-        <q-item-label header> MENU </q-item-label> 
+        <q-item-label header> MENU </q-item-label>
         <EssentialLink
           v-for="link in linksList"
           :key="link.title"
           :items="link.menuitems"
           v-bind="link"
         />
-      </q-list> 
-              <q-item 
-                key="logout" 
-                clickable
-                tag="a"
-                target="_blank"
-                @click="logout()"
-              >
-                <q-item-section avatar> 
-                  <q-item-label><q-icon name="logout" />Log Out </q-item-label> 
-                </q-item-section> 
-              </q-item>   
+      </q-list>
+      <q-item key="logout" clickable tag="a" target="_blank" @click="logout()">
+        <q-item-section avatar>
+          <q-item-label><q-icon name="logout" />Log Out </q-item-label>
+        </q-item-section>
+      </q-item>
     </q-drawer>
     <q-page-container>
       <router-view @update-menu="handleUpdateMenu" />
@@ -58,6 +52,12 @@ let defaultList = [
   {
     title: "Default 1",
     menuitems: [
+      {
+        title: " Dashboard",
+        caption: "Dashboard Page",
+        icon: "dashboard",
+        link: "/dashboard",
+      },
       {
         title: " Status",
         caption: "Status Page",
@@ -129,7 +129,7 @@ let defaultList = [
         icon: "record_voice_over",
         link: "/prospect",
       },
-       {
+      {
         title: " Investors",
         caption: "Investors",
         icon: "record_voice_over",
@@ -189,16 +189,16 @@ function handleUpdateMenu(updatedMenuItems) {
     linksList.push(menu);
   });
   LocalStorage.set("profiles", linksList);
+  router.push({ path: "/dashboard" });
 }
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
-function logout(){
-  console.log(">>>>>>>clicked Logout>>>>>>>>")
-  console.log(router)
-  LocalStorage.clear()
-  sessionStorage.clear()
+function logout() {
+  console.log(">>>>>>>clicked Logout>>>>>>>>");
+  console.log(router);
+  LocalStorage.clear();
+  sessionStorage.clear();
   router.push("/");
-
 }
 </script>
