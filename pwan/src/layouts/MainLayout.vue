@@ -194,9 +194,7 @@ function handleUpdateMenu(updatedMenuItems) {
 function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
-function logout() {
-  console.log(">>>>>>>clicked Logout>>>>>>>>");
-  console.log(router);
+function logout() {  
   LocalStorage.clear();
   sessionStorage.clear();
   router.push("/");
