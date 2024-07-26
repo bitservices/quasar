@@ -144,8 +144,7 @@ export default {
     const requestParams = {
       params: {
         client: turnelParams.client,
-        organisation: turnelParams.organisation,
-        email: turnelParams.email,
+        organisation: turnelParams.organisation, 
       },
     };
 

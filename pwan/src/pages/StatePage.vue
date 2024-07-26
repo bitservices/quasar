@@ -25,16 +25,18 @@
             size="sm"
             @click="viewItem"
           />
-          <StateFormDialog
-            v-model="showFormDialog"
-            :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="State"
-            :searchValue="searchValue"
-            :action="action"
-            :actionLabel="actionLabel"
-            :urlLink="urlLink"
-          />
+          <div v-if="loadForm"> 
+            <StateFormDialog
+              v-model="showFormDialog"
+              :onClick="saveRecord"
+              @formDataSubmitted="saveRecord"
+              label="State"
+              :searchValue="searchValue"
+              :action="action"
+              :actionLabel="actionLabel"
+              :urlLink="urlLink"
+            /> 
+         </div>
           <ResponseDialog
             v-model="showMessageDialog"
             :cardClass="childRef.cardClass"
@@ -86,7 +88,7 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import StateFormDialog from "src/components/StateFormDialog.vue";
@@ -129,6 +131,7 @@ export default {
       code: "",
       name: "",
     });
+    const loadForm = ref(false)
     const urlLink = ref(path.STATE_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -148,8 +151,7 @@ export default {
     });
 
     const fetchData = async () => {
-      try {
-        Loading.show();
+      try { 
         const response = await axios.get(
           "http://localhost:8000/api/pwanproperties/state/",
           headers
@@ -157,8 +159,7 @@ export default {
         if (response.data) {
           console.log("response data >>>>>>", response.data);
           rows.value = response.data;
-          selected.value = [];
-          Loading.hide();
+          selected.value = []; 
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -255,11 +256,13 @@ export default {
       }
     };
     const addItem = () => {
+      loadForm.value= true;
       showFormDialog.value = true;
       action.value = "add";
       actionLabel.value = "Submit";
     };
     const editItem = () => {
+      loadForm.value= true
       if (selected.value.length > 0) {
         showFormDialog.value = true;
         searchValue.value = selected.value[0]["code"];
@@ -268,6 +271,7 @@ export default {
       }
     };
     const viewItem = () => {
+      loadForm.value= true
       if (selected.value.length > 0) {
         showFormDialog.value = true;
         searchValue.value = selected.value[0]["code"];
@@ -312,7 +316,8 @@ export default {
       headers,
       medium_dialog,
       action,
-      showFormDialog,
+      showFormDialog, 
+      loadForm,
     };
   },
   beforeCreate() {

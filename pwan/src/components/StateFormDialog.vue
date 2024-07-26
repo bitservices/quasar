@@ -71,6 +71,7 @@ import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
+import debug from "src/router/debugger";
 
 export default {
   name: "StateFormDialog",
@@ -125,32 +126,28 @@ export default {
       width: "10px",
       height: "10px",
     });
-    const showDialog = ref(false);
 
     return {
       formData,
-      showDialog,
+      showDialog : false, 
       form,
       dialogWidth,
       dialogHeight,
       countries: [],
       statusOptions: [],
+      dense:false,
     };
   },
   methods: {
+    handleChange(value){
+      debug(">>>>>>value>>>",value)
+    },
     saveRecord() {
-      this.formData.countryCode = {
-        id: this.formData.countryCode.value,
-        name: this.formData.countryCode.label,
-      };
-      this.formData.status = {
-        id: this.formData.status.value,
-        name: this.formData.status.label,
-      };
+      this.formData.countryCode =   this.formData.countryCode.value;
+      this.formData.status = this.formData.status.value;
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
       this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
       console.log(this.showDialog);
     },
   },
@@ -190,7 +187,9 @@ export default {
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
-      });
+      }); 
+      this.showDialog = true;
+      debug("showDialog>>>>>>", this.showDialog)
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
