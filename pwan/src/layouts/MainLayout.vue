@@ -65,6 +65,13 @@ let defaultList = [
         link: "/status",
       },
       {
+        title: " Prospect Type",
+        caption: "Prospect Type Page",
+        icon: "prospect",
+        link: "/prospecttype",
+      },
+      
+      {
         title: " Gender",
         caption: "Gender Page",
         icon: "code",

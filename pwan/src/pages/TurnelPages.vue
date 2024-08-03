@@ -6,7 +6,7 @@
           filled
           bottom-slots
           v-model="formData.client"
-          @input="handleClientChange"
+          @update:model-value="handleClientChange"
           :options="clients"
           label="Select Client"
         />
@@ -79,12 +79,12 @@ export default {
         console.error("Error submitting form:", error);
       }
     },
-    handleClientChange(value) {
+    handleClientChange(selectedItem) {
       try {
-        console.log(">>>>>calling handleClientChange>>>>>>>>>", value);
+        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
         const requestParam = {
           params: {
-            client: value,
+            client: selectedItem.value,
             email: this.userEmail,
           },
         };
@@ -163,7 +163,6 @@ export default {
   mounted() {
     this.loadUserClients();
     console.log(">>>>>>>>mounted>>>>>>>>>>");
-    this.handleClientChange("Cl");
   },
   beforeUpdate() {
     console.log(">>>>>>>>before updated>>>>>>>>>>");

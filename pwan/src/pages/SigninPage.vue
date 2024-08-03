@@ -57,8 +57,10 @@
 <script>
 import { ref } from "vue";
 import axios from "axios";
-import { LocalStorage, SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar"; 
+import path from "src/router/urlpath"; 
 //import router from "src/router/routes";
+
 import { useRouter } from "vue-router";
 export default {
   setup() {
@@ -79,7 +81,8 @@ export default {
           LocalStorage.set("token", response.data);
           const headers = {
             Authentication: "Bearer " + response.data["access"],
-          };
+            "Access-Control-Allow-Origin": path.ORIGIN_PATH,
+          }; 
           console.log(headers);
           SessionStorage.set("headers", headers);
           console.log(authenticated);
@@ -97,6 +100,7 @@ export default {
       isPwd: ref(true),
       formData,
       handleSubmit,
+      dense:false,
     };
   },
 };

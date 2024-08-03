@@ -88,6 +88,12 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
+      components: [
+        'QList',
+        'QItemLabel',
+        'QPage',
+        // other components
+      ],
       config: {},
 
       // iconSet: 'material-icons', // Quasar icon set

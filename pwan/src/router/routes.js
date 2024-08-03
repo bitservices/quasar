@@ -14,6 +14,7 @@ const routes = [
     children: [
       {
         path: "",
+        name:"ApplicationHomePage",
         component: () => import("src/pages/ApplicationHomePage.vue"),
       },
       {
@@ -106,6 +107,10 @@ const routes = [
       {
         path: "/productcontact",
         component: () => import("src/pages/ProductContact.vue"),
+      },
+      {
+        path: "/prospecttype",
+        component: () => import("src/pages/ProspectTypePage.vue"),
       },
     ],
     meta: {

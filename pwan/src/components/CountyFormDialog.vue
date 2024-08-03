@@ -24,27 +24,25 @@
             label="Name"
             :dense="dense"
           />
-          <q-select
+           <q-select
             filled
             bottom-slots
-            v-model="formData.country"
-            label="Country"
+            v-model="formData.countryCode"
+            :options="countries"
+            label="Select Country"
+            @update:model-value="handleCountryChange"
             :dense="dense"
-          />
+          /> 
+          
           <q-select
             filled
             bottom-slots
-            v-model="formData.state"
+            v-model="formData.state" 
+            :options="stateList"
             label="State"
             :dense="dense"
           />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.status"
-            label="Status"
-            :dense="dense"
-          />
+           
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -73,7 +71,8 @@
 <script>
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
-import axios from "axios";
+import axios from "axios"; 
+import path from "src/router/urlpath"; 
 
 export default {
   name: "CountyFormDialog",
@@ -113,7 +112,8 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogHeight = controlHeight + "px"; 
+    const headers = SessionStorage.getItem("headers");
 
     const formData = ref({
       code: "",
@@ -131,7 +131,11 @@ export default {
       showDialog,
       form,
       dialogWidth,
-      dialogHeight,
+      dialogHeight, 
+      countries: [],
+      stateList : [],
+      dense:true,
+      headers,
     };
   },
   methods: {
@@ -142,6 +146,29 @@ export default {
       this.showDialog = true;
       console.log(this.showDialog);
     },
+    handleCountryChange(selectedItem){
+      console.log("calling country change", selectedItem.value)
+      const requestParams = {
+          params: {
+            countryCode: selectedItem.value,
+          },
+        };
+        console.log(">>>>>>this.headers>>>>>>>",this.headers)
+      axios
+      .get(path.STATE_SEARCH,requestParams,this.headers)
+      .then((response) => {
+        console.log("State Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.stateList = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.countries >>>>>>>>>>>>", this.stateList);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+    }
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -154,13 +181,27 @@ export default {
   },
   mounted() {
     console.log("mounted");
+     axios
+      .get(path.COUNTRY_ALL)
+      .then((response) => {
+        console.log("country Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.countries = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.countries >>>>>>>>>>>>", this.countries);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
     this.formData = { code: "", name: "" };
   },
-  updated() {
-    const headers = SessionStorage.getItem("headers");
+  updated() { 
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;

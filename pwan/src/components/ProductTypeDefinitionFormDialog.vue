@@ -128,16 +128,16 @@
             v-model="formData.country"
             :options="countries"
             label="Select Country"
-            @input="handleCountryChange"
+            @update:model-value="handleCountryChange"
             :dense="dense"
           />
           <q-select
             filled
             bottom-slots
             v-model="formData.state"
-            :options="states"
+            :options="stateList"
             label="Select State"
-            @input="handleStateChange"
+            @update:model-value="handleStateChange"
             :dense="dense"
           />
           <q-select
@@ -247,7 +247,7 @@ export default {
       time: "10:00",
       dense: true,
       countries: [],
-      states: [],
+      stateList: [],
       counties: [],
     };
   },
@@ -258,10 +258,7 @@ export default {
     hideTimePopup() {
       this.$refs.timePopup.hide();
     },
-    handleCountryChange(value) {
-      debug(">>>>>>counry value>>>>>>>", value);
-    },
-    handleStateChange(value) {},
+   
     saveRecord() {
       //this.onClick(formData.value);
       let productType = this.formData.productType.value;
@@ -288,7 +285,55 @@ export default {
       this.showDialog = true;
       debug(this.showDialog);
     },
+     handleCountryChange(selectedItem){
+      console.log("calling country change", selectedItem.value)
+      const requestParams = {
+          params: {
+            countryCode: selectedItem.value,
+          },
+        };
+        console.log(">>>>>>this.headers>>>>>>>",this.headers)
+      axios
+      .get(path.STATE_SEARCH,requestParams,this.headers)
+      .then((response) => {
+        console.log("State Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.stateList = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.state List >>>>>>>>>>>>", this.stateList);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+    },
+     handleStateChange(selectedItem){
+      console.log("calling State change", selectedItem.value)
+      const requestParams = {
+          params: {
+            countryCode: this.formData.country.value,
+            stateCode : selectedItem.value,
+          },
+        };
+        console.log(">>>>>>this.headers>>>>>>>",this.headers)
+      axios
+      .get(path.COUNTY_SEARCH,requestParams,this.headers)
+      .then((response) => {
+        console.log("State Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.counties = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.county List >>>>>>>>>>>>", this.counties);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+    }
   },
+  
   beforeCreate() {
     debug("beforeCreate");
   },
@@ -322,37 +367,6 @@ export default {
       .catch((error) => {
         console.error("Error fetching options:", error);
       });
-
-    axios
-      .get(path.STATE_ALL)
-      .then((response) => {
-        debug("country Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.states = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        debug("this.countries >>>>>>>>>>>>", this.states);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-
-    axios
-      .get(path.COUNTY_ALL)
-      .then((response) => {
-        debug("country Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.counties = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        debug("this.countries >>>>>>>>>>>>", this.counties);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-
     axios
       .get(path.PRODUCTTYPE_SEARCH, requestParams, this.headers)
       .then((response) => {

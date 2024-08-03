@@ -1,6 +1,7 @@
 const BASEPATH = "http://localhost:8000";
 const APP_PATH = BASEPATH + "/api/pwanproperties/";
 const path = {
+  ORIGIN_PATH : "http://localhost:9000",
   CLIENT_CREATE: APP_PATH + "client/create/",
   CLIENT_UPDATE: APP_PATH + "client/update/",
   CLIENT_FIND_BY_CREATOR: APP_PATH + "client/findbycreator/",
@@ -22,8 +23,9 @@ const path = {
   STATE_ALL: APP_PATH + "state/",
   STATE_CREATE: APP_PATH + "state/create/",
   STATE_UPDATE: APP_PATH + "state/update/",
-  STATE_REMOVE: APP_PATH + "state/remove",
-  STATE_SEARCH: APP_PATH + "state/search",
+  STATE_REMOVE: APP_PATH + "state/remove/",
+  STATE_SEARCH: APP_PATH + "state/search/",
+  STATE_SEARCH_BY_COUNTRY: APP_PATH + "state/findbycountry/",
 
   STATUS_ALL: APP_PATH + "status/",
 
@@ -74,8 +76,8 @@ const path = {
   COUNTY_ALL: APP_PATH + "county/",
   COUNTY_CREATE: APP_PATH + "county/create/",
   COUNTY_UPDATE: APP_PATH + "county/update/",
-  COUNTY_REMOVE: APP_PATH + "county/remove",
-  COUNTY_SEARCH: APP_PATH + "county/search",
+  COUNTY_REMOVE: APP_PATH + "county/remove/",
+  COUNTY_SEARCH: APP_PATH + "county/search/",
 
   PAYMENTSTATUS_CREATE: APP_PATH + "paymentstatus/create/",
   PAYMENTSTATUS_UPDATE: APP_PATH + "paymentstatus/update/",
@@ -110,6 +112,15 @@ const path = {
   INVESTORS_FIND_BY_USER: APP_PATH + "investor/listbyuser/",
 
   DASHBOARD: APP_PATH + "user/dashboard/",
+
+
+  
+  PROSPECTTYPE_CREATE: APP_PATH + "prospecttype/create/",
+  PROSPECTTYPE_UPDATE: APP_PATH + "prospecttype/update/",
+  PROSPECTTYPE_SEARCH: APP_PATH + "prospecttype/search/",
+  PROSPECTTYPE_REMOVE: APP_PATH + "prospecttype/remove/",
+  PROSPECTTYPE_SEARCH_ALL: APP_PATH + "prospecttype/",
+
 };
 
 export default path;

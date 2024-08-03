@@ -8,7 +8,7 @@
           v-model="formData.client"
           :options="clients"
           label="Select Client"
-          @input="handleClientChange"
+          @update:model-value="handleClientChange"
           :dense="dense"
         />
         <q-select
@@ -16,7 +16,7 @@
           bottom-slots
           v-model="formData.organisation"
           :options="organisations"
-          label="Select Organisation"
+          label="Select Organisation" 
           :dense="dense"
         />
         <q-btn class="pwan-button" @click="handleTurnelling" rounded>
@@ -28,28 +28,38 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
 export default {
-  setup() {
+  data() {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail");
     const formData = ref({
       client: "",
       organisation: "",
     });
-    const loadUserClients = async () => {
+    
+    return {
+      formData,
+      clients: [],
+      organisations: [],
+      headers,
+      userEmail,
+    };
+  },
+  methods: {
+
+     loadUserClients() {
       try {
-        console.log(">>>>>calling LoadUserClients>>>>>>>>>", userEmail);
-        Loading.show();
+        console.log(">>>>>calling LoadUserClients>>>>>>>>>", userEmail); 
         const requestParam = {
           params: {
             email: userEmail,
           },
         };
-        const response = await axios.get(
+        const response = axios.get(
           path.ACTIVE_USER_CLIENT_SEARCH,
           requestParam,
           headers
@@ -64,24 +74,25 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    };
+    },
 
-    const handleClientChange = async () => {
+    handleClientChange(selectedItem) {
+      console.log(">>>>selectedItem>>>>>",selectedItem)
       try {
-        Loading.show();
-        const selectedClient = formData.value.client;
         const requestParam = {
           params: {
             email: userEmail,
-            client: selectedClient,
+            client: selectedItem.value,
           },
         };
-        const response = await axios.get(
+        const response = axios.get(
           path.ACTIVE_ORG_USER_SEARCH,
           requestParam,
           headers
         );
+
         if (response.data) {
+          console.log(">>>>response.data>>>>>",response.data)
           organisations = response.data.map((option) => ({
             label: option.organisation.name,
             value: option.organisation.code,
@@ -90,17 +101,8 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    };
+    },
 
-    return {
-      formData,
-      clients: [],
-      organisations: [],
-      headers,
-      userEmail,
-      loadUserClients,
-      handleClientChange,
-    };
   },
   beforeCreate() {
     console.log("beforeCreate");

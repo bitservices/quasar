@@ -138,8 +138,7 @@ export default {
     });
 
     const fetchData = async () => {
-      try {
-        Loading.show();
+      try { 
         const userEmail = LocalStorage.getItem("userEmail");
         const requestParam = {
           params: {
