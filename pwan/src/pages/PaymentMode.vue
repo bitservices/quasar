@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
@@ -142,16 +142,14 @@ export default {
     });
 
     const fetchData = async () => {
-      try {
-        Loading.show();
+      try { 
         const response = await axios.get(
           "http://localhost:8000/api/pwanproperties/paymentmode/",
           headers
         );
         if (response.data) {
           rows.value = response.data;
-          selected.value = [];
-          Loading.hide();
+          selected.value = []; 
         }
       } catch (error) {
         console.error("Error submitting form:", error);

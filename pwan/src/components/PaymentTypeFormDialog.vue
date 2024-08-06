@@ -24,25 +24,6 @@
             label="Name"
             :dense="dense"
           />
-           <q-select
-            filled
-            bottom-slots
-            v-model="formData.countryCode"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense"
-          /> 
-          
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.stateCode" 
-            :options="stateList"
-            label="State"
-            :dense="dense"
-          />
-           
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -72,10 +53,9 @@
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios"; 
-import path from "src/router/urlpath"; 
 
 export default {
-  name: "CountyFormDialog",
+  name: "PaymentTypeFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -112,12 +92,15 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px"; 
-    const headers = SessionStorage.getItem("headers");
+    const dialogHeight = controlHeight + "px";
 
+   const profile = SessionStorage.getItem("turnelParams"); 
     const formData = ref({
       code: "",
-      name: "",
+      name: "", 
+      client : "",
+      organisation : "" ,
+      createdBy : "",
     });
     const form = ref({
       label: "",
@@ -131,47 +114,21 @@ export default {
       showDialog,
       form,
       dialogWidth,
-      dialogHeight, 
-      countries: [],
-      stateList : [],
-      dense:true,
-      headers,
+      dialogHeight,
+      profile,
     };
   },
   methods: {
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.formData
+      
       //this.onClick(formData.value);
-      this.formData.countryCode = this.formData.countryCode.value
-      this.formData.stateCode = this.formData.stateCode.value
+      this.formData.client = this.profile.client;
+      this.formData.organisation =  this.profile.organisation;
+      this.formData.createdBy = this.profile.email;
+      console.log(">>>>>>>thisis inside handle Save,", this.formData);
       this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
+      this.showDialog = true; 
     },
-    handleCountryChange(selectedItem){
-      console.log("calling country change", selectedItem.value)
-      const requestParams = {
-          params: {
-            countryCode: selectedItem.value,
-          },
-        };
-        console.log(">>>>>>this.headers>>>>>>>",this.headers)
-      axios
-      .get(path.STATE_SEARCH,requestParams,this.headers)
-      .then((response) => {
-        console.log("State Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.stateList = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        console.log("this.countries >>>>>>>>>>>>", this.stateList);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-    }
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -184,46 +141,35 @@ export default {
   },
   mounted() {
     console.log("mounted");
-     axios
-      .get(path.COUNTRY_ALL)
-      .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.countries = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        console.log("this.countries >>>>>>>>>>>>", this.countries);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
     this.formData = { code: "", name: "" };
   },
-  updated() { 
+  updated() {
+    const headers = SessionStorage.getItem("headers");
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
     if (this.action == "edit" || this.action == "view") {
       try {
+      
         const requestParams = {
           params: {
             code: this.searchValue,
+             client : this.profile.client,
+             organisation : this.profile.organisation, 
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        debug("this.urlLink>>>>>>>>",this.urlLink)
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
+              console.log("formData>>>>>>>",this.formData)
             }
           })
           .catch((error) => {
@@ -233,7 +179,12 @@ export default {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = { code: "", name: "" , 
+      client : "",
+      organisation : "" ,
+      createdBy : "",
+      paymentType:"",};
+      
     }
   },
 };

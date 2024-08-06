@@ -60,10 +60,23 @@ const path = {
   PRODUCTTYPE_SEARCH: APP_PATH + "producttype/search/",
   PRODUCTTYPE_REMOVE: APP_PATH + "producttype/remove/",
 
+  PAYMENTTYPE_CREATE: APP_PATH + "paymenttype/create/",
+  PAYMENTTYPE_UPDATE: APP_PATH + "paymenttype/update/",
+  PAYMENTTYPE_SEARCH: APP_PATH + "paymenttype/search/",
+  PAYMENTTYPE_REMOVE: APP_PATH + "paymenttype/remove/",
+
+
   PRODUCTDEF_CREATE: APP_PATH + "productdef/create/",
   PRODUCTDEF_UPDATE: APP_PATH + "productdef/update/",
   PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/",
   PRODUCTDEF_REMOVE: APP_PATH + "productdef/remove/",
+
+  PAYMENTDEF_CREATE: APP_PATH + "paymentdef/create/",
+  PAYMENTDEF_UPDATE: APP_PATH + "paymentdef/update/",
+  PAYMENTDEF_SEARCH: APP_PATH + "paymentdef/search/",
+  PAYMENTDEF_REMOVE: APP_PATH + "paymentdef/remove/",
+
+
 
   DIMENSION_CREATE: APP_PATH + "dimension/create/",
   DIMENSION_UPDATE: APP_PATH + "dimension/update/",

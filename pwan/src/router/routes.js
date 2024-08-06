@@ -37,6 +37,10 @@ const routes = [
         component: () => import("src/pages/PaymentMode.vue"),
       },
       {
+        path: "/paymenttype",
+        component: () => import("src/pages/PaymentType.vue"),
+      },
+      {
         path: "/productstatus",
         component: () => import("src/pages/ProductStatus.vue"),
       },
@@ -91,6 +95,10 @@ const routes = [
       {
         path: "/productdef",
         component: () => import("src/pages/ProductTypeDefinition.vue"),
+      },
+      {
+        path: "/paymentdef",
+        component: () => import("src/pages/PaymentTypeDefinition.vue"),
       },
       {
         path: "/dimension",

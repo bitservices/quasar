@@ -417,6 +417,7 @@ export default {
     this.formData = { code: "", name: "" };
   },
   updated() {
+     debug("Calling updated>>>>>>>>>>");
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;

@@ -10,13 +10,15 @@
 
       <q-card-section>
         <q-form>
-          <q-input
+          <q-select
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
+            v-model="formData.paymentType"
+            :options="PaymentTypes"
+            label="Select Payment Type"
             :dense="dense"
           />
+
           <q-input
             filled
             bottom-slots
@@ -24,24 +26,21 @@
             label="Name"
             :dense="dense"
           />
-           <q-select
+          <q-input
             filled
             bottom-slots
-            v-model="formData.countryCode"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense"
-          /> 
-          
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.stateCode" 
-            :options="stateList"
-            label="State"
-            :dense="dense"
+            v-model="formData.amount"
+            label="Enter Amount"
+            type="number"
+            step="0.01"
           />
+         
+           
+          <q-checkbox
+            v-model="formData.allowPartialPayment"
+            label="Allowed Parital Payment"
+            color="primary"
+          /> 
            
         </q-form>
       </q-card-section>
@@ -71,11 +70,12 @@
 <script>
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
-import axios from "axios"; 
-import path from "src/router/urlpath"; 
+import axios from "axios";
+import path from "src/router/urlpath";
+import debug from "src/router/debugger";
 
 export default {
-  name: "CountyFormDialog",
+  name: "PaymentTypeFormDialog",
   props: {
     onClick: {
       type: Function,
@@ -112,12 +112,16 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px"; 
-    const headers = SessionStorage.getItem("headers");
+    const dialogHeight = controlHeight + "px";
 
+    const profile = SessionStorage.getItem("turnelParams");
+    const headers = SessionStorage.getItem("headers");
     const formData = ref({
       code: "",
       name: "",
+      client: "",
+      organisation: "",
+      createdBy: "",
     });
     const form = ref({
       label: "",
@@ -131,80 +135,73 @@ export default {
       showDialog,
       form,
       dialogWidth,
-      dialogHeight, 
-      countries: [],
-      stateList : [],
-      dense:true,
+      dialogHeight,
+      profile,
       headers,
+      time: "10:00",
+      dense: true,
+      countries: [],
+      stateList: [],
+      counties: [],
     };
   },
   methods: {
+   
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.formData
-      //this.onClick(formData.value);
-      this.formData.countryCode = this.formData.countryCode.value
-      this.formData.stateCode = this.formData.stateCode.value
+      debug( ">>>>>>>>payment Type Value>>>>>>>>>>",this.formData.paymentType)
+      let PaymentType = this.formData.PaymentType;
+      this.formData.client = this.profile.client;
+      this.formData.organisation = this.profile.organisation;
+      this.formData.createdBy = this.profile.email;
+      this.formData.paymentType = this.formData.paymentType.value;;  
+      
       this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
-    },
-    handleCountryChange(selectedItem){
-      console.log("calling country change", selectedItem.value)
-      const requestParams = {
-          params: {
-            countryCode: selectedItem.value,
-          },
-        };
-        console.log(">>>>>>this.headers>>>>>>>",this.headers)
-      axios
-      .get(path.STATE_SEARCH,requestParams,this.headers)
-      .then((response) => {
-        console.log("State Response >>>>>>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.stateList = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        console.log("this.countries >>>>>>>>>>>>", this.stateList);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
-    }
+      this.showDialog = true; 
+    },  
+   
   },
+  
   beforeCreate() {
-    console.log("beforeCreate");
+    debug("beforeCreate");
   },
   created() {
-    console.log("created");
+    debug("created");
   },
   beforeMount() {
     console.log("before Mount");
   },
   mounted() {
-    console.log("mounted");
-     axios
-      .get(path.COUNTRY_ALL)
+    const turnelParams = SessionStorage.getItem("turnelParams");
+    const requestParams = {
+      params: {
+        client: turnelParams.client,
+        organisation: turnelParams.organisation, 
+      },
+    }; 
+     
+    axios
+      .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
+        debug("Payment Type Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.countries = response.data.map((option) => ({
+        this.PaymentTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.countries);
+        debug("this.Payment Type >>>>>>>>>>>>", this.PaymentTypes);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
       });
 
+    
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    debug("Calling unmounted>>>>>>>>>>",this.action);
     this.formData = { code: "", name: "" };
   },
-  updated() { 
+  updated() {
+     debug("Calling updated>>>>>>>>>>",this.action);
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
@@ -213,27 +210,37 @@ export default {
         const requestParams = {
           params: {
             code: this.searchValue,
+            client: this.profile.client,
+            organisation: this.profile.organisation,
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, this.headers);
         promise
           .then((response) => {
-            // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
             if (result.success) {
-              this.formData = result.data[0];
+              debug(result.data[0])
+              this.formData = result.data[0]; 
+              this.formData.paymentType={
+                label: result.data[0].paymentType.name,
+                value: result.data[0].paymentType.code,
+              }
             }
           })
           .catch((error) => {
-            console.log(error);
+            debug(error);
           });
       } catch (error) {
         console.error("Error:", error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = {
+        code: "",
+        name: "",
+        client: "",
+        organisation: "",
+        createdBy: "",
+      };
     }
   },
 };
