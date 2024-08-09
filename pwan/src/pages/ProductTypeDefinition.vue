@@ -155,8 +155,7 @@ export default {
           requestParams,
           headers
         );
-        if (response.data) {
-          console.log("response>>>>>>", response.data.data);
+        if (response.data) { 
           rows.value = response.data.data;
           selected.value = [];
         }
@@ -165,6 +164,7 @@ export default {
       }
     };
     const saveRecord = (record) => {
+      debug(">>>>>>>>>result>>>>>>", action.value);
       if (action.value == "add") {
         createRecord(record);
       } else if (action.value == "edit") {
@@ -173,8 +173,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        headers["Content-Type"] = "multipart/form-data";
-        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
+        headers["Content-Type"] = "multipart/form-data"; 
 
         const promise = axios.post(path.PRODUCTDEF_CREATE, record, headers);
         promise
@@ -210,16 +209,17 @@ export default {
         console.error("Error:", error);
       }
     };
-    const updateRecord = (record) => {
-      try {
-        console.log("calling Update Record from Child Component", record);
-        headers["Content-Type"] = "multipart/form-data";
-        debug(">>>>>>>>>>>header>>>>>>>>>", headers);
-        const promise = axios.put(path.PRODUCTDEF_UPDATE, record, headers);
+    const updateRecord = async (record) => {
+      debug(">>>>>>>>>update record >>>>>>>>>",record)
+      try { 
+        headers["Content-Type"] = "multipart/form-data"; 
+        const promise = await axios.put(path.PRODUCTDEF_UPDATE, record, headers); 
+        debug(">>>>>>>>>promise>>>>>>>>>",promise)
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
+            debug(">>>>>>>>>result>>>>>>>>>",result)
             console.log(result);
             if (result.success) {
               fetchData();

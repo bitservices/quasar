@@ -15,6 +15,7 @@
             bottom-slots
             v-model="formData.code"
             label="Code"
+            :readonly="isReadonly"
             :dense="dense"
           />
           <div>
@@ -33,14 +34,25 @@
             v-model="formData.website"
             label="Web Site"
             :dense="dense"
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.email"
-            label="Email"
-            :dense="dense"
-          />
+          /> 
+          <div class="row">
+            <div class="cols-8">
+                <q-file
+                  bottom-slots
+                  filled
+                  v-model="formData.logo"
+                  @update:model-value="onFileChange"
+                  label="Client Logo"
+                >
+                  <template v-slot:append>
+                    <q-icon name="attachment" />
+                  </template>
+                </q-file>
+              </div>
+              <div v-if="logoFile" class="cols-4 q-mt-md">
+                <img :src="logoFile" alt="Preview" style="max-width: 100%;" />
+            </div>
+            </div>
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -70,6 +82,8 @@
 import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
+import path from "src/router/urlpath";
+import debug from "src/router/debugger";
 
 export default {
   name: "StandingDataFormDialog",
@@ -110,13 +124,14 @@ export default {
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
-
+    const logoFile = ref(null)
+    const profile = SessionStorage.getItem("turnelParams");
     const formData = ref({
       code: "",
       name: "",
       website: "",
-      isAnAffilate: false,
-      email: LocalStorage.getItem("userEmail"),
+      isAnAffilate: false, 
+      logo : "",
     });
     const form = ref({
       label: "",
@@ -132,22 +147,49 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
+      logoFile,
+      dense:true,
+      isReadonly:false,
+      profile,
     };
   },
   methods: {
-    saveRecord() {
+    saveRecord() {  
+      this.formData.email = this.profile.email;
       console.log(">>>>>>>this.isChecked>>>>>>>>", this.isChecked);
+      
+      debug(">>>>>>>thisis inside handle Save,", this.formData); 
       if (this.isChecked) {
         this.formData.isAnAffilate = true;
       } else {
         this.formData.isAnAffilate = false;
       }
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
+      const requestData = new FormData();
+      for (let key in this.formData) {
+        console.log(key, this.formData[key]);
+        requestData.append(key, this.formData[key]);
+      }
+      debug(">>>>>>>thisis inside handle Save,", this.formData);
+      debug(">>>>>>>thisis requestData Save,", requestData);
       //this.onClick(formData.value);
 
-      this.$emit("formDataSubmitted", this.formData);
+      this.$emit("formDataSubmitted", requestData);
       this.showDialog = true;
       console.log(this.showDialog);
+    },
+    onFileChange(file) {
+      console.log("file>>>>>>>>",file)
+      if (file) {
+        const reader = new FileReader();
+        console.log("reader>>>>>>>",reader)
+       reader.onload  = function(e) {
+          const logoByte = e.target.result; 
+          console.log(">>>>>>>logoByte>>>>>>>>",logoByte)
+          this.logoFile = "data:image/jpeg;base64,"+logoByte 
+        }; 
+      } else {
+        this.logoFile = null;
+      }
     },
   },
   beforeCreate() {
@@ -178,6 +220,7 @@ export default {
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
     if (this.action == "edit" || this.action == "view") {
+      this.isReadonly = true
       try {
         const requestParams = {
           params: {
@@ -189,11 +232,12 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
+              this.formData.status = result.data[0].status.code
               this.isChecked = this.formData.isAnAffilate;
+              this.logoFile = "data:image/jpeg;base64," + result.data[0].logo 
             }
           })
           .catch((error) => {
@@ -203,6 +247,8 @@ export default {
         console.error("Error:", error);
       }
     } else {
+      this.isReadonly = false
+      this.logoFile = null
       this.formData = {
         code: "",
         name: "",

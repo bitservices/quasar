@@ -43,6 +43,9 @@ const path = {
 
   USER_PROFILE: APP_PATH + "user/profiles/",
 
+  FIND_USER_BY_EMAIL: APP_PATH + "user/findbyemail/",
+  USER_UPDATE: APP_PATH + "user/update/",
+
   ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
 
   ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveorganisationuser/",
@@ -133,6 +136,8 @@ const path = {
   PROSPECTTYPE_SEARCH: APP_PATH + "prospecttype/search/",
   PROSPECTTYPE_REMOVE: APP_PATH + "prospecttype/remove/",
   PROSPECTTYPE_SEARCH_ALL: APP_PATH + "prospecttype/",
+
+  GENDER_SEARCH_ALL: APP_PATH + "gender/",
 
 };
 

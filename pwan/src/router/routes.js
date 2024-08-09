@@ -120,6 +120,10 @@ const routes = [
         path: "/prospecttype",
         component: () => import("src/pages/ProspectTypePage.vue"),
       },
+      {
+        path: "/userprofile",
+        component: () => import("src/pages/UserProfile.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

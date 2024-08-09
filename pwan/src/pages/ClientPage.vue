@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import ClientFormDialog from "src/components/ClientFormDialog.vue";
@@ -158,7 +158,6 @@ export default {
 
     const fetchData = async () => {
       try {
-        Loading.show();
         const userEmail = LocalStorage.getItem("userEmail");
         const requestParam = {
           params: {
@@ -170,10 +169,10 @@ export default {
           requestParam,
           headers
         );
+        console.log(">>>>>>>>client data>>>>>>>>>",response.data)
         if (response.data) {
           rows.value = response.data;
-          selected.value = [];
-          Loading.hide();
+          selected.value = []; 
         }
       } catch (error) {
         console.error("Error submitting form:", error);
