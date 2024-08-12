@@ -132,6 +132,13 @@ const routes = [
         path: "/useroutstanding",
         component: () => import("src/pages/UserOutstandingPayment.vue"),
       },
+
+      {
+        path: "/userpayment",
+        component: () => import("src/pages/UserPaymentTransaction.vue"),
+      },
+
+      
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

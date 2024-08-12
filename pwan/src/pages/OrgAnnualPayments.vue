@@ -17,7 +17,7 @@
           <q-checkbox v-model="props.selected" />
         </template>
         <template v-slot:top>
-          <q-label>Menu</q-label>
+          <q-label>Organisational Annual Payment</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />

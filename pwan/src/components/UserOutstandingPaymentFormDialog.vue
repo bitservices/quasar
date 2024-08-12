@@ -40,7 +40,7 @@
             filled
             bottom-slots
             v-model="formData.openingDebit"
-            label="Enter Current Debit"
+            label="Enter OPening Debit"
             type="number"
             step="0.01"
           />
@@ -166,6 +166,8 @@ export default {
       this.formData.client = this.profile.client;
       this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email;
+      this.formData.year = this.formData.year.value;
+      this.formData.userId = this.formData.userId.value;
 
       //this.onClick(formData.value);
       this.$emit("formDataSubmitted", this.formData);
@@ -179,13 +181,9 @@ export default {
     getCurrentYear() {
       // Create a new Date object
       const currentDate = new Date();
-
-      // Extract the current year
-      const currentYear = currentDate.getFullYear();
-
-      // Output the current year
-      console.log(currentYear);
-      return currentYear;
+      currentYear = currentDate.getFullYear();
+      console.log(">>>>>>>currentYear>>>>>>",currentYear)
+      return currentYear
     },
   },
   beforeCreate() {
@@ -210,7 +208,8 @@ export default {
       .then((response) => {
         console.log("organisation Users>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.orgUsers = response.data.data.map((option) => ({
+        this.orgUsers = response.data.data.map((option) => (
+          {
           label:
             option.userId.last_name +
             " " +
@@ -226,17 +225,26 @@ export default {
 
     axios
       .get(path.ORG_ANNUAL_PAYMENT_YEARS, requestParams, this.headers)
-      .then((response) => {
-        console.log("organisation Users>>>>>>>", response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
+      .then((response) => {  
+        const currentYear = new Date().getFullYear()  
+        let hasCuurentYear = false
 
-        currentYear = this.getCurrentYear();
-        response.data.data[currentYear] = currentYear;
+        for (let i = 0; i < response.data.data.length; i++) {
+          console.log(response.data.data[i]);
+          if(response.data.data[i]['year']==currentYear){
+            hasCuurentYear = true
+          }
+        }   
+
+        if(!hasCuurentYear){ 
+          
+          response.data.data.push({"year":currentYear})  
+        } 
         this.years = response.data.data.map((option) => ({
           label: option.year,
           value: option.year,
         }));
-        console.log("years>>>>>>>>>", years);
+           
       })
       .catch((error) => {});
   },
