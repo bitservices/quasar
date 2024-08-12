@@ -73,42 +73,37 @@
             color="secondary"
           />
           <div class="row">
-              <div class="col-6">
-                <q-file
-                  bottom-slots
-                  filled
-                  v-model="formData.imageByte"
-                  label="Product Image"
-                >
-                  <template v-slot:append>
-                    <q-icon name="attachment" />
-                  </template>
-                </q-file>
-            </div>
-            <div v-if="imageFile" class="col-6 q-mt-md">
-                  <img :src="imageFile" alt="Preview" style="max-width: 100%;" />
-            </div>
-          </div>
-          <div class="row">
-              <div class="col-6">
+            <div class="col-6">
               <q-file
                 bottom-slots
                 filled
-                v-model="formData.videoByte"
-                label="Product Video"
+                v-model="formData.imageByte"
+                label="Product Image"
               >
                 <template v-slot:append>
                   <q-icon name="attachment" />
                 </template>
               </q-file>
             </div>
-          <div v-if="videoFile" class="col-6 q-mt-md"> 
-           <q-video
-              :src="videoFile"
-              controls 
-              autoplay
-              class="my-video"
-            />
+            <div v-if="imageFile" class="col-6 q-mt-md">
+              <img :src="imageFile" alt="Preview" style="max-width: 100%" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-6">
+              <q-file filled v-model="formData.videoByte" label="Product Video">
+                <template v-slot:append>
+                  <q-icon name="attachment" />
+                </template>
+              </q-file>
+            </div>
+            <div v-if="videoFile" class="col-6 q-mt-md">
+              <q-video
+                :src="videoFile"
+                autoplay="false"
+                controls
+                class="my-video"
+              />
             </div>
           </div>
           <q-time
@@ -237,7 +232,7 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px"; 
+    const dialogHeight = controlHeight + "px";
 
     const profile = SessionStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
@@ -268,9 +263,9 @@ export default {
       countries: [],
       stateList: [],
       counties: [],
-      isReadonly:false,
-      imageFile:null,
-      videoFile:null,
+      isReadonly: false,
+      imageFile: null,
+      videoFile: null,
     };
   },
   methods: {
@@ -280,7 +275,7 @@ export default {
     hideTimePopup() {
       this.$refs.timePopup.hide();
     },
-   
+
     saveRecord() {
       //this.onClick(formData.value);
       let productType = this.formData.productType.value;
@@ -299,52 +294,51 @@ export default {
       const requestData = new FormData();
       for (let key in this.formData) {
         requestData.append(key, this.formData[key]);
-      } 
- 
+      }
+
       this.$emit("formDataSubmitted", requestData);
-      this.showDialog = true; 
+      this.showDialog = true;
     },
-     handleCountryChange(selectedItem){ 
+    handleCountryChange(selectedItem) {
       const requestParams = {
-          params: {
-            countryCode: selectedItem.value,
-          },
-        }; 
+        params: {
+          countryCode: selectedItem.value,
+        },
+      };
       axios
-      .get(path.STATE_SEARCH,requestParams,this.headers)
-      .then((response) => { 
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.stateList = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        console.log("this.state List >>>>>>>>>>>>", this.stateList);
-      })
-      .catch((error) => {
-        console.error("Error fetching options:", error);
-      });
+        .get(path.STATE_SEARCH, requestParams, this.headers)
+        .then((response) => {
+          // Assuming the response data is an array of objects with 'value' and 'label' properties
+          this.stateList = response.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          }));
+          console.log("this.state List >>>>>>>>>>>>", this.stateList);
+        })
+        .catch((error) => {
+          console.error("Error fetching options:", error);
+        });
     },
-     handleStateChange(selectedItem){ 
+    handleStateChange(selectedItem) {
       const requestParams = {
-          params: {
-            countryCode: this.formData.country.value,
-            stateCode : selectedItem.value,
-          },
-        }; 
+        params: {
+          countryCode: this.formData.country.value,
+          stateCode: selectedItem.value,
+        },
+      };
       axios
-      .get(path.COUNTY_SEARCH,requestParams,this.headers)
-      .then((response) => { 
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.counties = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        })); 
-      })
-      .catch((error) => { 
-      });
-    }
+        .get(path.COUNTY_SEARCH, requestParams, this.headers)
+        .then((response) => {
+          // Assuming the response data is an array of objects with 'value' and 'label' properties
+          this.counties = response.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          }));
+        })
+        .catch((error) => {});
+    },
   },
-  
+
   beforeCreate() {
     debug("beforeCreate");
   },
@@ -366,35 +360,33 @@ export default {
 
     axios
       .get(path.COUNTRY_ALL)
-      .then((response) => { 
+      .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.countries = response.data.map((option) => ({
           label: option.name,
           value: option.code,
-        })); 
+        }));
       })
-      .catch((error) => { 
-      });
+      .catch((error) => {});
     axios
       .get(path.PRODUCTTYPE_SEARCH, requestParams, this.headers)
-      .then((response) => { 
+      .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.productTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
-        })); 
+        }));
       })
-      .catch((error) => { 
-      });
+      .catch((error) => {});
 
     axios
       .get(path.PRODUCTSTATUS_SEARCH_ALL, this.headers)
-      .then((response) => { 
+      .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.productStatusList = response.data.map((option) => ({
           label: option.name,
           value: option.code,
-        })); 
+        }));
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -402,26 +394,25 @@ export default {
 
     axios
       .get(path.DIMENSION_SEARCH_ALL, this.headers)
-      .then((response) => { 
+      .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.dimensions = response.data.map((option) => ({
           label: option.name,
           value: option.code,
-        })); 
+        }));
       })
-      .catch((error) => { 
-      });
+      .catch((error) => {});
   },
   unmounted() {
     debug("Calling unmounted>>>>>>>>>>");
     this.formData = { code: "", name: "" };
   },
-  updated() { 
+  updated() {
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
     if (this.action == "edit" || this.action == "view") {
-      this.isReadonly = true
+      this.isReadonly = true;
       try {
         const requestParams = {
           params: {
@@ -435,48 +426,53 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            
+
             if (result.success) {
-              debug("fetched product Type Definition>>>>>>",result.data[0])
+              debug("fetched product Type Definition>>>>>>", result.data[0]);
               this.formData = result.data[0];
               this.formData.country = {
-                value : result.data[0].country.code,
-                label :result.data[0].country.name,
-              }
+                value: result.data[0].country.code,
+                label: result.data[0].country.name,
+              };
               this.formData.state = {
-                value : result.data[0].state.code,
-                label :result.data[0].state.name,
-              }
+                value: result.data[0].state.code,
+                label: result.data[0].state.name,
+              };
               this.formData.county = {
-                value : result.data[0].county.code,
-                label :result.data[0].county.name,
-              }
+                value: result.data[0].county.code,
+                label: result.data[0].county.name,
+              };
 
               this.formData.dimension = {
-                value : result.data[0].dimension.code,
-                label :result.data[0].dimension.name,
-              }
-              
+                value: result.data[0].dimension.code,
+                label: result.data[0].dimension.name,
+              };
+
               this.formData.productStatus = {
-                value : result.data[0].productStatus.code,
-                label :result.data[0].productStatus.name,
-              }
+                value: result.data[0].productStatus.code,
+                label: result.data[0].productStatus.name,
+              };
 
               this.formData.productType = {
-                value : result.data[0].productType.code,
-                label :result.data[0].productType.name,
-              }
-               this.formData.status = {
-                value : result.data[0].status.code,
-                label :result.data[0].status.name,
-              }
-              this.imageFile = "data:image/jpeg;base64," + result.data[0].imageByte  
-              //const blob = new Blob([result.data[0].videoByte], { type: 'video/mp4' });  
-      
-              //this.videoFile = URL.createObjectURL(blob); 
+                value: result.data[0].productType.code,
+                label: result.data[0].productType.name,
+              };
+              this.formData.status = {
+                value: result.data[0].status.code,
+                label: result.data[0].status.name,
+              };
+              this.imageFile =
+                "data:image/jpeg;base64," + result.data[0].imageByte;
+              //const blob = new Blob([result.data[0].videoByte], { type: 'video/mp4' });
+
+              //this.videoFile = URL.createObjectURL(blob);
               const byteCharacters = atob(result.data[0].videoByte); // Extract Base64 part
               const byteArrays = [];
-              for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+              for (
+                let offset = 0;
+                offset < byteCharacters.length;
+                offset += 512
+              ) {
                 const slice = byteCharacters.slice(offset, offset + 512);
                 const byteNumbers = new Array(slice.length);
                 for (let i = 0; i < slice.length; i++) {
@@ -484,9 +480,9 @@ export default {
                 }
                 byteArrays.push(new Uint8Array(byteNumbers));
               }
-              const blob = new Blob(byteArrays, { type: 'video/mp4' }); // Create Blob with MIME type 
+              const blob = new Blob(byteArrays, { type: "video/mp4" }); // Create Blob with MIME type
               // Create Object URL and set as video source
-              this.videoFile = URL.createObjectURL(blob); 
+              this.videoFile = URL.createObjectURL(blob);
             }
           })
           .catch((error) => {
@@ -496,7 +492,7 @@ export default {
         console.error("Error:", error);
       }
     } else {
-       this.isReadonly = false
+      this.isReadonly = false;
       this.formData = {
         code: "",
         name: "",

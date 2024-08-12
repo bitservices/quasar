@@ -14,7 +14,7 @@ const routes = [
     children: [
       {
         path: "",
-        name:"ApplicationHomePage",
+        name: "ApplicationHomePage",
         component: () => import("src/pages/ApplicationHomePage.vue"),
       },
       {
@@ -123,6 +123,14 @@ const routes = [
       {
         path: "/userprofile",
         component: () => import("src/pages/UserProfile.vue"),
+      },
+      {
+        path: "/organnualpymt",
+        component: () => import("src/pages/OrgAnnualPayments.vue"),
+      },
+      {
+        path: "/useroutstanding",
+        component: () => import("src/pages/UserOutstandingPayment.vue"),
       },
     ],
     meta: {

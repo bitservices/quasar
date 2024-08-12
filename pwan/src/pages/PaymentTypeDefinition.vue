@@ -121,10 +121,11 @@ export default {
         name: "amount",
         align: "center",
         label: "Amount",
-        field: (row) => new Intl.NumberFormat('en-US', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              }).format(row.amount),
+        field: (row) =>
+          new Intl.NumberFormat("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(row.amount),
         sortable: true,
       },
     ];
@@ -154,7 +155,7 @@ export default {
     const requestParams = {
       params: {
         client: turnelParams.client,
-        organisation: turnelParams.organisation, 
+        organisation: turnelParams.organisation,
       },
     };
 
@@ -175,7 +176,7 @@ export default {
       }
     };
     const saveRecord = (record) => {
-      debug("Action Value>>>>>>>",action.value)
+      debug("Action Value>>>>>>>", action.value);
       if (action.value == "add") {
         createRecord(record);
       } else if (action.value == "edit") {

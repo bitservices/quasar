@@ -1,7 +1,7 @@
 const BASEPATH = "http://localhost:8000";
 const APP_PATH = BASEPATH + "/api/pwanproperties/";
 const path = {
-  ORIGIN_PATH : "http://localhost:9000",
+  ORIGIN_PATH: "http://localhost:9000",
   CLIENT_CREATE: APP_PATH + "client/create/",
   CLIENT_UPDATE: APP_PATH + "client/update/",
   CLIENT_FIND_BY_CREATOR: APP_PATH + "client/findbycreator/",
@@ -68,7 +68,6 @@ const path = {
   PAYMENTTYPE_SEARCH: APP_PATH + "paymenttype/search/",
   PAYMENTTYPE_REMOVE: APP_PATH + "paymenttype/remove/",
 
-
   PRODUCTDEF_CREATE: APP_PATH + "productdef/create/",
   PRODUCTDEF_UPDATE: APP_PATH + "productdef/update/",
   PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/",
@@ -78,8 +77,6 @@ const path = {
   PAYMENTDEF_UPDATE: APP_PATH + "paymentdef/update/",
   PAYMENTDEF_SEARCH: APP_PATH + "paymentdef/search/",
   PAYMENTDEF_REMOVE: APP_PATH + "paymentdef/remove/",
-
-
 
   DIMENSION_CREATE: APP_PATH + "dimension/create/",
   DIMENSION_UPDATE: APP_PATH + "dimension/update/",
@@ -129,8 +126,6 @@ const path = {
 
   DASHBOARD: APP_PATH + "user/dashboard/",
 
-
-  
   PROSPECTTYPE_CREATE: APP_PATH + "prospecttype/create/",
   PROSPECTTYPE_UPDATE: APP_PATH + "prospecttype/update/",
   PROSPECTTYPE_SEARCH: APP_PATH + "prospecttype/search/",
@@ -139,6 +134,18 @@ const path = {
 
   GENDER_SEARCH_ALL: APP_PATH + "gender/",
 
+  ORG_ANNUAL_PAYMENT_CREATE: APP_PATH + "organnualpymt/create/",
+  ORG_ANNUAL_PAYMENT_UPDATE: APP_PATH + "organnualpymt/update/",
+  ORG_ANNUAL_PAYMENT_SEARCH: APP_PATH + "organnualpymt/search/",
+  ORG_ANNUAL_PAYMENT_REMOVE: APP_PATH + "organnualpymt/remove/",
+  ORG_ANNUAL_PAYMENT_YEARS: APP_PATH + "organnualpymt/findorgyears/",
+
+  USR_OUTSTANDING_PAYMENT_CREATE: APP_PATH + "useroutstanding/create/",
+  USR_OUTSTANDING_PAYMENT_UPDATE: APP_PATH + "useroutstanding/update/",
+  USR_OUTSTANDING_PAYMENT_SEARCH: APP_PATH + "useroutstanding/search/",
+  USR_OUTSTANDING_PAYMENT_REMOVE: APP_PATH + "useroutstanding/remove/",
+
+  ORGUSER_SEARCH: APP_PATH + "orguser/search/",
 };
 
 export default path;
