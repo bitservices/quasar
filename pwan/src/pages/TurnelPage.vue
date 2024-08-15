@@ -6,18 +6,16 @@
           filled
           bottom-slots
           v-model="formData.client"
+          @update:model-value="handleClientChange"
           :options="clients"
           label="Select Client"
-          @update:model-value="handleClientChange"
-          :dense="dense"
         />
         <q-select
           filled
           bottom-slots
           v-model="formData.organisation"
           :options="organisations"
-          label="Select Organisation" 
-          :dense="dense"
+          label="Select Organisation"
         />
         <q-btn class="pwan-button" @click="handleTurnelling" rounded>
           Turnel
@@ -32,77 +30,126 @@ import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
+import { useRouter } from "vue-router";
+const router = useRouter();
 export default {
   data() {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail");
+    const clients = ref([]);
+    const organisations = ref([]);
+    const menus = ref([]);
     const formData = ref({
-      client: "",
-      organisation: "",
+      client: null,
+      organisation: null,
     });
-    
     return {
       formData,
-      clients: [],
-      organisations: [],
+      clients,
+      organisations,
+      menus,
       headers,
       userEmail,
     };
   },
   methods: {
-
-     loadUserClients() {
+    loadUserClients() {
       try {
-        console.log(">>>>>calling LoadUserClients>>>>>>>>>", userEmail); 
+        console.log(">>>>>calling LoadUserClients>>>>>>>>>", this.userEmail);
         const requestParam = {
           params: {
-            email: userEmail,
+            email: this.userEmail,
           },
         };
-        const response = axios.get(
-          path.ACTIVE_USER_CLIENT_SEARCH,
-          requestParam,
-          headers
-        );
-        console.log(response.data);
-        if (response.data) {
-          clients = response.data.map((option) => ({
-            label: option.client.name,
-            value: option.client.code,
-          }));
-        }
+        axios
+          .get(path.ACTIVE_USER_CLIENT_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            this.clients = response.data.data.map((option) => ({
+              label: option.client.name,
+              value: option.client.code,
+            }));
+            console.log("this.clients >>>>>>>>>>>>", this.clients);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     },
-
     handleClientChange(selectedItem) {
-      console.log(">>>>selectedItem>>>>>",selectedItem)
       try {
+        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
         const requestParam = {
           params: {
-            email: userEmail,
             client: selectedItem.value,
+            email: this.userEmail,
           },
         };
-        const response = axios.get(
-          path.ACTIVE_ORG_USER_SEARCH,
-          requestParam,
-          headers
-        );
-
-        if (response.data) {
-          console.log(">>>>response.data>>>>>",response.data)
-          organisations = response.data.map((option) => ({
-            label: option.organisation.name,
-            value: option.organisation.code,
-          }));
-        }
+        axios
+          .get(path.ACTIVE_ORG_USER_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            console.log(
+              "organisations Response >>>>>>>>>>>>",
+              response.data.data
+            );
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            this.organisations = response.data.data.map((option) => ({
+              label: option.organisation.name,
+              value: option.organisation.code,
+            }));
+            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     },
-
+    handleTurnelling() {
+      const turnelParams = {
+        email: this.userEmail,
+        client: this.formData.client.value,
+        organisation: this.formData.organisation.value,
+      };
+      SessionStorage.set("turnelParams", turnelParams);
+      try {
+        const requestParam = {
+          params: turnelParams,
+        };
+        axios
+          .get(path.USER_PROFILES, requestParam, this.headers)
+          .then((response) => {
+            this.menus = response.data.data;
+            let updatedMenu = [];
+            Object.keys(this.menus).forEach((key) => {
+              let menuSection = { title: key };
+              let sectionItems = this.menus[key];
+              let menuitems = [];
+              sectionItems.forEach(function (menu, index) {
+                let menuitem = {
+                  title: menu.name,
+                  caption: menu.code,
+                  icon: menu.code,
+                  link: menu.url,
+                };
+                menuitems.push(menuitem);
+              });
+              menuSection["menuitems"] = menuitems;
+              updatedMenu.push(menuSection);
+            });
+            this.$emit("update-menu", updatedMenu);
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -114,10 +161,15 @@ export default {
     console.log("beforeMount");
   },
   mounted() {
-    console.log(">>>>>>>>mounted>>>>>>>>>>");
     this.loadUserClients();
+    console.log(">>>>>>>>mounted>>>>>>>>>>");
   },
-  updated() {},
+  beforeUpdate() {
+    console.log(">>>>>>>>before updated>>>>>>>>>>");
+  },
+  updated() {
+    console.log(">>>>>>>>updated>>>>>>>>>>");
+  },
 };
 </script>
 

@@ -118,6 +118,13 @@ export default {
         sortable: true,
       },
       {
+        name: "paymentType",
+        align: "center",
+        label: "Payment Type",
+        field: (row) => row.paymentType.name,
+        sortable: true,
+      },
+      {
         name: "openingDebit",
         align: "center",
         label: "Opening Debit",
@@ -157,7 +164,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.ORG_ANNUAL_PAYMENT_SEARCH);
+    const urlLink = ref(path.USR_OUTSTANDING_PAYMENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -233,7 +240,7 @@ export default {
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
-            this.showMessageDialog.value = true;
+            this.showMessageDialog = true;
           });
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -280,7 +287,7 @@ export default {
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
-            this.showMessageDialog.value = true;
+            this.showMessageDialog = true;
           });
       } catch (error) {
         console.error("Error:", error);
@@ -310,7 +317,7 @@ export default {
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
-            showMessageDialog.value = true;
+            this.showMessageDialog = true;
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -321,7 +328,7 @@ export default {
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
-            this.showMessageDialog.value = true;
+            this.showMessageDialog = true;
           });
       } catch (error) {
         console.error("Error:", error);
@@ -342,7 +349,7 @@ export default {
     editItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
+        this.searchValue = this.selected[0]["id"];
         this.action = "edit";
         this.actionLabel = "Update";
       }
@@ -363,7 +370,7 @@ export default {
         this.actionBtn = "done";
       }
       console.log(">>>>>>>>>selected.value.target>>>>>", this.selected.target);
-      selected.value = row;
+      this.selected = row;
     },
     getSelectedString(row) {
       // Example function to return label for selected row (if needed)

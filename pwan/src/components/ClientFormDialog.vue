@@ -155,10 +155,7 @@ export default {
   },
   methods: {
     saveRecord() {  
-      this.formData.email = this.profile.email;
-      console.log(">>>>>>>this.isChecked>>>>>>>>", this.isChecked);
-      
-      debug(">>>>>>>thisis inside handle Save,", this.formData); 
+      this.formData.email = this.profile.email; 
       if (this.isChecked) {
         this.formData.isAnAffilate = true;
       } else {
@@ -168,23 +165,38 @@ export default {
       for (let key in this.formData) {
         console.log(key, this.formData[key]);
         requestData.append(key, this.formData[key]);
-      }
-      debug(">>>>>>>thisis inside handle Save,", this.formData);
-      debug(">>>>>>>thisis requestData Save,", requestData);
-      //this.onClick(formData.value);
+      }  
 
       this.$emit("formDataSubmitted", requestData);
       this.showDialog = true;
       console.log(this.showDialog);
     },
-    onFileChange(file) {
-      console.log("file>>>>>>>>",file)
+    loadUClientLogo(code){ 
+       const requestParam = {
+        params: {
+          code: code, 
+        },
+      };  
+      const promise =  axios.get(
+          path.CLIENT_LOGO,
+          requestParam,
+          this.headers
+        );  
+         promise
+          .then((response) => {
+ 
+            this.logoFile = "data:image/jpeg;base64," + response.data.data.logo;
+          })
+          .catch((error) => {
+            console.log(error);
+          }); 
+    },
+    onFileChange(file) { 
       if (file) {
         const reader = new FileReader();
         console.log("reader>>>>>>>",reader)
        reader.onload  = function(e) {
-          const logoByte = e.target.result; 
-          console.log(">>>>>>>logoByte>>>>>>>>",logoByte)
+          const logoByte = e.target.result;  
           this.logoFile = "data:image/jpeg;base64,"+logoByte 
         }; 
       } else {
@@ -227,8 +239,7 @@ export default {
             code: this.searchValue,
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
           .then((response) => {
             // Extract data from the response
@@ -237,7 +248,8 @@ export default {
               this.formData = result.data[0];
               this.formData.status = result.data[0].status.code
               this.isChecked = this.formData.isAnAffilate;
-              this.logoFile = "data:image/jpeg;base64," + result.data[0].logo 
+              this.loadUClientLogo(result.data[0].code)
+              //this.logoFile = "data:image/jpeg;base64," + result.data[0].logo 
             }
           })
           .catch((error) => {

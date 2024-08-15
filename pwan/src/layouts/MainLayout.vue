@@ -131,6 +131,12 @@ let defaultList = [
         link: "/client",
       },
       {
+        title: " Organisation",
+        caption: "Maintain Definition",
+        icon: "chat",
+        link: "/organisation",
+      },
+      {
         title: " Prospecting Customer",
         caption: "Prospecting Customers",
         icon: "record_voice_over",

@@ -65,6 +65,10 @@ const routes = [
         component: () => import("src/pages/ClientPage.vue"),
       },
       {
+        path: "/organisation",
+        component: () => import("src/pages/OrganisationPage.vue"),
+      },
+      {
         path: "/prospect",
         component: () => import("src/pages/ProspectCustomer.vue"),
       },
@@ -78,7 +82,7 @@ const routes = [
       },
       {
         path: "/turnel",
-        component: () => import("src/pages/TurnelPages.vue"),
+        component: () => import("src/pages/TurnelPage.vue"),
       },
       {
         path: "/menuitem",
@@ -137,6 +141,22 @@ const routes = [
         path: "/userpayment",
         component: () => import("src/pages/UserPaymentTransaction.vue"),
       },
+
+      {
+        path: "/attendancerpt",
+        component: () => import("src/pages/UserPaymentTransaction.vue"),
+      },
+
+      {
+        path: "/userpaymentrpt",
+        component: () => import("src/pages/UserPaymentReport.vue"),
+      },
+      
+      {
+        path: "/outstandingpaymentrpt",
+        component: () => import("src/pages/OutstandingPaymentReport.vue"),
+      },
+      
 
       
     ],

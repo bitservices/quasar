@@ -36,6 +36,14 @@
             @update:model-value="onChangeUser"
             :dense="dense"
           />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.paymentType"
+            :options="paymentTypes"
+            label="Select Payment Type"
+            :dense="dense"
+          />
           <q-input
             filled
             bottom-slots
@@ -132,6 +140,7 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
     const profile = SessionStorage.getItem("turnelParams");
+    console.log(">>>>>>>profile>>>>>>>>",profile)
     const headers = SessionStorage.getItem("headers");
 
     const formData = ref({
@@ -157,19 +166,20 @@ export default {
       headers,
       imageFile: null,
       years: [],
+      paymentTypes:[],
     };
   },
   methods: {
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
+      console.log(">>>>>>>thisis inside handle Save,", this.formData.paymentType.value);
       this.formData.paymentType = this.formData.paymentType.value;
       this.formData.client = this.profile.client;
       this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email;
       this.formData.year = this.formData.year.value;
-      this.formData.userId = this.formData.userId.value;
+      this.formData.userId = this.formData.userId.value; 
 
-      //this.onClick(formData.value);
+      //this.onClick(formData.value); 
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -178,13 +188,7 @@ export default {
       console.log(value);
       this.imageFile = "data:image/jpeg;base64," + value.imageSrc;
     },
-    getCurrentYear() {
-      // Create a new Date object
-      const currentDate = new Date();
-      currentYear = currentDate.getFullYear();
-      console.log(">>>>>>>currentYear>>>>>>",currentYear)
-      return currentYear
-    },
+    
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -196,7 +200,7 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
+    console.log("mounted>>>>>>>>>>>>",this.profile);
     const requestParams = {
       params: {
         client: this.profile.client,
@@ -221,7 +225,23 @@ export default {
         }));
         console.log("orgUsers>>>>>>>>>", orgUsers);
       })
-      .catch((error) => {});
+      .catch((error) => {}); 
+     
+    axios
+      .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
+      .then((response) => {
+        console.log("Payment Type Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.paymentTypes = response.data.data.map((option) => ({
+          label: option.name,
+          value: option.id,
+        }));
+        console.log("this.Payment Type >>>>>>>>>>>>", this.paymentTypes);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
+
 
     axios
       .get(path.ORG_ANNUAL_PAYMENT_YEARS, requestParams, this.headers)
@@ -261,7 +281,7 @@ export default {
       try {
         const requestParams = {
           params: {
-            code: this.searchValue,
+            id: this.searchValue,
           },
         };
         const promise = axios.get(this.urlLink, requestParams, headers);
@@ -270,13 +290,21 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            console.log(">>>>>>>>result>xxxxxxxxxx>>>>>>", result.data);
             if (result.success) {
               this.formData = result.data[0];
               this.formData.paymentType = {
-                value: result.data[0].paymentType.code,
+                value: result.data[0].paymentType.id,
                 label: result.data[0].paymentType.name,
               };
+
+               this.formData.userId = {
+                value: result.data[0].userId.id,
+                label: result.data[0].userId.last_name + " "+result.data[0].userId.first_name + result.data[0].userId.middle_name ,
+                imageSrc: result.data[0].userId.imageByte,
+              };
+              this.onChangeUser(result.data[0].userId);
+
             }
           })
           .catch((error) => {

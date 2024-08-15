@@ -16,7 +16,7 @@
             v-model="formData.productType"
             :options="productTypes"
             label="Select Product Type"
-            :readonly="isReadonly"
+            :readonly="isReadonly" 
             :dense="dense"
           />
 

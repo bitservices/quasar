@@ -139,10 +139,7 @@ export default {
       profile,
       headers,
       time: "10:00",
-      dense: true,
-      countries: [],
-      stateList: [],
-      counties: [],
+      dense: true, 
     };
   },
   methods: {

@@ -44,7 +44,7 @@
             :message="childRef.message"
             :buttonClass="childRef.buttonClass"
           />
-          <q-btn
+          <q-btn v-if="issuperuser"
             rounded
             color="red"
             :icon="actionBtn"
@@ -54,25 +54,35 @@
             <q-dialog v-model="medium_dialog">
               <q-card style="width: 700px" class="bg-info text-white">
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class="text-h6">Client Activatation/Deactivation</div>
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                  Are you sure you want to delete selected item(s)
+                  Are you sure you want to Activate/Deacivate Client
                 </q-card-section>
                 <q-card-actions align="center" class="bg-white text-teal">
-                  <q-btn
-                    @click="deleteItem"
+                   <q-btn
+                    @click="activate"
                     flat
-                    label="Yes"
+                    label="Activate"
+                    class="bg-secondary text-white"
+                    v-close-popup
+                    rounded
+                    :disable="disableActivate"
+                  />
+                   <q-btn
+                    @click="deactivate"
+                    flat
+                    label="De-Activate"
                     v-close-popup
                     class="bg-negative text-white"
                     rounded
+                    :disable="disableDeActivate"
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label="Cancle"
+                    class="bg-primary text-white"
                     v-close-popup
                     rounded
                   />
@@ -146,7 +156,11 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref("Submit");
-    const medium_dialog = ref(false);
+    const medium_dialog = ref(false);  
+    const issuperuser = ref(false);  
+    const disableDeActivate = ref(true);
+    const disableActivate = ref(false);
+
     const childRef = ref({
       label: "",
       message: "",
@@ -156,6 +170,29 @@ export default {
       data: {},
     });
 
+    const loadUser = async () => {
+      try {
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            email: userEmail,
+          },
+        };
+        const response = await axios.get(
+          path.USER_SEARCH_BY_EMAIL,
+          requestParam,
+          headers
+        ); 
+        if (response.data) {  
+          console.log("luser loading ",response.data.data)
+          issuperuser.value = response.data.data.is_superuser
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+
+    
     const fetchData = async () => {
       try {
         const userEmail = LocalStorage.getItem("userEmail");
@@ -260,6 +297,13 @@ export default {
     const showDialog = () => {
       if (selected.value.length > 0) {
         medium_dialog.value = true;
+         if(selected.value[0].status.code == "A"){
+          disableActivate.value = true
+          disableDeActivate.value = false
+        }else{
+           disableActivate.value = false
+          disableDeActivate.value = true
+        }
       } else {
         medium_dialog.value = false;
       }
@@ -299,10 +343,10 @@ export default {
       // Example function to return label for selected row (if needed)
       return row ? row.name : "No client selected";
     };
-    const deleteItem = async () => {
+   const activate = async () => {
       try {
-        const data = selected.value;
-        const response = await axios.post(path.CLIENT_REMOVE, data, headers);
+        const data = {"code":selected.value[0].code};
+        const response = await axios.post(path.CLIENT_ACTIVATE, data, headers);
         if (response.data.success) {
           fetchData();
         }
@@ -310,6 +354,18 @@ export default {
         console.error("Error submitting form:", error);
       }
     };
+    const deactivate = async () => {
+      try {
+        const data = {"code":selected.value[0].code}; 
+        const response = await axios.post(path.CLIENT_DEACTIVATE, data, headers);
+        if (response.data.success) { 
+          fetchData();
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+
 
     return {
       fetchData,
@@ -319,9 +375,11 @@ export default {
       handleRowClick,
       addItem,
       editItem,
-      viewItem,
-      deleteItem,
-      showDialog,
+      viewItem, 
+      showDialog, 
+      activate,
+      deactivate,
+      loadUser,
       urlLink,
       actionLabel,
       searchValue,
@@ -336,6 +394,9 @@ export default {
       action,
       showFormDialog,
       actionBtn,
+      issuperuser, 
+      disableActivate,
+      disableDeActivate,
     };
   },
   beforeCreate() {
@@ -344,13 +405,12 @@ export default {
   created() {
     console.log("created");
   },
-  beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+  beforeMount() { 
   },
   mounted() {
     console.log("mounted");
     this.fetchData();
+    this.loadUser();
   },
   updated() {},
 };

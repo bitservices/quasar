@@ -5,16 +5,17 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Payment Mode"
+        title="Organisation"
         :rows="rows"
         :columns="columns"
         row-key="name"
         :selected-rows-label="getSelectedString"
-        selection="multiple"
+        selection="single"
+        @row-click="handleRowClick"
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Payment Mode</q-label>
+          <q-label>Organisation</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -25,11 +26,11 @@
             size="sm"
             @click="viewItem"
           />
-          <StandingDataFormDialog
+          <OrganisationFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Status"
+            label="Organisation"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -43,35 +44,46 @@
             :message="childRef.message"
             :buttonClass="childRef.buttonClass"
           />
-          <q-btn
+          <q-btn v-if="issuperuser"
             rounded
             color="red"
-            icon="delete"
+            :icon="actionBtn"
             size="sm"
             @click="showDialog"
           >
             <q-dialog v-model="medium_dialog">
               <q-card style="width: 700px" class="bg-info text-white">
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class="text-h6">Activate/DeActivate</div>
                 </q-card-section>
 
                 <q-card-section class="q-pt-none">
-                  Are you sure you want to delete selected item(s)
+                  Are you sure you Want to Active/Deactivate the Organisation?
                 </q-card-section>
                 <q-card-actions align="center" class="bg-white text-teal">
+                 
                   <q-btn
-                    @click="deleteItem"
+                    @click="activate"
                     flat
-                    label="Yes"
+                    label="Activate"
+                    class="bg-secondary text-white"
+                    v-close-popup
+                    rounded
+                    :disable="disableActivate"
+                  />
+                   <q-btn
+                    @click="deactivate"
+                    flat
+                    label="De-Activate"
                     v-close-popup
                     class="bg-negative text-white"
                     rounded
+                    :disable="disableDeActivate"
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label="Cancle"
+                    class="bg-primary text-white"
                     v-close-popup
                     rounded
                   />
@@ -86,20 +98,20 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import OrganisationFormDialog from "src/components/OrganisationFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
-
 export default {
   components: {
-    StandingDataFormDialog,
+    OrganisationFormDialog,
     ResponseDialog,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
+    const userEmail = "";
     const columns = [
       {
         name: "code",
@@ -112,9 +124,23 @@ export default {
       },
       {
         name: "name",
-        align: "center",
+        align: "left",
         label: "Name",
         field: (row) => row.name,
+        sortable: true,
+      },
+      {
+        name: "client",
+        align: "left",
+        label: "Client Name",
+        field: (row) => row.client.name,
+        sortable: true,
+      },
+      {
+        name: "expirationDate",
+        align: "left",
+        label: "Renewal Date",
+        field: (row) => row.expirationDate,
         sortable: true,
       },
     ];
@@ -122,16 +148,20 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.PAYMENTMODE_SEARCH
-    );
+    const urlLink = ref(path.ORGANISATION_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
     const searchValue = ref("");
+    const actionBtn = ref("done");
+    const issuperuser = ref(false); 
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
+    const disableDeActivate = ref(true);
+    const disableActivate = ref(false);
+    
     const childRef = ref({
       label: "",
       message: "",
@@ -141,11 +171,40 @@ export default {
       data: {},
     });
 
-    const fetchData = async () => {
-      try { 
-        const response = await axios.get(path.PAYMENTMODE_SEARCH,
+    const loadUser = async () => {
+      try {
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            email: userEmail,
+          },
+        };
+        const response = await axios.get(
+          path.USER_SEARCH_BY_EMAIL,
+          requestParam,
           headers
-        );
+        ); 
+        if (response.data) {  
+          console.log("luser loading ",response.data.data)
+          issuperuser.value = response.data.data.is_superuser
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+    const fetchData = async () => {
+      try {
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            createdBy: userEmail,
+          },
+        };
+        const response = await axios.get(
+          path.ORGANISATION_FIND_BY_CREATOR,
+          requestParam,
+          headers
+        ); 
         if (response.data) {
           rows.value = response.data;
           selected.value = []; 
@@ -163,11 +222,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/save/",
-          record,
-          headers
-        );
+        const promise = axios.post(path.CLIENT_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -203,16 +258,12 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/paymentmode/update/",
-          record,
-          headers
-        );
+        const promise = axios.put(path.ORGANISATION_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(result);
+            console.log("result after savings >>>>>", result);
             if (result.success) {
               fetchData();
             }
@@ -242,8 +293,15 @@ export default {
       }
     };
     const showDialog = () => {
-      if (selected.value.length > 0) {
+      if (selected.value.length > 0) { 
         medium_dialog.value = true;
+        if(selected.value[0].status.code == "A"){
+          disableActivate.value = true
+          disableDeActivate.value = false
+        }else{
+           disableActivate.value = false
+          disableDeActivate.value = true
+        }
       } else {
         medium_dialog.value = false;
       }
@@ -256,7 +314,7 @@ export default {
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
+        searchValue.value = selected.value[0]["id"];
         action.value = "edit";
         actionLabel.value = "Update";
       }
@@ -264,19 +322,29 @@ export default {
     const viewItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
+        searchValue.value = selected.value[0]["id"];
         action.value = "view";
         actionLabel.value = "Done";
       }
     };
-    const deleteItem = async () => {
+    const handleRowClick = (event, row) => {
+      console.log("Row clicked:", row, "  >>>selected>>>>>", selected.value);
+      if (row.status.code == "A") {
+        actionBtn.value = "clear";
+      } else {
+        actionBtn.value = "done";
+      }
+      console.log(">>>>>>>>>selected.value.target>>>>>", selected.value.target);
+      selected.value = row;
+    };
+    const getSelectedString = (row) => {
+      // Example function to return label for selected row (if needed)
+      return row ? row.name : "No client selected";
+    };
+    const activate = async () => {
       try {
-        const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/remove/",
-          data,
-          headers
-        );
+        const data = {"id":selected.value[0].id};
+        const response = await axios.post(path.ORGANISATION_ACTIVATE, data, headers);
         if (response.data.success) {
           fetchData();
         }
@@ -284,16 +352,33 @@ export default {
         console.error("Error submitting form:", error);
       }
     };
+    const deactivate = async () => {
+      try {
+        const data = {"id":selected.value[0].id};
+        console.log(">>>>>>>>>>>>>>>>>>>>inside deactivare data>>>>>>>>>>>>>>>>>",data)
+        const response = await axios.post(path.ORGANISATION_DEACTIVATE, data, headers);
+        if (response.data.success) {
+          console.log(">>>>>>>>>>>>>>>>>>>>>>deactivte Organisation>>>>>>>>>>>>>>>>>")
+          fetchData();
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+
 
     return {
       fetchData,
+      activate,
+      deactivate,
+      loadUser,
       saveRecord,
       createRecord,
       updateRecord,
+      handleRowClick,
       addItem,
       editItem,
-      viewItem,
-      deleteItem,
+      viewItem, 
       showDialog,
       urlLink,
       actionLabel,
@@ -303,10 +388,15 @@ export default {
       selected,
       columns,
       rows,
+      userEmail,
       headers,
       medium_dialog,
       action,
       showFormDialog,
+      actionBtn,
+      disableActivate,
+      disableDeActivate,
+      issuperuser,
     };
   },
   beforeCreate() {
@@ -317,10 +407,12 @@ export default {
   },
   beforeMount() {
     console.log("beforeMount");
+    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
     console.log("mounted");
     this.fetchData();
+    this.loadUser();
   },
   updated() {},
 };
