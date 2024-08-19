@@ -168,7 +168,10 @@ const path = {
 
   USR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "userpayment/search/",
 
+  USR_LEDGER_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "userledger/search/",
+
   USR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/usertransactionreport/",
+  USR_LEDGER_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/userledgerreport/",
   USR_OUTSTANDING_PAYMENT_REPORT: APP_PATH + "report/outstandingpayment/",
 
   VENDOR_CREATE: APP_PATH + "vendor/create/",
@@ -177,6 +180,8 @@ const path = {
   VENDOR_SEARCH: APP_PATH + "vendor/search/",
 
   VENDOR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "vendorpayment/create/",
+  VENDOR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "vendorpayment/search/",
+  VENDOR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/vendortransactionreport/",
 };
 
 export default path;

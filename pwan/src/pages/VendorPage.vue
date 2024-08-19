@@ -10,7 +10,7 @@
         :columns="columns"
         row-key="name"
         :selected-rows-label="getSelectedString"
-        selection="Single"
+        selection="single"
         v-model:selected="selected"
       >
         <template v-slot:top>
@@ -224,7 +224,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(path.VENDOR_UPATE, record, headers);
+        const promise = axios.put(path.VENDOR_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response

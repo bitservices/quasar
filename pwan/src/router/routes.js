@@ -157,6 +157,15 @@ const routes = [
         component: () => import("src/pages/OutstandingPaymentReport.vue"),
       },
       {
+        path: "/vendorpaymentrpt",
+        component: () => import("src/pages/VendorPaymentReport.vue"),
+      },
+      {
+        path: "/usercumulativepaymentrpt",
+        component: () => import("src/pages/UserCumulativePaymentReport.vue"),
+      },
+      
+      {
         path: "/vendor",
         component: () => import("src/pages/VendorPage.vue"),
       },
