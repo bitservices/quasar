@@ -11,16 +11,13 @@ const path = {
   CLIENT_DEACTIVATE: APP_PATH + "client/deactivate/",
   CLIENT_LOGO: APP_PATH + "client/getclientlogo/",
 
-
-  
   ORGANISATION_CREATE: APP_PATH + "organisation/create/",
-  ORGANISATION_UPDATE: APP_PATH + "organisation/update/", 
+  ORGANISATION_UPDATE: APP_PATH + "organisation/update/",
   ORGANISATION_SEARCH: APP_PATH + "organisation/search/",
   ORGANISATION_REMOVE: APP_PATH + "organisation/remove/",
   ORGANISATION_ACTIVATE: APP_PATH + "organisation/activate/",
-  ORGANISATION_DEACTIVATE: APP_PATH + "organisation/deactivate/", 
+  ORGANISATION_DEACTIVATE: APP_PATH + "organisation/deactivate/",
   ORGANISATION_FIND_BY_CREATOR: APP_PATH + "organisation/findbycreator/",
-
 
   PROSPECT_CUSTOMER_ALL: APP_PATH + "prospect/",
   PROSPECT_CUSTOMER_FIND_BY_USER: APP_PATH + "prospect/listbyuser/",
@@ -110,12 +107,10 @@ const path = {
   PAYMENTSTATUS_REMOVE: APP_PATH + "paymentstatus/remove/",
   PAYMENTSTATUS_SEARCH_ALL: APP_PATH + "paymentstatus/",
 
-
   PAYMENTMODE_CREATE: APP_PATH + "paymentmode/create/",
   PAYMENTMODE_UPDATE: APP_PATH + "paymentmode/update/",
   PAYMENTMODE_SEARCH: APP_PATH + "paymentmode/search/",
   PAYMENTMODE_REMOVE: APP_PATH + "paymentmode/remove/",
-
 
   SALESSTATUS_CREATE: APP_PATH + "salesstatus/create/",
   SALESSTATUS_UPDATE: APP_PATH + "salesstatus/update/",
@@ -131,7 +126,6 @@ const path = {
   USER_SEARCH_AUTOCOMPLETER: APP_PATH + "user/autocomplete/",
   USER_IMAGE: APP_PATH + "user/getuserimage/",
   USER_SEARCH_BY_EMAIL: APP_PATH + "user/findbyemail/",
-
 
   CONTACTINFO_CREATE: APP_PATH + "contactinfo/create/",
   CONTACTINFO_UPDATE: APP_PATH + "contactinfo/update/",
@@ -168,19 +162,21 @@ const path = {
   USR_OUTSTANDING_PAYMENT_SEARCH: APP_PATH + "useroutstanding/search/",
   USR_OUTSTANDING_PAYMENT_REMOVE: APP_PATH + "useroutstanding/remove/",
 
-
-
   ORGUSER_SEARCH: APP_PATH + "orguser/search/",
 
-
-  USR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "userpayment/create/", 
+  USR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "userpayment/create/",
 
   USR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "userpayment/search/",
 
+  USR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/usertransactionreport/",
+  USR_OUTSTANDING_PAYMENT_REPORT: APP_PATH + "report/outstandingpayment/",
 
- USR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/usertransactionreport/",
- USR_OUTSTANDING_PAYMENT_REPORT: APP_PATH + "report/outstandingpayment/",
+  VENDOR_CREATE: APP_PATH + "vendor/create/",
+  VENDOR_UPDATE: APP_PATH + "vendor/update/",
+  VENDOR_REMOVE: APP_PATH + "vendor/remove/",
+  VENDOR_SEARCH: APP_PATH + "vendor/search/",
 
+  VENDOR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "vendorpayment/create/",
 };
 
 export default path;

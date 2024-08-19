@@ -151,14 +151,19 @@ const routes = [
         path: "/userpaymentrpt",
         component: () => import("src/pages/UserPaymentReport.vue"),
       },
-      
+
       {
         path: "/outstandingpaymentrpt",
         component: () => import("src/pages/OutstandingPaymentReport.vue"),
       },
-      
-
-      
+      {
+        path: "/vendor",
+        component: () => import("src/pages/VendorPage.vue"),
+      },
+      {
+        path: "/vendorpayment",
+        component: () => import("src/pages/VendorPaymentTransaction.vue"),
+      },
     ],
     meta: {
       requiresAuth: true, // Example of a protected route
