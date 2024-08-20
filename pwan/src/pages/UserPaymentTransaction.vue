@@ -113,7 +113,7 @@ export default {
     ResponseDialog,
   },
   data() { 
-   const profile = SessionStorage.getItem("turnelParams");
+   const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const showMessageDialog = ref(false);
     const formData = ref({
@@ -373,11 +373,6 @@ export default {
       } catch (error) {
         console.error("Error:", error);
       }
-
-       
-
- 
-
         
   },
   unmounted() { 

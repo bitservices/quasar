@@ -227,14 +227,33 @@ export default {
          promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;  
+            const result = response.data;   
             if (result.success) { 
               this.formData = result.data; 
               this.formData.gender = {
                 value : result.data.gender == null? "" : result.data.gender.code,
                 label : result.data.gender == null? "" : result.data.gender.name,
               }
-              this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte 
+             // this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte  
+              const requestParam = {
+                  params: {
+                    userId: result.data.id, 
+                  },
+                };  
+                const promise =  axios.get(
+                    path.USER_IMAGE,
+                    requestParam,
+                    this.headers
+                  );  
+                  promise
+                    .then((response) => {
+          
+                      this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+                    })
+                    .catch((error) => {
+                      console.log(error);
+                    }); 
+
             }
           })
           .catch((error) => {
@@ -251,8 +270,7 @@ export default {
         this.genderList = response.data.map((option) => ({
           label: option.name,
           value: option.code,
-        }));
-        console.log("this.genderList >>>>>>>>>>>>", this.genderList);
+        })); 
       })
       .catch((error) => {
         console.error("Error fetching options:", error);

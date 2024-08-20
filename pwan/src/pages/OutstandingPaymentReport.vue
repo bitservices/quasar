@@ -80,7 +80,7 @@ export default {
    
   data() {
     const headers = SessionStorage.getItem("headers"); 
-    const profile = SessionStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem("turnelParams");
     const userEmail = ""; 
      
     const columns = [

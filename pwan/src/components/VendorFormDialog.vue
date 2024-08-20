@@ -134,7 +134,7 @@ export default {
   },
   methods: {
     saveRecord() {
-      let profile = SessionStorage.getItem("turnelParams");
+      let profile = LocalStorage.getItem("turnelParams");
       this.formData.createdBy = LocalStorage.getItem("userEmail");
       this.formData.client = profile.client;
       this.formData.organisation = profile.organisation;

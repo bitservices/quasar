@@ -115,7 +115,7 @@ export default {
         client: this.formData.client.value,
         organisation: this.formData.organisation.value,
       };
-      SessionStorage.set("turnelParams", turnelParams);
+      LocalStorage.set("turnelParams", turnelParams);
       try {
         const requestParam = {
           params: turnelParams,

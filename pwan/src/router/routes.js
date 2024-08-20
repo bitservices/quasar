@@ -151,6 +151,10 @@ const routes = [
         path: "/userpaymentrpt",
         component: () => import("src/pages/UserPaymentReport.vue"),
       },
+      {
+        path: "/incomerpt",
+        component: () => import("src/pages/IncomeReport.vue"),
+      },
 
       {
         path: "/outstandingpaymentrpt",
@@ -159,6 +163,10 @@ const routes = [
       {
         path: "/vendorpaymentrpt",
         component: () => import("src/pages/VendorPaymentReport.vue"),
+      },
+      {
+        path: "/expenserpt",
+        component: () => import("src/pages/ExpenseReport.vue"),
       },
       {
         path: "/usercumulativepaymentrpt",

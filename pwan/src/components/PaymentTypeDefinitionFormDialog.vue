@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
@@ -168,7 +168,7 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    const turnelParams = SessionStorage.getItem("turnelParams");
+    const turnelParams = LocalStorage.getItem("turnelParams");
     const requestParams = {
       params: {
         client: turnelParams.client,

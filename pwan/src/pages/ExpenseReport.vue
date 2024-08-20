@@ -8,27 +8,26 @@
           <q-select
             filled
             bottom-slots
-            v-model="formData.userId"
-            :options="orgUsers"
-            label="Select Member" 
+            v-model="formData.vendorCode"
+            :options="vendors"
+            label="Select Vendor" 
             :dense="dense"
-          />
+          />  
+           <q-input
+              filled
+              bottom-slots
+              v-model="formData.amount"
+              placeholder="Payable Amount"
+              type="number"
+              :dense="dense"
+            />
           <q-select
             filled
             bottom-slots
-            v-model="formData.paymentType"
-            :options="paymentTypes"
-            label="Select Payment Type"
+            v-model="formData.paymentMode"
+            :options="paymentModes"
+            label="Select Payment Mode"
             :dense="dense"
-          />
-           
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.amount"
-            label="Enter Amount"
-            type="number"
-            step="0.01"
           />
         </q-form>
       </q-card-section>
@@ -39,7 +38,7 @@
             size="md"
             color="primary"
             label="Search"
-            @click="searchPaymentData"
+            @click="searchExpenseReportData"
             v-close-popup
           />
           <q-btn
@@ -58,14 +57,14 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="User Summary Payment REport"
+        title="Vendor Payments"
         :rows="rows"
         :columns="columns"
         row-key="id"
         v-model:selected="selected"
       > 
         <template v-slot:top>
-          <q-label>User Summary Payment REport</q-label>
+          <q-label>Expense Report</q-label>
           <q-space /> 
         </template> 
       </q-table>
@@ -86,28 +85,44 @@ export default {
     const userEmail = ""; 
     const columns = [
       {
-        name: "userName",
+        name: "vendor",
         required: false,
-        label: "Payer",
+        label: "Vendor",
         align: "left",
         field: (row) =>
-          row.payer.last_name +
-          " " +
-          row.payer.first_name +
-          " " +
-          row.payer.middle_name,
+          row.vendorCode.name,
         format: (val) => `${val}`,
         sortable: true,
       },
-       
+      {
+        name: "description",
+        align: "left",
+        label: "Description",
+        field: (row) => row.description, 
+        sortable: true,
+      },
       {
         name: "amount",
         align: "left",
         label: "Amount",
-        field: (row) => row.sumAmount,
+        field: (row) => row.amount, 
         sortable: true,
       },
-      
+      {
+        name: "paymentMode",
+        align: "left",
+        label: "Payment Mode",
+        field: (row) => row.paymentMode.name,
+        sortable: true,
+      },
+      {
+        name: "payemntDate",
+        align: "left",
+        label: "Payment Date",
+        field: (row) => row.paymentDate,
+        sortable: true,
+      }, 
+       
     ]; 
     const rows = ref([]);
     const selected = ref([]);
@@ -120,30 +135,41 @@ export default {
       userEmail,
       headers, 
       formData,
-      profile,
+      profile,      
+      vendors: [],
+      paymentModes: [],
       dense:true, 
+      totalAmount:0
     };
   },
   methods: {
      
-    searchPaymentData() {
+    searchExpenseReportData() {
+      this.totalAmount = 0
          const requestParams = {
           params: { 
             client: this.profile.client,
             organisation: this.profile.organisation,
           },
         };
-      try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ""){
+          requestParams["params"]["vendorCode"] = this.formData.vendorCode.value
+        }
+        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
+          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        } 
+        if(this.formData.amount != null &&   this.formData.amount != "" && parseFloat(this.formData.amount) > 0 ){
+          requestParams["params"]["amount"] = this.formData.amount
+        } 
+      try { 
         const promise = axios.get(
-          path.USR_LEDGER_PAYMENT_TRANSACTION_SEARCH,
+          path.VENDOR_PAYMENT_TRANSACTION_SEARCH,
           requestParams,
           this.headers
         ); 
         promise
           .then((response) => {
-            // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            // Extract data from the response 
             this.rows = response.data.data;  
             this.selected = [];
           })
@@ -162,9 +188,18 @@ export default {
             organisation: this.profile.organisation,
           },
         };
+         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ""){
+          requestParams["params"]["vendorCode"] = this.formData.vendorCode.value
+        }
+        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
+          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        } 
+        if(this.formData.amount != null &&   this.formData.amount != "" && parseFloat(this.formData.amount) > 0 ){
+          requestParams["params"]["amount"] = this.formData.amount
+        } 
       try { 
         const promise = axios.get(
-          path.USR_LEDGER_PAYMENT_TRANSACTION_REPORT,
+          path.VENDOR_PAYMENT_TRANSACTION_REPORT,
           requestParams,
           this.headers
         ); 
@@ -179,7 +214,7 @@ export default {
           // Create a link element to trigger the download
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = 'user_summary_payment.pdf'; // Set the filename for download
+          a.download = 'vendor_payment_report.pdf'; // Set the filename for download
           a.textContent = 'Download File';
           document.body.appendChild(a);
           a.click();
@@ -205,8 +240,51 @@ export default {
     console.log("beforeMount");
     console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
-  mounted() {
-    console.log("mounted"); 
+ mounted() {
+    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    try {
+      const requestParams = {
+        params: {
+          client: this.profile.client,
+          organisation: this.profile.organisation,
+        },
+      };
+      const promise = axios.get(
+        path.VENDOR_SEARCH,
+        requestParams,
+        this.headers
+      );
+      console.log(">>>>>>>>promise>>>>>>>", promise);
+      promise
+        .then((response) => {
+          this.vendors = response.data.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      const paymentModePromise = axios.get(
+        path.PAYMENTMODE_SEARCH,
+        this.headers
+      );
+      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
+      paymentModePromise
+        .then((response) => {
+          this.paymentModes = response.data.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          }));
+          console.log("paymentModes>>>>>>>>>", this.paymentModes);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   },
   updated() {},
 };
