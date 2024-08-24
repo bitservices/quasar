@@ -58,6 +58,8 @@ const path = {
   ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
 
   ACTIVE_ORG_USER_SEARCH: APP_PATH + "orguser/findactiveorganisationuser/",
+  ORG_USER_SEARCH: APP_PATH + "orguser/search/",
+  ORG_USER_REPORT: APP_PATH + "report/orguserreport/",
 
   USER_PROFILES: APP_PATH + "user/profiles/",
 
@@ -162,9 +164,14 @@ const path = {
   USR_OUTSTANDING_PAYMENT_SEARCH: APP_PATH + "useroutstanding/search/",
   USR_OUTSTANDING_PAYMENT_REMOVE: APP_PATH + "useroutstanding/remove/",
 
-  ORGUSER_SEARCH: APP_PATH + "orguser/search/",
+  ORGUSER_SEARCH: APP_PATH + "orguser/search/", 
+  ORGUSER_SAVE: APP_PATH + "orguser/save/",
+  ORGUSER_DEACTIVATE: APP_PATH + "orguser/deactivate/",
+  ORGUSER_ACTIVATE: APP_PATH + "orguser/activate/",
+  
 
   USR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "userpayment/create/",
+
 
   USR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "userpayment/search/",
 
@@ -182,6 +189,24 @@ const path = {
   VENDOR_PAYMENT_TRANSACTION_CREATE: APP_PATH + "vendorpayment/create/",
   VENDOR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "vendorpayment/search/",
   VENDOR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/vendortransactionreport/",
+
+
+
+
+  VENDOR_LEDGER_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "vendorledger/search/", 
+  VENDOR_LEDGER_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/vendorledgerreport/",
+
+  SELF_VENDOR_PAYMENT_TRANSACTION_SEARCH: APP_PATH + "vendorpayment/selfServiceIncome/", 
+  SELF_VENDOR_PAYMENT_TRANSACTION_REPORT: APP_PATH + "report/selfServiceIncomeReport/", 
+
+  PROSPECT_TYPE_CREATE: APP_PATH + "prospecttype/create/",
+  PROSPECT_TYPE_UPDATE: APP_PATH + "prospecttype/update/",
+  PROSPECT_TYPE_SEARCH: APP_PATH + "prospecttype/search/",
+  PROSPECT_TYPE_REMOVE: APP_PATH + "prospecttype/remove/",
+  PROSPECT_TYPE_SEARCH_ALL: APP_PATH + "prospecttype/", 
+
+
+
 };
 
 export default path;

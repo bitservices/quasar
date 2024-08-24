@@ -171,7 +171,7 @@ export default {
                 value : result.data.gender == null? "" : result.data.gender.code,
                 label : result.data.gender == null? "" : result.data.gender.name,
               }
-              this.imageFile = "data:image/jpeg;base64,"+result.data.imageByte
+              //this.imageFile = "data:image/jpeg;base64,"+result.data.imageByte
 
             }
  
@@ -199,6 +199,26 @@ export default {
         this.imageFile = null;
       }
     },
+    loadUserImage(userId){
+       const requestParam = {
+                  params: {
+              userId: userId, 
+            },
+          };  
+          const promise =  axios.get(
+              path.USER_IMAGE,
+              requestParam,
+              this.headers
+            );  
+            promise
+              .then((response) => {
+
+                this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+              })
+              .catch((error) => {
+                console.log(error);
+              }); 
+    }
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -234,25 +254,8 @@ export default {
                 value : result.data.gender == null? "" : result.data.gender.code,
                 label : result.data.gender == null? "" : result.data.gender.name,
               }
-             // this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte  
-              const requestParam = {
-                  params: {
-                    userId: result.data.id, 
-                  },
-                };  
-                const promise =  axios.get(
-                    path.USER_IMAGE,
-                    requestParam,
-                    this.headers
-                  );  
-                  promise
-                    .then((response) => {
-          
-                      this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
-                    })
-                    .catch((error) => {
-                      console.log(error);
-                    }); 
+             // this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte   
+             this.loadUserImage(result.data.id)
 
             }
           })

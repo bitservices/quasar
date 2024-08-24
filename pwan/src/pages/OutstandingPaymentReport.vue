@@ -3,6 +3,14 @@
     <q-card
       class="card-flex-display" 
     > 
+       <q-card-section>
+        <div class="row">
+          <div class="col-8 text-h6">Uuser Pofile</div>
+          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
+                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
+          </div>
+        </div>
+      </q-card-section>
       <q-card-section>
         <q-form>
           <q-select
@@ -11,22 +19,8 @@
             v-model="formData.userId"
             :options="orgUsers"
             label="Select Member" 
-            :dense="dense"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.paymentType"
-            :options="paymentTypes"
-            label="Select Payment Type"
-            :dense="dense"
-          /> 
-          <q-select
-            filled
-            v-model="formData.year"
-            :options="years"
-            label="Select Year"
-            :dense="dense"
+            :dense="dense" 
+            @update:model-value="loadUserImage"
           />
           <div class="row">
           </div>
@@ -149,6 +143,8 @@ export default {
       formData,
       profile,
       dense:true, 
+      imageFile:null,
+      orgUsers:[],
     };
   },
   methods: {
@@ -160,6 +156,9 @@ export default {
             organisation: this.profile.organisation,
           },
         };
+         if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
+          requestParams["params"]["userId"] = this.formData.userId.value
+        }
       try {
         console.log(">>>>>requestParams>>>>>>>>",requestParams)
         const promise = axios.get(
@@ -189,6 +188,9 @@ export default {
             organisation: this.profile.organisation,
           },
         };
+          if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
+          requestParams["params"]["userId"] = this.formData.userId.value
+        }
       try { 
         const promise = axios.get(
           path.USR_OUTSTANDING_PAYMENT_REPORT,
@@ -206,7 +208,7 @@ export default {
           // Create a link element to trigger the download
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = 'example.pdf'; // Set the filename for download
+          a.download = 'user_outstanding_report.pdf'; // Set the filename for download
           a.textContent = 'Download File';
           document.body.appendChild(a);
           a.click();
@@ -218,7 +220,29 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    }
+    },
+     loadUserImage(userObj){
+      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
+       const requestParam = {
+        params: {
+          userId: userObj.value, 
+        },
+      };  
+      const promise =  axios.get(
+          path.USER_IMAGE,
+          requestParam,
+          this.headers
+        );  
+         promise
+          .then((response) => {
+ 
+            this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+          })
+          .catch((error) => {
+            console.log(error);
+          }); 
+    },
+     
      
     
   },
@@ -233,7 +257,42 @@ export default {
     console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
-    console.log("mounted"); 
+    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    try {
+       const requestParams = {
+      params: {
+        client: this.profile.client,
+        organisation: this.profile.organisation,
+      },
+    };
+         const promise =  axios.get(
+          path.ORGUSER_SEARCH,
+          requestParams,
+          this.headers
+        ); 
+         promise
+          .then((response) => {
+          this.orgUsers = response.data.data.map((option) => (
+          {
+          label:
+            option.userId.last_name +
+            " " +
+            option.userId.first_name +
+            " " +
+            option.userId.middle_name,
+          value: option.userId.id,
+        })); 
+          
+         console.log(">>>>>>>>this.orgUsers>>>>>>>",this.orgUsers)
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+       
+      } catch (error) {
+        console.error("Error:", error);
+      }
+        
   },
   updated() {},
 };

@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { SessionStorage, Loading, LocalStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import SalesTransactionFormDialog from "src/components/SalesTransactionFormDialog.vue";
@@ -143,6 +143,7 @@ export default {
       code: "",
       name: "",
     });
+    
     const urlLink = ref(path.SALESTRANS_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -161,21 +162,23 @@ export default {
       data: {},
     });
 
-    const turnelParams = SessionStorage.getItem("turnelParams");
-    const requestParams = {
-      params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
-        email: turnelParams.email,
-      },
-    };
-
+    
     const fetchData = async () => {
       try {
+        
+    const profile = LocalStorage.getItem("turnelParams");
+    const requestParams = {
+      params: {
+        client: profile.client,
+        organisation: profile.organisation,
+        email: profile.email,
+      },
+    }; 
+    console.log("requestParams>>>>>>>>>>>>",requestParams)
         const response = await axios.get(
           path.SALESTRANS_SEARCH,
-          requestParams,
-          headers
+          this.requestParams,
+          this.headers
         );
         if (response.data) {
           console.log("response>>>>>>", response.data.data);
@@ -326,7 +329,7 @@ export default {
       editItem,
       viewItem,
       deleteItem,
-      showDialog,
+      showDialog,  
       urlLink,
       actionLabel,
       searchValue,

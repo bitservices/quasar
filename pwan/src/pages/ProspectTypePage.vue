@@ -1,50 +1,6 @@
 <template>
-  <q-page padding> 
-     
+  <q-page padding>
     <div class="q-pa-md">
-        <q-card class="card-flex-display"  >
-      <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :dense="dense"
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
-          />
-        </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
-    </q-card> 
       <q-table
         class="my-sticky-header-table"
         flat
@@ -54,7 +10,7 @@
         :columns="columns"
         row-key="name"
         :selected-rows-label="getSelectedString"
-        selection="multiple"
+        selection="single"
         v-model:selected="selected"
       >
         <template v-slot:top>
@@ -68,7 +24,17 @@
             icon="visibility"
             size="sm"
             @click="viewItem"
-          /> 
+          />
+          <StandingDataFormDialog
+            v-model="showFormDialog"
+            :onClick="saveRecord"
+            @formDataSubmitted="saveRecord"
+            label="Prospect Type"
+            :searchValue="searchValue"
+            :action="action"
+            :actionLabel="actionLabel"
+            :urlLink="urlLink"
+          />
           <ResponseDialog
             v-model="showMessageDialog"
             :cardClass="childRef.cardClass"
@@ -122,12 +88,14 @@
 <script>
 import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
-import { ref } from "vue"; 
-import ResponseDialog from "src/components/ResponseDialog.vue";
+import { ref } from "vue";
+import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
+import ResponseDialog from "src/components/ResponseDialog.vue"; 
 import path from "src/router/urlpath";
 
 export default {
-  components: { 
+  components: {
+    StandingDataFormDialog,
     ResponseDialog,
   },
   setup() {
@@ -154,7 +122,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.ACTIVE_ORG_USER_SEARCH
+    const urlLink = ref(path.PROSPECT_TYPE_SEARCH
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -173,21 +141,10 @@ export default {
       data: {},
     });
 
-    const formData = ref({
-      code: "",
-      name: "",
-    });
-    const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
-    });
-
     const fetchData = async () => {
       try {
         Loading.show();
-        const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/status/",
+        const response = await axios.get(path.PROSPECT_TYPE_SEARCH_ALL,
           headers
         );
         if (response.data) {
@@ -208,8 +165,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/status/save/",
+        const promise = axios.post(path.PROSPECT_TYPE_CREATE,
           record,
           headers
         );
@@ -249,8 +205,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
  
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/status/update/", 
+        const promise = axios.put(path.PROSPECT_TYPE_UPDATE, 
           record,
           headers
         );
@@ -318,8 +273,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/status/remove/",
+        const response = await axios.post(path.PROSPECT_TYPE_REMOVE,
           data,
           headers
         );
@@ -353,8 +307,6 @@ export default {
       medium_dialog,
       action,
       showFormDialog,
-      form,
-      formData,
     };
   },
   beforeCreate() {

@@ -10,7 +10,7 @@
         :columns="columns"
         row-key="name"
         :selected-rows-label="getSelectedString"
-        selection="multiple"
+        selection="single"
         v-model:selected="selected"
       >
         <template v-slot:top>
@@ -87,7 +87,7 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import ProspectCustomerFormDialog from "src/components/ProspectCustomerFormDialog.vue";
@@ -113,16 +113,23 @@ export default {
       },
       {
         name: "phoneNumber",
-        align: "center",
+        align: "left",
         label: "Phone Number",
         field: (row) => row.phoneNumber,
         sortable: true,
       },
       {
         name: "prospectEmail",
-        align: "center",
+        align: "left",
         label: "Email",
         field: (row) => row.prospectEmail,
+        sortable: true,
+      },
+      {
+        name: "prospectType",
+        align: "left",
+        label: "Prospect Type",
+        field: (row) => row.prospectType.name,
         sortable: true,
       },
     ];
@@ -149,23 +156,23 @@ export default {
     });
 
     const fetchData = async () => {
-      try {
-        Loading.show();
+      try { 
         const userEmail = LocalStorage.getItem("userEmail");
         const requestParam = {
           params: {
             email: userEmail,
           },
         };
+        console.log("requestParam>>> inside prospect customer>>>>>>>>>>",requestParam)
         const response = await axios.get(
-          path.PROSPECT_CUSTOMER_FIND_BY_USER,
+          path.PROSPECT_CUSTOMER_SEARCH,
           requestParam,
           headers
         );
         if (response.data) {
-          rows.value = response.data;
-          selected.value = [];
-          Loading.hide();
+           
+          rows.value = response.data.data;
+          selected.value = []; 
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -221,7 +228,7 @@ export default {
       try {
         console.log("calling Update Record from Child Component", record);
         const promise = axios.put(
-          path.PROSPECT_CUSTOMER_UPATE,
+          path.PROSPECT_CUSTOMER_UPDATE,
           record,
           headers
         );

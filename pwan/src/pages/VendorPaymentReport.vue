@@ -8,19 +8,11 @@
           <q-select
             filled
             bottom-slots
-            v-model="formData.userId"
+            v-model="formData.payerId"
             :options="vendors"
             label="Select Vendor" 
             :dense="dense"
-          />  
-           <q-input
-              filled
-              bottom-slots
-              v-model="formData.amount"
-              placeholder="Payable Amount"
-              type="number"
-              :dense="dense"
-            />
+          /> 
           <q-select
             filled
             bottom-slots
@@ -77,11 +69,12 @@ import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue"; 
 import path from "src/router/urlpath";
+import { format } from 'date-fns';
 export default {
    
   data() {
     const headers = SessionStorage.getItem("headers"); 
-    const profile = SessionStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem("turnelParams");
     const userEmail = ""; 
     const columns = [
       {
@@ -119,7 +112,7 @@ export default {
         name: "payemntDate",
         align: "left",
         label: "Payment Date",
-        field: (row) => row.paymentDate,
+        field: (row) => format(row.paymentDate, 'yyyy-MM-dd'),
         sortable: true,
       }, 
        
@@ -225,6 +218,7 @@ export default {
  mounted() {
     console.log(">>>>>>>>>mounted>>>>>>>>>>");
     try {
+      console.log(">>>>>>this.profile>>>>>",this.profile)
       const requestParams = {
         params: {
           client: this.profile.client,

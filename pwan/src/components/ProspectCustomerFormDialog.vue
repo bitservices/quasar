@@ -33,6 +33,31 @@
             label="Prospect Email"
             :dense="dense"
           />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.subject"
+            label="Subject"
+            :dense="dense"
+          />
+           <q-input
+            filled
+            bottom-slots
+            v-model="formData.message"
+            label="Description"
+            type="textarea"
+            rows="2"
+            maxlength="200"
+            counter
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.prospectType"
+            :options="prospectTypes"
+            label="Select Prospect Type" 
+            :dense="dense"  
+          />
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -61,7 +86,8 @@
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
-import axios from "axios";
+import axios from "axios"; 
+import path from "src/router/urlpath";
 
 export default {
   name: "ProspectCustomerFormDialog",
@@ -123,13 +149,15 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
+      prospectTypes:[],
+      dense:true,
     };
   },
   methods: {
     saveRecord() {
-      this.formData.email = LocalStorage.getItem("userEmail");
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
+      this.formData.email = LocalStorage.getItem("userEmail"); 
       //this.onClick(formData.value);
+      this.formData.prospectType = this.formData.prospectType.value
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -144,11 +172,29 @@ export default {
   beforeMount() {
     console.log("before Mount");
   },
-  mounted() {
-    console.log("mounted");
+   mounted() {
+    console.log(">>>>>>>>inside mout>>>>>>>");
+    try{
+        
+      const prospectTypesPromise = axios.get(
+        path.PROSPECT_TYPE_SEARCH_ALL,
+        this.headers
+      ); 
+      prospectTypesPromise
+        .then((response) => { 
+          this.prospectTypes = response.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          })); 
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } catch (error) {
+      console.error("Error:", error);
+    }
   },
-  unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+  unmounted() { 
     this.formData = {
       id: "",
       prospectName: "",
@@ -169,15 +215,16 @@ export default {
             id: this.searchValue,
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
-            if (result.success) {
-              this.formData = result.data[0];
+          .then((response) => {  
+            const result = response.data; 
+            if (result.success) { 
+              this.formData = result.data[0];  
+              this.formData.prospectType = {
+                value: result.data[0].prospectType.code,
+                label : result.data[0].prospectType.name,
+              } 
             }
           })
           .catch((error) => {

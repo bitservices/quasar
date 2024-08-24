@@ -241,9 +241,7 @@ export default {
           }); 
     },
     onChangeUser(obj) {
-      console.log(">>>>>>>>obj>>>>>>>>>>>",obj);
-      //this.imageFile = "data:image/jpeg;base64," + obj.imageSrc;
-      
+      console.log(">>>>>>>>obj>>>>>>>>>>>",obj); 
       try {
        this.loadUserImage(obj.value)
        const requestParam = {

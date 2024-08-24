@@ -172,6 +172,18 @@ const routes = [
         path: "/usercumulativepaymentrpt",
         component: () => import("src/pages/UserCumulativePaymentReport.vue"),
       },
+      {
+        path: "/vendorledgerpaymentrpt",
+        component: () => import("src/pages/VendorCumulativePaymentReport.vue"),
+      },
+      {
+        path: "/selfpaymentrpt",
+        component: () => import("src/pages/SelfPaymentReport.vue"),
+      },     
+      {
+        path: "/selfvendorrpt",
+        component: () => import("src/pages/SelfVendorPaymentReport.vue"),
+      },  
       
       {
         path: "/vendor",
@@ -180,6 +192,14 @@ const routes = [
       {
         path: "/vendorpayment",
         component: () => import("src/pages/VendorPaymentTransaction.vue"),
+      },
+      {
+        path: "/userasignment",
+        component: () => import("src/pages/UserAssignment.vue"),
+      },
+      {
+        path: "/orguserrpt",
+        component: () => import("src/pages/OrganisationUsersReport.vue"),
       },
     ],
     meta: {

@@ -3,14 +3,23 @@
     <q-card
       class="card-flex-display" 
     > 
+       <q-card-section>
+        <div class="row">
+          <div class="col-8 text-h6">Uuser Pofile</div>
+          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
+                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
+          </div>
+        </div>
+      </q-card-section>
       <q-card-section>
         <q-form>
           <q-select
             filled
             bottom-slots
-            v-model="formData.userId"
+            v-model="formData.payerId"
             :options="orgUsers"
             label="Select Member" 
+            @update:model-value="loadUserImage"
             :dense="dense"
           />
           <q-select
@@ -21,31 +30,14 @@
             label="Select Payment Type"
             :dense="dense"
           />
-          <q-input
+           <q-select
             filled
             bottom-slots
-            v-model="formData.openingDebit"
-            label="Enter OPening Debit"
-            type="number"
-            step="0.01"
-          />
-
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.currentDebit"
-            label="Enter Current Debit"
-            type="number"
-            step="0.01"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.year"
-            :options="years"
-            label="Select Year"
+            v-model="formData.paymentMode"
+            :options="paymentModes"
+            label="Select Payment Mode" 
             :dense="dense"
-          />
+          /> 
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -94,6 +86,7 @@ import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue"; 
 import path from "src/router/urlpath";
+import { format } from 'date-fns';
 export default {
    
   data() {
@@ -133,9 +126,16 @@ export default {
         name: "payemntDate",
         align: "left",
         label: "Payment Date",
-        field: (row) => row.paymentDate,
+        field: (row) => format(row.paymentDate, 'yyyy-MM-dd'),
         sortable: true,
       }, 
+      {
+        name: "organisation",
+        align: "left",
+        label: "Organisation",
+        field: (row) => row.organisation.name,
+        sortable: true,
+      },
        
     ]; 
     const rows = ref([]);
@@ -151,6 +151,10 @@ export default {
       formData,
       profile,
       dense:true, 
+      orgUsers:[], 
+      paymentModes:[], 
+      paymentTypes:[],
+      imageFile:null,
     };
   },
   methods: {
@@ -162,8 +166,18 @@ export default {
             organisation: this.profile.organisation,
           },
         };
+        console.log(">>>>>this.formData.payerId.values>>>>>>>>",this.formData.payerId)
+         if(this.formData.payerId != null && this.formData.payerId.value != null &&  this.formData.payerId.value != ""){
+          requestParams["params"]["payerId"] = this.formData.payerId.value
+        }
+         if(this.formData.paymentType != null && this.formData.paymentType.value != null &&  this.formData.paymentType.value != ""){
+          requestParams["params"]["paymentType"] = this.formData.paymentType.value
+        }
+         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
+          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        } 
       try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log(">>>>>requestParam 11111111111s>>>>>>>>",requestParams)
         const promise = axios.get(
           path.USR_PAYMENT_TRANSACTION_SEARCH,
           requestParams,
@@ -191,6 +205,15 @@ export default {
             organisation: this.profile.organisation,
           },
         };
+          if(this.formData.payerId != null && this.formData.payerId.value != null &&  this.formData.payerId.value != ""){
+          requestParams["params"]["payerId"] = this.formData.payerId.value
+        }
+         if(this.formData.paymentType != null && this.formData.paymentType.value != null &&  this.formData.paymentType.value != ""){
+          requestParams["params"]["paymentType"] = this.formData.paymentType.value
+        }
+         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
+          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        } 
       try { 
         const promise = axios.get(
           path.USR_PAYMENT_TRANSACTION_REPORT,
@@ -220,7 +243,28 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    }
+    },
+     loadUserImage(userObj){
+      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
+       const requestParam = {
+        params: {
+          userId: userObj.value, 
+        },
+      };  
+      const promise =  axios.get(
+          path.USER_IMAGE,
+          requestParam,
+          this.headers
+        );  
+         promise
+          .then((response) => {
+ 
+            this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+          })
+          .catch((error) => {
+            console.log(error);
+          }); 
+    },
      
     
   },
@@ -234,8 +278,73 @@ export default {
     console.log("beforeMount");
     console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
-  mounted() {
-    console.log("mounted"); 
+ 
+ mounted() {
+    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    try {
+      console.log(">>>>>>this.profile>>>>>",this.profile)
+      const requestParams = {
+        params: {
+          client: this.profile.client,
+          organisation: this.profile.organisation,
+        },
+      };
+      const promise = axios.get(
+        path.ORGUSER_SEARCH,
+        requestParams,
+        this.headers
+      );
+      console.log(">>>>>>>>promise>>>>>>>", promise);
+      promise
+        .then((response) => {
+          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
+          this.orgUsers = response.data.data.map((option) => ({
+            label: option.userId.last_name +
+          " " +
+          option.userId.first_name +
+          " " +
+          option.userId.middle_name,
+            value: option.userId.id,
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      const paymentModePromise = axios.get(
+        path.PAYMENTMODE_SEARCH,
+        this.headers
+      );
+      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
+      paymentModePromise
+        .then((response) => {
+          this.paymentModes = response.data.data.map((option) => ({
+            label: option.name,
+            value: option.code,
+          }));
+          console.log("paymentModes>>>>>>>>>", this.paymentModes);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+        axios
+        .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
+        .then((response) => {
+          console.log("Payment Type Response >>>>>>>>>>>>", response.data); 
+          this.paymentTypes = response.data.data.map((option) => ({
+            label: option.name,
+            value: option.id,
+          }));
+          console.log("this.Payment Type >>>>>>>>>>>>", this.PaymentTypes);
+        })
+        .catch((error) => {
+          console.error("Error fetching options:", error);
+        });
+
+    } catch (error) {
+      console.error("Error:", error);
+    }
   },
   updated() {},
 };

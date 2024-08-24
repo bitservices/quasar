@@ -7,9 +7,9 @@
         <q-card
           class="my-card text-white"
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        >
+        v-if="outstanding.length > 0">
           <q-card-section>
-            <div class="text-h6">Out Standing Payment</div> 
+            <div class="text-h6">OutStanding Payment(s)</div> 
           </q-card-section>  
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in outstanding" :key="index"> 
@@ -20,22 +20,31 @@
             </q-card-section>
         </q-card>
 
-        <q-card dark bordered class="bg-red-9 my-card text-white">
+        <q-card dark bordered class="bg-red-9 my-card text-white"  v-if="contributions.length > 0">
           <q-card-section>
-            <div class="text-h6">Total Contribution</div> 
+            <div class="text-h6">Total Contribution(s)</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in contributions" :key="index"> 
                 <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-green-9 my-card text-white">
+        <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="attendance.length > 0">
           <q-card-section>
             <div class="text-h6">Attendance</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in attendance" :key="index"> 
                 <div class="col-3">{{field.organisation__name}}: <b>N{{field.transactionAmount}}</b></div>  
+            </q-card-section>
+        </q-card>
+        <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="benefits.length > 0">
+          <q-card-section>
+            <div class="text-h6">Total Receivable(s)</div> 
+          </q-card-section>
+          <q-separator dark inset /> 
+            <q-card-section v-for="(field, index) in benefits" :key="index"> 
+                <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
         
@@ -59,7 +68,8 @@ export default {
       userEmail,
       contributions:[], 
       attendance:[],
-      outstanding:[]
+      outstanding:[],
+      benefits:[],
     };
   },
     methods:{
@@ -77,12 +87,11 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;  
-            if (result.success) {  
-              console.log("response Data>>>>>>>>", response.data.data); 
+            if (result.success) {   
               this.contributions =  response.data.data.usertransaction
               this.attendance = response.data.data.attendance
-              this.outstanding=response.data.data.outstanding
-              console.log("contributions>>>>>>", this.contributions); 
+              this.outstanding=response.data.data.outstanding 
+              this.benefits=response.data.data.benefits 
             } 
   
           })

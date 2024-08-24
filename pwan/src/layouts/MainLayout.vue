@@ -124,6 +124,19 @@ let defaultList = [
         icon: "code",
         link: "/membershiptype",
       },
+      
+      {
+        title: " Expense Report",
+        caption: "",
+        icon: "chat",
+        link: "/selfpaymentrpt",
+      },
+       {
+        title: " Income Report",
+        caption: "",
+        icon: "chat",
+        link: "/selfvendorrpt",
+      },      
       {
         title: " Client",
         caption: "Client Definition",
