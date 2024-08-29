@@ -17,7 +17,7 @@
           <q-checkbox v-model="props.selected" />
         </template>
         <template v-slot:top>
-          <q-label>Menu</q-label>
+          <q-label>Role</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -28,11 +28,11 @@
             size="sm"
             @click="viewItem"
           />
-          <MenuItemFormDialog
+          <StandingDataFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Menu Item"
+            label="Role"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
@@ -92,15 +92,16 @@
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import MenuItemFormDialog from "src/components/MenuItemFormDialog.vue";
+import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
 export default {
   components: {
-    MenuItemFormDialog,
+    StandingDataFormDialog,
     ResponseDialog,
   },
   data() {
+    const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const userEmail = "";
     const columns = [
@@ -115,16 +116,16 @@ export default {
       },
       {
         name: "name",
-        align: "center",
+        align: "left",
         label: "Name",
         field: (row) => row.name,
         sortable: true,
       },
       {
-        name: "parentmenu",
-        align: "center",
-        label: "Parent",
-        field: (row) => row.menuCode.name,
+        name: "organisation",
+        align: "left",
+        label: "Organisation",
+        field: (row) => row.organisation.name,
         sortable: true,
       },
     ];
@@ -132,7 +133,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(path.MENUITEM_SEARCH);
+    const urlLink = ref(path.ROLE_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -166,10 +167,11 @@ export default {
       action,
       showFormDialog,
       actionBtn,
+      profile,
     };
   },
   methods: {
-    handleRowClicks(event, row) {
+    handleRowClick(event, row) {
       // Handle row click event
       console.log("Row clicked:", row);
 
@@ -186,12 +188,18 @@ export default {
       }
     },
     fetchData() {
+      const requestParams = {
+          params: { 
+            client: this.profile.client,
+            organisation: this.profile.organisation,
+          },
+        }; 
       try {
-        const promise = axios.get(path.MENUITEM_SEARCH, this.headers);
+        const promise = axios.get(path.ROLE_SEARCH, requestParams, this.headers);
         console.log("promise in the Fetch Data>>>>>>>>>>", promise);
         promise
-          .then((response) => {
-            // Extract data from the response
+          .then((response) => { 
+            console.log(response.data.data)
             this.rows = response.data.data;
             this.selected = [];
             // You can access properties of the response data as needed
@@ -213,6 +221,9 @@ export default {
     saveRecord(record) {
       console.log("action clicked>>>>>>>>>", this.action);
       if (this.action == "add") {
+        record["createdBy"] = this.profile.email
+        record["client"] = this.profile.client
+        record["organisation"] = this.profile.organisation
         this.createRecord(record);
       } else if (this.action == "edit") {
         this.updateRecord(record);
@@ -220,7 +231,7 @@ export default {
     },
     createRecord(record) {
       try {
-        const promise = axios.post(path.MENUITEM_CREATE, record, this.headers);
+        const promise = axios.post(path.ROLE_CREATE, record, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -256,7 +267,7 @@ export default {
     updateRecord(record) {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(path.MENUITEM_UPDATE, record, this.headers);
+        const promise = axios.put(path.ROLE_UPDATE, record, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -317,36 +328,38 @@ export default {
         this.action = "view";
         this.actionLabel = "Done";
       }
-    },
-    handleRowClick(event, row) {
-      console.log("Row clicked:", row, "  >>>selected>>>>>", this.selected);
-      if (this.row.status.code == "A") {
-        this.actionBtn = "clear";
-      } else {
-        this.actionBtn = "done";
-      }
-      console.log(">>>>>>>>>selected.value.target>>>>>", this.selected.target);
-      this.selected = row;
-    },
-    getSelectedString(row) {
-      // Example function to return label for selected row (if needed)
-      return row ? row.name : "No client selected";
-    },
-    async deleteItem() {
-      try {
+    },  
+    deleteItem(){
+       try {
         const data = this.selected;
-        const response = await axios.post(
-          path.MENUITEM_REMOVE,
+        const promise =  axios.post(          
+          path.ROLE_REMOVE,
           data,
           this.headers
         );
-        if (response.data.success) {
-          this.fetchData();
-        }
+         promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+            console.log(result);
+            if (result.success) {
+              this.fetchData();
+            }
+
+            this.childRef = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            this.showMessageDialog = true;
+            // You can access properties of the response data as needed
+          })
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    },
+    }
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -355,8 +368,7 @@ export default {
     console.log("created");
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log("beforeMount"); 
   },
   mounted() {
     console.log("mounted");

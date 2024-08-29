@@ -125,7 +125,7 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
     const logoFile = ref(null)
-    const profile = SessionStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem("turnelParams");
     const formData = ref({
       code: "",
       name: "",
@@ -154,22 +154,21 @@ export default {
     };
   },
   methods: {
-    saveRecord() {  
+    saveRecord() {   
       this.formData.email = this.profile.email; 
+      
       if (this.isChecked) {
         this.formData.isAnAffilate = true;
       } else {
         this.formData.isAnAffilate = false;
       }
       const requestData = new FormData();
-      for (let key in this.formData) {
-        console.log(key, this.formData[key]);
+      for (let key in this.formData) { 
         requestData.append(key, this.formData[key]);
       }  
 
       this.$emit("formDataSubmitted", requestData);
       this.showDialog = true;
-      console.log(this.showDialog);
     },
     loadUClientLogo(code){ 
        const requestParam = {

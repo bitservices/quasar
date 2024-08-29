@@ -6,7 +6,7 @@
     >
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">Organisation User Assignment </div>
+          <div class="col-8 text-h6">Attendance </div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
@@ -56,7 +56,7 @@
       <q-card-section>
         <q-card-actions align="center"> 
           <q-btn
-            label="Assign User"
+            label="Record Attendance"
             color="secondary"
             @click="saveRecord"
             size="md"
@@ -79,51 +79,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Organisation Members</q-label>
-          <q-space /> 
-          <q-btn 
-            rounded
-            color="blue" 
-            icon="edit" size="sm" 
-            @click="showDialog"
-          >
-            <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
-                <q-card-section>
-                  <div class="text-h6">{{dialog_header}}</div>
-                </q-card-section>
-
-                <q-card-section class="q-pt-none">
-                  {{dialog_message}}
-                </q-card-section>
-                <q-card-actions align="center" class="bg-white text-teal">
-                   <q-btn v-if="activate"
-                    @click="activateUser"
-                    flat
-                    label="Activate"
-                    class="bg-secondary text-white"
-                    v-close-popup
-                    rounded 
-                  />
-                   <q-btn v-if="deactivate"
-                    @click="deactivateUser"
-                    flat
-                    label="De-Activate"
-                    v-close-popup
-                    class="bg-negative text-white"
-                    rounded 
-                  />
-                  <q-btn
-                    flat
-                    label="Cancle"
-                    class="bg-primary text-white"
-                    v-close-popup
-                    rounded
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </q-btn>
+          <q-label>Attendance List</q-label>
         </template> 
 
       </q-table>
@@ -165,6 +121,10 @@ export default {
       buttonClass: "",
       data: {},
     });
+    const position ={
+      longitude : 0,
+      latitude: 0,
+    }
     const columns = [
       {
         name: "name",
@@ -185,19 +145,34 @@ export default {
         sortable: true,
       },
        {
-        name: "status",
+        name: "seatNumber",
         align: "left",
-        label: "Status",
-        field: (row) => row.status.name,
+        label: "Seat Number",
+        field: (row) => row.seatNumber,
         sortable: true,
       },
-      {
-        name: "createdDate",
+       {
+        name: "membershipType",
         align: "left",
-        label: "Registration Date",
-        field: (row) => format(row.createdDate, 'yyyy-MM-dd'),
+        label: "MembeShip Type",
+        field: (row) => row.membership.name,
         sortable: true,
-      }, 
+      },
+       {
+        name: "attendanceDate",
+        align: "left",
+        label: "Attendance Date",
+        field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
+        sortable: true,
+      },
+       {
+        name: "attendanceTime",
+        align: "left",
+        label: "Attendance Time",
+        field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
+        sortable: true,
+      },
+       
        
     ]; 
 
@@ -220,6 +195,7 @@ export default {
       activate:false,
       dialog_header:"",
       dialog_message:"",
+      position,
     };
   },
   methods: {
@@ -257,8 +233,7 @@ export default {
       }
     },
     handleEnter() {
-      if (this.filteredSuggestions.length > 0) {
-        console.log("this.filteredSuggestions[0]:::::::::",this.filteredSuggestions[0])
+      if (this.filteredSuggestions.length > 0) { 
         this.selectRecord(this.filteredSuggestions[0]);
       }
     },
@@ -266,8 +241,10 @@ export default {
       console.log(">>>>>>>>>>>>value>>>>>>>>",userObj)
       this.formData.userName = userObj.name;
       this.formData.email = userObj.email;
+      this.formData.userId = userObj.id;
       this.showSuggestions = false;
       this.loadUserImage(userObj)
+      this.loadOrganisationAttendance(userObj.id)
       // Optionally, emit an event or perform other actions when a suggestion is selected
     },
     loadUserImage(userObj){
@@ -292,12 +269,17 @@ export default {
           }); 
     },
     saveRecord() {     
-      this.formData.client = this.profile.client
-      this.formData.organisation = this.profile.organisation 
-      this.formData.createdBy = this.profile.email
-      console.log(">>>>>>>>>>>>>>>",this.formData)
+      
+      const data = {
+        client : this.profile.client,
+        organisation:this.profile.organisation,
+        email : this.formData.email,
+        longitude:   this.position.longitude ,  
+        latitude: this.position.latitude,
+      }
+      console.log(">>>>>>>>>>>>>>>",data)
       try { 
-        const promise = axios.post(path.ORGUSER_SAVE, this.formData, this.headers);
+        const promise = axios.post(path.REGISTER_ATTENDANCE, data, this.headers);
         promise
           .then((response) => { 
             console.log(">>>>>>>response>>>>>>>>>>>>>>>",response)
@@ -311,7 +293,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             this.showMessageDialog = true;
-            this.loadOrganisationMembers()
+            this.loadOrganisationAttendance()
             }else{
 
               this.childRef = {
@@ -332,17 +314,20 @@ export default {
         debug("Error:", error);
       } 
     },
-     loadOrganisationMembers() {
+     loadOrganisationAttendance(userId) {
          const requestParams = {
           params: { 
             client: this.profile.client,
             organisation: this.profile.organisation,
           },
         };
+        if(userId != null && userId != ""){
+          requestParams["params"]["userId"]=userId
+        }
       try {
         console.log(">>>>>requestParams>>>>>>>>",requestParams)
         const promise = axios.get(
-          path.ORGUSER_SEARCH,
+          path.ATTENDANCE_SEARCH,
           requestParams,
           this.headers
         ); 
@@ -399,7 +384,7 @@ export default {
           .then((response) => {
             // Extract data from the response
             console.log("response data>>>>>>>", response.data.data); 
-             this.loadOrganisationMembers()
+             this.loadOrganisationAttendance()
              this.childRef = {
               message: response.data.message,
               label: "Success",
@@ -433,7 +418,7 @@ export default {
           .then((response) => {
             // Extract data from the response
             console.log("response data>>>>>>>", response.data); 
-             this.loadOrganisationMembers()
+             this.loadOrganisationAttendance()
               this.childRef = {
               message: response.data.message,
               label: "Success",
@@ -465,7 +450,30 @@ export default {
   },
   mounted() {
     console.log(">>>>>>>>>mounted>>>>>>>>>>");
-    this.loadOrganisationMembers()
+    this.loadOrganisationAttendance()
+    try{
+        if ('geolocation' in navigator) {
+          console.log('Geolocation is supported');
+          navigator.geolocation.getCurrentPosition(
+              (position) => {
+                // Success callback
+                this.position = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude
+                };
+                console.log(">>>>>>>>>>this.position>>>>>>>>",this.position)
+              },
+              (error) => {
+                // Error callback
+                console.log(error)
+              }
+            );
+        } else {
+          console.log('Geolocation is not supported by this browser');
+        }
+    }catch(error){
+      console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
+    }
         
   },
   unmounted() { 

@@ -31,6 +31,11 @@
             label="Url"
             :dense="dense"
           />
+          <q-checkbox
+            v-model="formData.restrictAccess"
+            label="Restrict Access"
+            color="primary"
+          />
           <q-select
             filled
             bottom-slots

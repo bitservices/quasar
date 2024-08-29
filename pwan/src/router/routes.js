@@ -144,7 +144,7 @@ const routes = [
 
       {
         path: "/attendancerpt",
-        component: () => import("src/pages/UserPaymentTransaction.vue"),
+        component: () => import("src/pages/AttendanceReport.vue"),
       },
 
       {
@@ -201,6 +201,24 @@ const routes = [
         path: "/orguserrpt",
         component: () => import("src/pages/OrganisationUsersReport.vue"),
       },
+      {
+        path: "/role",
+        component: () => import("src/pages/RolePage.vue"),
+      },
+      {
+        path: "/userrole",
+        component: () => import("src/pages/UserRolePage.vue"),
+      },
+      {
+        path: "/profile",
+        component: () => import("src/pages/AuthorizationProfile.vue"),
+      },
+
+      {
+        path: "/attendance",
+        component: () => import("src/pages/AttendanceRecord.vue"),
+      },
+      
     ],
     meta: {
       requiresAuth: true, // Example of a protected route

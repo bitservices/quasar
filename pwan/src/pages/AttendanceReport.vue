@@ -5,10 +5,7 @@
     > 
        <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">Uuser Pofile</div>
-          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
-                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
-          </div>
+          <div class="col-8 text-h6">Attendance Report</div> 
         </div>
       </q-card-section>
       <q-card-section>
@@ -47,7 +44,7 @@
             size="md"
             color="primary"
             label="Search"
-            @click="searchPaymentData"
+            @click="searchAttendanceData"
             v-close-popup
           />
           <q-btn
@@ -73,7 +70,7 @@
         v-model:selected="selected"
       > 
         <template v-slot:top>
-          <q-label>User Payment Report</q-label>
+          <q-label>Attendance Report</q-label>
           <q-space /> 
         </template> 
       </q-table>
@@ -91,53 +88,58 @@ export default {
    
   data() {
     const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = ""; 
-    const columns = [
+    const profile = LocalStorage.getItem("turnelParams"); 
+   const columns = [
       {
-        name: "userName",
+        name: "name",
         required: false,
-        label: "User",
+        label: "Name",
         align: "left",
         field: (row) =>
-          row.payerId.last_name +
-          " " +
-          row.payerId.first_name +
-          " " +
-          row.payerId.middle_name,
+          row.userId.last_name +" "+row.userId.first_name + " "+row.userId.middle_name,
         format: (val) => `${val}`,
         sortable: true,
       },
+     
       {
-        name: "description",
+        name: "email",
         align: "left",
-        label: "Description",
-        field: (row) => row.description, 
+        label: "Email",
+        field: (row) => row.userId.email,
         sortable: true,
       },
-      {
-        name: "amount",
+       {
+        name: "seatNumber",
         align: "left",
-        label: "Amount",
-        field: (row) => row.amount,
+        label: "Seat Number",
+        field: (row) => row.seatNumber,
         sortable: true,
       },
-      {
-        name: "payemntDate",
+       {
+        name: "membershipType",
         align: "left",
-        label: "Payment Date",
-        field: (row) => format(row.paymentDate, 'yyyy-MM-dd'),
+        label: "MembeShip Type",
+        field: (row) => row.membership.name,
         sortable: true,
-      }, 
-      {
-        name: "organisation",
+      },
+       {
+        name: "attendanceDate",
         align: "left",
-        label: "Organisation",
-        field: (row) => row.organisation.name,
+        label: "Attendance Date",
+        field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
+        sortable: true,
+      },
+       {
+        name: "attendanceTime",
+        align: "left",
+        label: "Attendance Time",
+        field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
         sortable: true,
       },
        
+       
     ]; 
+
     const rows = ref([]);
     const selected = ref([]);
     const formData = ref({});
@@ -145,8 +147,7 @@ export default {
     return {  
       selected,
       columns,
-      rows,
-      userEmail,
+      rows, 
       headers, 
       formData,
       profile,
@@ -159,27 +160,18 @@ export default {
   },
   methods: {
      
-    searchPaymentData() {
+    searchAttendanceData() {
          const requestParams = {
           params: { 
             client: this.profile.client,
-            organisation: this.profile.organisation,
+            organisation: this.profile.organisation
           },
         };
-        console.log(">>>>>this.formData.payerId.values>>>>>>>>",this.formData.payerId)
-         if(this.formData.payerId != null && this.formData.payerId.value != null &&  this.formData.payerId.value != ""){
-          requestParams["params"]["payerId"] = this.formData.payerId.value
-        }
-         if(this.formData.paymentType != null && this.formData.paymentType.value != null &&  this.formData.paymentType.value != ""){
-          requestParams["params"]["paymentType"] = this.formData.paymentType.value
-        }
-         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
-        } 
+        
       try {
         console.log(">>>>>requestParam 11111111111s>>>>>>>>",requestParams)
         const promise = axios.get(
-          path.USR_PAYMENT_TRANSACTION_SEARCH,
+          path.ATTENDANCE_SEARCH,
           requestParams,
           this.headers
         ); 
@@ -205,18 +197,10 @@ export default {
             organisation: this.profile.organisation,
           },
         };
-          if(this.formData.payerId != null && this.formData.payerId.value != null &&  this.formData.payerId.value != ""){
-          requestParams["params"]["payerId"] = this.formData.payerId.value
-        }
-         if(this.formData.paymentType != null && this.formData.paymentType.value != null &&  this.formData.paymentType.value != ""){
-          requestParams["params"]["paymentType"] = this.formData.paymentType.value
-        }
-         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
-        } 
+          
       try { 
         const promise = axios.get(
-          path.USR_PAYMENT_TRANSACTION_REPORT,
+          path.ATTENDANCE_REPORT,
           requestParams,
           this.headers
         ); 
@@ -231,7 +215,7 @@ export default {
           // Create a link element to trigger the download
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = 'example.pdf'; // Set the filename for download
+          a.download = 'attendance_report.pdf'; // Set the filename for download
           a.textContent = 'Download File';
           document.body.appendChild(a);
           a.click();
@@ -274,77 +258,11 @@ export default {
   created() {
     console.log("created");
   },
-  beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+  beforeMount() { 
   },
  
- mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
-    try {
-      console.log(">>>>>>this.profile>>>>>",this.profile)
-      const requestParams = {
-        params: {
-          client: this.profile.client,
-          organisation: this.profile.organisation,
-        },
-      };
-      const promise = axios.get(
-        path.ORGUSER_SEARCH,
-        requestParams,
-        this.headers
-      );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
-      promise
-        .then((response) => {
-          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
-          this.orgUsers = response.data.data.map((option) => ({
-            label: option.userId.last_name +
-          " " +
-          option.userId.first_name +
-          " " +
-          option.userId.middle_name,
-            value: option.userId.id,
-          }));
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-      const paymentModePromise = axios.get(
-        path.PAYMENTMODE_SEARCH,
-        this.headers
-      );
-      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
-      paymentModePromise
-        .then((response) => {
-          this.paymentModes = response.data.data.map((option) => ({
-            label: option.name,
-            value: option.code,
-          }));
-          console.log("paymentModes>>>>>>>>>", this.paymentModes);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-
-        axios
-        .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
-        .then((response) => {
-          console.log("Payment Type Response >>>>>>>>>>>>", response.data); 
-          this.paymentTypes = response.data.data.map((option) => ({
-            label: option.name,
-            value: option.id,
-          }));
-          console.log("this.Payment Type >>>>>>>>>>>>", this.PaymentTypes);
-        })
-        .catch((error) => {
-          console.error("Error fetching options:", error);
-        });
-
-    } catch (error) {
-      console.error("Error:", error);
-    }
+ mounted() { 
+     
   },
   updated() {},
 };

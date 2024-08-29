@@ -50,80 +50,14 @@ defineOptions({
 let linksList = [];
 let defaultList = [
   {
-    title: "Default 1",
+    title: "Default",
     menuitems: [
       {
         title: " Dashboard",
         caption: "Dashboard Page",
         icon: "dashboard",
         link: "/dashboard",
-      },
-      {
-        title: " Status",
-        caption: "Status Page",
-        icon: "status",
-        link: "/status",
-      },
-      {
-        title: " Prospect Type",
-        caption: "Prospect Type Page",
-        icon: "prospect",
-        link: "/prospecttype",
-      },
-      
-      {
-        title: " Gender",
-        caption: "Gender Page",
-        icon: "code",
-        link: "/gender",
-      },
-      {
-        title: " Marital Status",
-        caption: "Marital Status Page",
-        icon: "chat",
-        link: "/maritalstatus",
-      },
-      {
-        title: " Product Status",
-        caption: "Product Status Page",
-        icon: "record_voice_over",
-        link: "/productstatus",
-      },
-      {
-        title: " Payment Mode",
-        caption: "Paymet Mode Page",
-        icon: "rss_feed",
-        link: "/paymentmode",
-      },
-      {
-        title: " Country",
-        caption: "@QuasarFramework",
-        icon: "country",
-        link: "/country",
-      },
-      {
-        title: " State",
-        caption: "State Definition",
-        icon: "favorite",
-        link: "/state",
-      },
-    ],
-  },
-  {
-    title: "Default 2",
-    menuitems: [
-      {
-        title: " County ",
-        caption: "County Definition",
-        icon: "school",
-        link: "/county",
-      },
-      {
-        title: " MemberShip Tyoe",
-        caption: "MemberShip Type",
-        icon: "code",
-        link: "/membershiptype",
-      },
+      }, 
       
       {
         title: " Expense Report",
@@ -160,18 +94,6 @@ let defaultList = [
         caption: "Investors",
         icon: "record_voice_over",
         link: "/investor",
-      },
-      {
-        title: " Menu ",
-        caption: "@quasarframework",
-        icon: "rss_feed",
-        link: "/menu",
-      },
-      {
-        title: " Menu Item ",
-        caption: "@quasarframework",
-        icon: "rss_feed",
-        link: "/menuitem",
       },
       {
         title: " Sales Transction ",

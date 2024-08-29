@@ -54,16 +54,15 @@
             <q-dialog v-model="medium_dialog">
               <q-card style="width: 700px" class="bg-info text-white">
                 <q-card-section>
-                  <div class="text-h6">Activate/DeActivate</div>
-                </q-card-section>
-
+                  <div class="text-h6">{{dialog_header}}</div>
+                </q-card-section>  
                 <q-card-section class="q-pt-none">
-                  Are you sure you Want to Active/Deactivate the Organisation?
+                   {{dialog_message}}
                 </q-card-section>
                 <q-card-actions align="center" class="bg-white text-teal">
                  
-                  <q-btn
-                    @click="activate"
+                  <q-btn v-if="activate"
+                    @click="activateUser"
                     flat
                     label="Activate"
                     class="bg-secondary text-white"
@@ -71,8 +70,8 @@
                     rounded
                     :disable="disableActivate"
                   />
-                   <q-btn
-                    @click="deactivate"
+                   <q-btn v-if="deactivate"
+                    @click="deactivateUser"
                     flat
                     label="De-Activate"
                     v-close-popup
@@ -159,8 +158,10 @@ export default {
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
-    const disableDeActivate = ref(true);
-    const disableActivate = ref(false);
+    const deactivate = ref(true);
+    const activate = ref(false); 
+     const dialog_header = ref(null);
+     const dialog_message= ref(null);
     
     const childRef = ref({
       label: "",
@@ -222,7 +223,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(path.CLIENT_CREATE, record, headers);
+        const promise = axios.post(path.ORGANISATION_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -295,12 +296,17 @@ export default {
     const showDialog = () => {
       if (selected.value.length > 0) { 
         medium_dialog.value = true;
+        const organisationName = selected.value[0].name
         if(selected.value[0].status.code == "A"){
-          disableActivate.value = true
-          disableDeActivate.value = false
+          deactivate.value = true
+          activate.value = false
+           dialog_header.value="Deactivate Organisation"
+         dialog_message.value=" Are you Sure you want to Deactivate "+ organisationName
         }else{
-           disableActivate.value = false
-          disableDeActivate.value = true
+           deactivate.value = false
+          activate.value = true
+          dialog_header.value="Activate Organisation"
+         dialog_message.value=" Are you Sure you want to Activate "+ organisationName
         }
       } else {
         medium_dialog.value = false;
@@ -341,25 +347,43 @@ export default {
       // Example function to return label for selected row (if needed)
       return row ? row.name : "No client selected";
     };
-    const activate = async () => {
+    const activateUser = async () => {
       try {
         const data = {"id":selected.value[0].id};
         const response = await axios.post(path.ORGANISATION_ACTIVATE, data, headers);
-        if (response.data.success) {
+        console.log(">>>response data>>",response.data)
+        const result = response.data;
+        if (result.success) {
           fetchData();
+           childRef.value = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     };
-    const deactivate = async () => {
+    const deactivateUser = async () => {
       try {
         const data = {"id":selected.value[0].id};
-        console.log(">>>>>>>>>>>>>>>>>>>>inside deactivare data>>>>>>>>>>>>>>>>>",data)
         const response = await axios.post(path.ORGANISATION_DEACTIVATE, data, headers);
-        if (response.data.success) {
-          console.log(">>>>>>>>>>>>>>>>>>>>>>deactivte Organisation>>>>>>>>>>>>>>>>>")
+        console.log(">>>response data>>",response.data)
+         const result = response.data;
+        if (result.success) {
           fetchData();
+           childRef.value = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -368,9 +392,7 @@ export default {
 
 
     return {
-      fetchData,
-      activate,
-      deactivate,
+      fetchData, 
       loadUser,
       saveRecord,
       createRecord,
@@ -380,6 +402,8 @@ export default {
       editItem,
       viewItem, 
       showDialog,
+      activateUser,
+      deactivateUser,
       urlLink,
       actionLabel,
       searchValue,
@@ -393,10 +417,12 @@ export default {
       medium_dialog,
       action,
       showFormDialog,
-      actionBtn,
-      disableActivate,
-      disableDeActivate,
-      issuperuser,
+      actionBtn, 
+      deactivate,
+      activate,
+      issuperuser, 
+      dialog_header,
+      dialog_message,
     };
   },
   beforeCreate() {

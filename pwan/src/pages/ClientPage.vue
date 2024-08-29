@@ -9,7 +9,6 @@
         :rows="rows"
         :columns="columns"
         row-key="name"
-        :selected-rows-label="getSelectedString"
         selection="single"
         @row-click="handleRowClick"
         v-model:selected="selected"
@@ -54,30 +53,27 @@
             <q-dialog v-model="medium_dialog">
               <q-card style="width: 700px" class="bg-info text-white">
                 <q-card-section>
-                  <div class="text-h6">Client Activatation/Deactivation</div>
-                </q-card-section>
-
+                  <div class="text-h6">{{dialog_header}}</div>
+                </q-card-section> 
                 <q-card-section class="q-pt-none">
-                  Are you sure you want to Activate/Deacivate Client
+                  {{dialog_message}}
                 </q-card-section>
                 <q-card-actions align="center" class="bg-white text-teal">
-                   <q-btn
-                    @click="activate"
+                   <q-btn v-if="activate"
+                    @click="activateUser"
                     flat
                     label="Activate"
                     class="bg-secondary text-white"
                     v-close-popup
-                    rounded
-                    :disable="disableActivate"
+                    rounded 
                   />
-                   <q-btn
-                    @click="deactivate"
+                   <q-btn v-if="deactivate"
+                    @click="deactivateUser"
                     flat
                     label="De-Activate"
                     v-close-popup
                     class="bg-negative text-white"
-                    rounded
-                    :disable="disableDeActivate"
+                    rounded 
                   />
                   <q-btn
                     flat
@@ -158,8 +154,10 @@ export default {
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);  
     const issuperuser = ref(false);  
-    const disableDeActivate = ref(true);
-    const disableActivate = ref(false);
+    const deactivate = ref(true);
+    const activate = ref(false); 
+     const dialog_header = ref(null);
+     const dialog_message= ref(null);
 
     const childRef = ref({
       label: "",
@@ -183,8 +181,7 @@ export default {
           requestParam,
           headers
         ); 
-        if (response.data) {  
-          console.log("luser loading ",response.data.data)
+        if (response.data) {   
           issuperuser.value = response.data.data.is_superuser
         }
       } catch (error) {
@@ -205,8 +202,7 @@ export default {
           path.CLIENT_FIND_BY_CREATOR,
           requestParam,
           headers
-        );
-        console.log(">>>>>>>>client data>>>>>>>>>",response.data)
+        ); 
         if (response.data) {
           rows.value = response.data;
           selected.value = []; 
@@ -258,14 +254,12 @@ export default {
       }
     };
     const updateRecord = (record) => {
-      try {
-        console.log("calling Update Record from Child Component", record);
+      try { 
         const promise = axios.put(path.CLIENT_UPDATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log("result after savings >>>>>", result);
+            const result = response.data; 
             if (result.success) {
               fetchData();
             }
@@ -297,12 +291,17 @@ export default {
     const showDialog = () => {
       if (selected.value.length > 0) {
         medium_dialog.value = true;
-         if(selected.value[0].status.code == "A"){
-          disableActivate.value = true
-          disableDeActivate.value = false
+        const clienName = selected.value[0].name
+        if(selected.value[0].status.code == "A"){
+          deactivate.value = true
+          activate.value = false
+           dialog_header.value="Deactivate Client"
+         dialog_message.value=" Are you Sure you want to Deactivate "+ clienName
         }else{
-           disableActivate.value = false
-          disableDeActivate.value = true
+           deactivate.value = false
+          activate.value = true
+          dialog_header.value="Activate Client"
+         dialog_message.value=" Are you Sure you want to Activate "+ clienName
         }
       } else {
         medium_dialog.value = false;
@@ -329,37 +328,53 @@ export default {
         actionLabel.value = "Done";
       }
     };
-    const handleRowClick = (event, row) => {
-      console.log("Row clicked:", row, "  >>>selected>>>>>", selected.value);
+    const handleRowClick = (event, row) => { 
       if (row.status.code == "A") {
         actionBtn.value = "clear";
       } else {
         actionBtn.value = "done";
-      }
-      console.log(">>>>>>>>>selected.value.target>>>>>", selected.value.target);
+      } 
       selected.value = row;
     };
     const getSelectedString = (row) => {
       // Example function to return label for selected row (if needed)
       return row ? row.name : "No client selected";
     };
-   const activate = async () => {
+   const activateUser = async () => {
       try {
         const data = {"code":selected.value[0].code};
         const response = await axios.post(path.CLIENT_ACTIVATE, data, headers);
-        if (response.data.success) {
+        const result = response.data
+        if (result.success) { 
           fetchData();
+           childRef.value = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
     };
-    const deactivate = async () => {
+    const deactivateUser = async () => {
       try {
         const data = {"code":selected.value[0].code}; 
         const response = await axios.post(path.CLIENT_DEACTIVATE, data, headers);
-        if (response.data.success) { 
+        const result = response.data
+        if (result.success) { 
           fetchData();
+           childRef.value = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            showMessageDialog.value = true;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -380,6 +395,8 @@ export default {
       activate,
       deactivate,
       loadUser,
+      activateUser,
+      deactivateUser,
       urlLink,
       actionLabel,
       searchValue,
@@ -394,9 +411,9 @@ export default {
       action,
       showFormDialog,
       actionBtn,
-      issuperuser, 
-      disableActivate,
-      disableDeActivate,
+      issuperuser,  
+      dialog_header,
+      dialog_message, 
     };
   },
   beforeCreate() {
@@ -443,5 +460,7 @@ export default {
   tbody
     /* height of all previous header rows */
     scroll-margin-top: 48px
-  tbody tr:nth-child(even)
+  tbody tr:nth-child(even) 
+  
+  
 </style>

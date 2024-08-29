@@ -254,12 +254,35 @@ export default {
     };
   },
   methods: {
+    getPosition(){
+      try{
+        if ('geolocation' in navigator) {
+          console.log('Geolocation is supported');
+          navigator.geolocation.getCurrentPosition(
+              (position) => {
+                // Success callbac 
+                  this.formData.latitude= position.coords.latitude,
+                  this.formData.longitude =  position.coords.longitude
+                  
+              },
+              (error) => {
+                // Error callback
+                console.log(error)
+              }
+            );
+        } else {
+          console.log('Geolocation is not supported by this browser');
+        }
+    }catch(error){
+      console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
+    }
+    },
     saveRecord() {   
       this.formData.client = this.formData.client.value;   
       this.formData.county = this.formData.county.value;
       this.formData.country = this.formData.country.value;
-      this.formData.state = this.formData.state.value;
-      this.formData.status = this.formData.status.code; 
+      this.formData.state = this.formData.state.value; 
+      this.formData.createdBy = this.userEmail;
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -318,8 +341,7 @@ export default {
           params: {
             createdBy: this.userEmail,
           },
-        };
-
+        }; 
     axios
       .get(path.CLIENT_FIND_BY_CREATOR, requestParam, this.headers)
       .then((response) => {
@@ -342,8 +364,7 @@ export default {
           label: option.name,
           value: option.code,
         }));
-      })
-
+      }) 
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");
@@ -398,6 +419,7 @@ export default {
     } else {
       this.formData = { code: "", name: "" };
       this.isReadonly = false
+      this.getPosition()
     }
   },
 };

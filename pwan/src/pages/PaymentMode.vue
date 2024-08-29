@@ -147,7 +147,7 @@ export default {
           headers
         );
         if (response.data) {
-          rows.value = response.data;
+          rows.value = response.data.data;
           selected.value = []; 
         }
       } catch (error) {

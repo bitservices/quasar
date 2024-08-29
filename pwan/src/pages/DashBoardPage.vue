@@ -29,13 +29,13 @@
                 <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="attendance.length > 0">
+        <q-card dark bordered class="bg-puple-9 my-card text-white"  v-if="attendance.length > 0">
           <q-card-section>
             <div class="text-h6">Attendance</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in attendance" :key="index"> 
-                <div class="col-3">{{field.organisation__name}}: <b>N{{field.transactionAmount}}</b></div>  
+                <div class="col-3">{{field.organisation__name}}: <b>{{field.count}}</b></div>  
             </q-card-section>
         </q-card>
         <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="benefits.length > 0">
@@ -87,11 +87,12 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;  
+            console.log("Attendanc data result>>>>>>>>>>>>",result) 
             if (result.success) {   
-              this.contributions =  response.data.data.usertransaction
-              this.attendance = response.data.data.attendance
-              this.outstanding=response.data.data.outstanding 
-              this.benefits=response.data.data.benefits 
+              this.contributions =  result.data.usertransaction
+              this.attendance = result.data.attendance
+              this.outstanding= result.data.outstanding 
+              this.benefits= result.data.benefits 
             } 
   
           })

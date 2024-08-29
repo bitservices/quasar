@@ -206,6 +206,34 @@ const path = {
   PROSPECT_TYPE_SEARCH_ALL: APP_PATH + "prospecttype/", 
 
 
+  ROLE_CREATE: APP_PATH + "role/create/",
+  ROLE_UPDATE: APP_PATH + "role/update/",
+  ROLE_SEARCH: APP_PATH + "role/search/",
+  ROLE_SEARCH_ALL: APP_PATH + "role/",
+  ROLE_REMOVE: APP_PATH + "role/remove/",
+
+
+  USERROLE_CREATE: APP_PATH + "userrole/create/",
+  USERROLE_UPDATE: APP_PATH + "userrole/update/",
+  USERROLE_SEARCH: APP_PATH + "userrole/search/",
+  USERROLE_REMOVE: APP_PATH + "userrole/remove/",
+
+
+
+  PROFILE_DETAIL: APP_PATH + "profile/details/",
+
+  PROFILE_CREATE: APP_PATH + "profile/create/",
+
+  ATTENDANCE_SEARCH: APP_PATH + "attendance/search/", 
+  ATTENDANCE_SEARCH_ALL: APP_PATH + "attendance/",
+  ATTENDANCE_REPORT: APP_PATH + "report/attendancereport",  
+
+  REGISTER_ATTENDANCE: APP_PATH + "attendance/register/", 
+
+  
+  
+
+
 
 };
 
