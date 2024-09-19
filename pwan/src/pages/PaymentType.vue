@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import PaymentTypeFormDialog from "src/components/PaymentTypeFormDialog.vue";
@@ -143,7 +143,7 @@ export default {
       data: {},
     });
 
-    const turnelParams = SessionStorage.getItem("turnelParams");
+    const turnelParams = LocalStorage.getItem("turnelParams");
      const requestParams = {
           params: {
             client: turnelParams.client,

@@ -1,7 +1,8 @@
 const BASEPATH = "http://localhost:8000";
 const APP_PATH = BASEPATH + "/api/pwanproperties/";
 const path = {
-  ORIGIN_PATH: "http://localhost:9000",
+  ORIGIN_PATH: "http://localhost:9000", 
+  USER_AUTHENTICATEE: BASEPATH + "/api/token/",
   CLIENT_CREATE: APP_PATH + "client/create/",
   CLIENT_UPDATE: APP_PATH + "client/update/",
   CLIENT_FIND_BY_CREATOR: APP_PATH + "client/findbycreator/",
@@ -229,6 +230,14 @@ const path = {
   ATTENDANCE_REPORT: APP_PATH + "report/attendancereport",  
 
   REGISTER_ATTENDANCE: APP_PATH + "attendance/register/", 
+
+  PASSWORD_CHANGE: APP_PATH + "pwdchange/forgetpass/", 
+  PASSWORD_FINALIZE: APP_PATH + "pwdchange/finalize/", 
+
+   
+  USER_REGISTER: APP_PATH + "userreg/register/", 
+  USER_REGISTER_FINALIZE: APP_PATH + "userreg/finalize/", 
+  
 
   
   

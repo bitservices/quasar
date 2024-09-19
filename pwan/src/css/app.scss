@@ -1,6 +1,11 @@
 // app global css in SCSS form
 .pwan-blue  {
-    background: #0c0144;
+    background: #0c0144; 
+    -webkit-text-fill-color: white;
+}
+.pwan-red{
+    background-color: #c60a0a;
+    -webkit-text-fill-color: white;
 }
 .pwan-button{
     background-color: #c60a0a;
@@ -11,3 +16,16 @@
     background-color: #c60a0a;
     -webkit-text-fill-color: white;
 }
+
+.app-bg {
+    background-image: url('http://cloud.traisoft.com:8081/EliteMobile/resources/images/background.jpg');
+    background-size: cover; /* adjust as needed */
+    background-position: center; /* adjust as needed */
+    min-height: 100vh; /* ensure full viewport height */
+  }
+   .gradient-background {
+      background: linear-gradient(45deg, #d58787, #a40303);
+      height: 100vh; /* Full viewport height */
+    }
+
+  

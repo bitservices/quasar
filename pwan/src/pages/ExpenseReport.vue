@@ -1,8 +1,16 @@
 <template>
   <q-page padding>
+     <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
     <q-card
       class="card-flex-display" 
-    > 
+    >  
       <q-card-section>
         <q-form>
           <q-select
@@ -75,11 +83,19 @@
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath";
+import { ref,computed } from "vue"; 
+import path from "src/router/urlpath"; 
+import { useI18n } from 'vue-i18n'
+ import HeaderPage from "src/components/HeaderPage.vue";
+
 export default {
-   
+  components: { 
+    HeaderPage,
+  },
   data() {
+    const { t } = useI18n();
+    const pageName = computed(()=> t('expensereport.pagename'))
+    const hint = computed(()=> t('expensereport.hint'))
     const headers = SessionStorage.getItem("headers"); 
     const profile = LocalStorage.getItem("turnelParams");
     const userEmail = ""; 
@@ -139,7 +155,9 @@ export default {
       vendors: [],
       paymentModes: [],
       dense:true, 
-      totalAmount:0
+      totalAmount:0,
+      pageName,
+      hint,
     };
   },
   methods: {
@@ -241,7 +259,7 @@ export default {
     console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
  mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log(">>>>>>>>>Expwnse Report mounted>>>>>>>>>>");
     try {
       const requestParams = {
         params: {

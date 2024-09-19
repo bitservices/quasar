@@ -188,7 +188,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
@@ -234,7 +234,7 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
 
-    const profile = SessionStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const formData = ref({
       code: "",
@@ -349,7 +349,7 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    const turnelParams = SessionStorage.getItem("turnelParams");
+    const turnelParams = LocalStorage.getItem("turnelParams");
     const requestParams = {
       params: {
         client: turnelParams.client,

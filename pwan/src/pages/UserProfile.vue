@@ -4,36 +4,46 @@
       <q-card
       class="card-flex-display" 
     >
+    <q-card-section class="pwan-blue text-white">
+        <HeaderPage  
+            :label="pageName"
+            :hint="hint"  
+          />
+      </q-card-section>
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">Uuser Pofile</div>
+          <div class="col-8 text-h6"></div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
         </div>
       </q-card-section>
-
       <q-card-section>
-        <q-form>
+        <q-form  @submit.prevent="saveRecord" ref="userProfileForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-input
             filled
             bottom-slots
             v-model="formData.last_name"
-            label="LastName" 
+            label="Last Name" 
             :dense="dense"
+            :rules="[requiredRule]" 
           />
             <q-input
             filled
             bottom-slots
             v-model="formData.first_name"
-            label="FirstName" 
+            label="First Name" 
             :dense="dense"
+            :rules="[requiredRule]" 
           />
            <q-input
             filled
             bottom-slots
             v-model="formData.middle_name"
-            label="FirstName" 
+            label="Middle Name" 
             :dense="dense"
           />
            <q-select
@@ -41,9 +51,8 @@
             bottom-slots
             v-model="formData.gender"
             :options="genderList"
-            label="Select Gender" 
-            :readonly="isReadonly"
-            :dense="dense"
+            label="Select Gender"  
+            :dense="dense"  
           /> 
           <q-input
             filled
@@ -51,12 +60,13 @@
             v-model="formData.phoneNumber"
             label="Phone Number" 
             :dense="dense"
+            :rules="[requiredRule]" 
           />
           <div class="q-pa-md">
            <q-date 
             v-model="formData.dateOfBirth"
             label="Date of Birth"  
-            mask="YYYY-MM-DD"
+            mask="YYYY-MM-DD" 
           />
           </div>
            <q-input
@@ -66,6 +76,7 @@
             label="Email"
             :readonly="isReadonly"
             :dense="dense"
+            :rules="[requiredRule]" 
           />
            <q-input
             filled
@@ -74,6 +85,7 @@
             label="User Name"
             :readonly="isReadonly"
             :dense="dense"
+            
           />
            
           <div class="row">
@@ -95,27 +107,29 @@
 
           </div>
             </div>
+            <q-row class="q-mt-md" justify="center">
+            <q-col cols="6" sm="4" class="q-mb-md">
+              <q-btn
+                      rounded  
+                      label="Cancel"
+                      icon="cancel"
+                      v-close-popup
+                      class="pwan-blue top-margin full-width"
+                    /> 
+            </q-col>
+            <q-col cols="6" sm="4" class="q-mb-md">
+               <q-btn
+                          label="Save" 
+                          rounded
+                          type="submit"
+                          icon="save"
+                          class="pwan-button top-margin full-width"
+                        />
+            </q-col>
+          </q-row>
+ 
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            label="Save"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
     </div>
   </q-page>
@@ -124,15 +138,26 @@
 
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
-import { isReadonly, onUnmounted, ref } from "vue";
+import { isReadonly, computed, ref } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import axios from "axios";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger";
+import debug from "src/router/debugger"; 
+import { useRouter } from "vue-router"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { isRequired } from 'src/validation/validation';
 
 export default {
+   components: { 
+    HeaderPage,  
+  }, 
    
   data() {
     
+    const { t } = useI18n()  
+    const pageName = computed(()=> t('userprofile.pagename'))
+    const hint = computed(()=> t('userprofile.hint'))
+    const router = useRouter();
     const headers = SessionStorage.getItem("headers");
     const formData = ref({
       last_name: "",
@@ -148,43 +173,53 @@ export default {
       isReadonly:true,
       imageFile : null,
       genderList:[],
+      router,
+      showSpinner: false, 
+      pageName,
+      hint,
+      requiredRule: value => isRequired(value), 
     };
   },
   methods: {
     saveRecord() {     
-      this.formData.gender = this.formData.gender.value
-      this.formData.status = this.formData.status.code
-      const requestData = new FormData();
-      for (let key in this.formData) { 
-        requestData.append(key, this.formData[key]);
-      }
-      
-      try { 
-        const promise = axios.put(path.USER_UPDATE, requestData, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;  
-            if (result.success) {  
-              this.formData = result.data; 
-              this.formData.gender = {
-                value : result.data.gender == null? "" : result.data.gender.code,
-                label : result.data.gender == null? "" : result.data.gender.name,
-              }
-              //this.imageFile = "data:image/jpeg;base64,"+result.data.imageByte
+       if (this.$refs.userProfileForm.validate()) {
+          this.showSpinner = true;
+          this.formData.gender = this.formData.gender.value
+          this.formData.status = this.formData.status.code
+          const requestData = new FormData();
+          for (let key in this.formData) { 
+            console.log(key, ":::",this.formData[key])
+            requestData.append(key, this.formData[key]);
+          }
+          
+          try { 
+            console.log(">>>>reqeust data>>>>>>>",requestData)
+            const promise = axios.put(path.USER_UPDATE, requestData, this.headers);
+            promise
+              .then((response) => {
+                // Extract data from the response
+                const result = response.data;  
+                if (result.success) {  
+                  this.formData = result.data; 
+                  this.formData.gender = {
+                    value : result.data.gender == null? "" : result.data.gender.code,
+                    label : result.data.gender == null? "" : result.data.gender.name,
+                  }
+                  this.showSpinner = false;
+                  this.router.push({ path: "/dashboard" });
+                  
 
-            }
- 
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
+                }
+    
+                // You can access properties of the response data as needed
+              })
+              .catch((error) => {
+                debug("Error:", error);
+              });
+          } catch (error) {
             debug("Error:", error);
-          });
-      } catch (error) {
-        debug("Error:", error);
-      }
-       
-
+          }
+       }   
       
     },
     onFileChange(file) {

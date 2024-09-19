@@ -4,7 +4,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import IndexPage from "pages/IndexPage.vue";
 import DashBoardPage from "pages/DashBoardPage.vue";
 import SigninPage from "src/pages/SigninPage.vue";
-import ApplicationHomePage from "src/pages/ApplicationHomePage.vue";
+import ApplicationHomePage from "src/pages/ApplicationHomePage.vue"; 
 
 const routes = [
   {
@@ -228,12 +228,20 @@ const routes = [
     path: "/signin",
     name: "Signin",
     component: SigninPage,
-  },
+  }, 
+ 
   {
     path: "/",
     component: () => import("layouts/LoginLayout.vue"),
     children: [
-      { path: "", component: () => import("src/pages/SigninPage.vue") },
+      { path: "", component: () => import("src/pages/SigninPage.vue") }, 
+      { path: "/register", component: () => import("src/pages/RegisterUser.vue") }, 
+      { path: "/forgot-password", component: () => import("src/pages/ForgotPassword.vue") }, 
+      { path: "/passwordchange", component: () => import("src/pages/PasswordChange.vue") }, 
+      { path: "/registrationcompletion", component: () => import("src/pages/RegistrationCompletion.vue") }, 
+      
+       
+
     ],
   },
 

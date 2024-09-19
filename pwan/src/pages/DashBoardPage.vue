@@ -1,15 +1,20 @@
 <template>
-  <q-page padding>
-    <div class="q-pa-md">Dash Board</div>
- 
-      <div class="q-pa-md row items-start q-gutter-md">
-         
+  <q-page padding> 
+        <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+      <div class="q-pa-md row items-start q-gutter-md"> 
         <q-card
           class="my-card text-white"
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
         v-if="outstanding.length > 0">
           <q-card-section>
-            <div class="text-h6">OutStanding Payment(s)</div> 
+            <div class="text-h6 text-center">OutStanding Payment(s)</div> 
           </q-card-section>  
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in outstanding" :key="index"> 
@@ -22,7 +27,7 @@
 
         <q-card dark bordered class="bg-red-9 my-card text-white"  v-if="contributions.length > 0">
           <q-card-section>
-            <div class="text-h6">Total Contribution(s)</div> 
+            <div class="text-h6 text-center">Total Contribution(s)</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in contributions" :key="index"> 
@@ -31,7 +36,7 @@
         </q-card>
         <q-card dark bordered class="bg-puple-9 my-card text-white"  v-if="attendance.length > 0">
           <q-card-section>
-            <div class="text-h6">Attendance</div> 
+            <div class="text-h6 text-center">Attendance</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in attendance" :key="index"> 
@@ -40,7 +45,7 @@
         </q-card>
         <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="benefits.length > 0">
           <q-card-section>
-            <div class="text-h6">Total Receivable(s)</div> 
+            <div class="text-h6 text-center">Total Receivable(s)</div> 
           </q-card-section>
           <q-separator dark inset /> 
             <q-card-section v-for="(field, index) in benefits" :key="index"> 
@@ -54,15 +59,26 @@
 
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
 import axios from "axios";
 import { ref } from "vue";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue";
 
 export default {
+  components: { 
+    HeaderPage,
+  },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('dashboard.pagename'))
+    const hint = computed(()=> t('dashboard.hint'))
     const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail");  
+    const userEmail = LocalStorage.getItem("userEmail"); 
+    
     return { 
       headers,
       userEmail,
@@ -70,6 +86,8 @@ export default {
       attendance:[],
       outstanding:[],
       benefits:[],
+      pageName,
+      hint,
     };
   },
     methods:{

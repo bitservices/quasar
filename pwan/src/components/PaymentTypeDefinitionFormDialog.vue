@@ -114,7 +114,7 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
 
-    const profile = SessionStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const formData = ref({
       code: "",

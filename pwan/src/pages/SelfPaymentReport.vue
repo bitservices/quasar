@@ -1,5 +1,13 @@
 <template>
   <q-page padding>
+    <q-card>
+        <q-card-section class="pwan-blue text-white">
+          <HeaderPage  
+              :label="pageName"
+              :hint="hint"  
+            />
+        </q-card-section>
+      </q-card>
     <q-card
       class="card-flex-display" 
     > 
@@ -76,12 +84,20 @@
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
-import { ref } from "vue"; 
+import { ref, computed } from "vue"; 
 import path from "src/router/urlpath";
 import { format } from 'date-fns';
+import { useI18n } from 'vue-i18n'
+import HeaderPage from "src/components/HeaderPage.vue";
+
 export default {
-   
+  components: { 
+    HeaderPage,
+  },
   data() {
+    const { t } = useI18n();
+    const pageName = computed(()=> t('selfpaymentereport.pagename'))
+    const hint = computed(()=> t('selfpaymentereport.hint'))
     const headers = SessionStorage.getItem("headers"); 
     const userEmail = LocalStorage.getItem("userEmail"); 
     const columns = [
@@ -143,7 +159,9 @@ export default {
       formData, 
       dense:true, 
       clients:[],
-      organisations:[], 
+      organisations:[],  
+      pageName,
+      hint,
     };
   },
   methods: {

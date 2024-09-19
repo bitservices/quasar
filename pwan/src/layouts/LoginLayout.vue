@@ -2,9 +2,9 @@
   <q-layout view="hHh Lpr lFf">
     <q-header elevated class="pwan-blue">
       <q-toolbar>
-        <q-toolbar-title> PWAN App </q-toolbar-title>
+        <q-toolbar-title> Property Connect App </q-toolbar-title>
 
-        <div>PWAN App v{{ $q.version }}</div>
+        <div>Property Connect App v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -27,3 +27,5 @@ function toggleLeftDrawer() {
   leftDrawerOpen.value = !leftDrawerOpen.value;
 }
 </script>
+
+

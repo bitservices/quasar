@@ -1,18 +1,25 @@
 <template>
-  <q-page padding class="flex flex-center">
-    <q-card style="width: 450px">
+  <q-page padding class="flex flex-center app-bg">
+    <q-card style="width: 600px">
       <q-card-section class="pwan-blue text-white">
-        <div class="text-h6 text-center">Sign In</div>
+        <HeaderPage  
+            :label="pageName"
+            :hint="hint"  
+          />
       </q-card-section>
       <q-card-section>
         <div>
-          <q-form>
+          <q-form @submit.prevent="handleSubmit" ref="signInForm">
+             <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
             <q-input
               filled
               bottom-slots
               v-model="formData.username"
               label="Email"
               :dense="dense"
+              :rules="[emailRule]" 
             >
               <template v-slot:prepend>
                 <q-icon name="email" />
@@ -22,6 +29,7 @@
                   name="close"
                   @click="formData.username = ''"
                   class="cursor-pointer"
+                  
                 />
               </template>
             </q-input>
@@ -31,6 +39,8 @@
               filled
               label="Password"
               :type="isPwd ? 'password' : 'text'"
+              :rules="[passwordRule]"
+              required 
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -42,66 +52,175 @@
                   @click="isPwd = !isPwd"
                 />
               </template>
-            </q-input>
+            </q-input>  
+             <q-btn rounded class="pwan-button top-margin full-width" icon="login" label="Login" type="submit"/>
           </q-form>
         </div>
-      </q-card-section>
-
-      <q-card-actions class="flex flex-center">
-        <q-btn class="pwan-button" @click="handleSubmit" rounded> Login </q-btn>
+         <ResponseDialog
+            v-model="showMessageDialog"
+            :cardClass="childRef.cardClass"
+            :textClass="childRef.textClass"
+            :label="childRef.label"
+            :message="childRef.message"
+            :buttonClass="childRef.buttonClass"
+          />
+      </q-card-section> 
+      
+      <q-card-actions>
+        <q-btn flat label="Forgot Password?" @click="navigateToForgotPassword" />
+        <q-btn flat label="Register" @click="navigateToRegister" />
       </q-card-actions>
     </q-card>
   </q-page>
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import axios from "axios";
 import { LocalStorage, SessionStorage } from "quasar"; 
-import path from "src/router/urlpath"; 
-//import router from "src/router/routes";
-
+import path from "src/router/urlpath";   
+import HeaderPage from "src/components/HeaderPage.vue";  
+import ResponseDialog from "src/components/ResponseDialog.vue";   
 import { useRouter } from "vue-router";
+import { validateEmail, validatePassword } from 'src/validation/validation';
+
 export default {
-  setup() {
+   components: { 
+    HeaderPage,
+    ResponseDialog,
+  }, 
+  data() {
+    const { t } = useI18n()  
+    const pageName = computed(()=> t('signin.pagename'))
+    const hint = computed(()=> t('signin.hint'))
+    const logonMessage = computed(()=> t('signin.invalduser'))
+    const emailValidationMsg = computed(()=> t('signin.validation.invalidemail'))
+    const passValidationMsg = computed(()=> t('signin.validation.passwordrequired'))
+    
     const router = useRouter();
     const formData = ref({
       username: "",
       password: "",
-    });
-    const handleSubmit = async () => {
-      try {
-        const response = await axios.post(
-          "http://localhost:8000/api/token/",
-          formData.value
+    }); 
+    const showMessageDialog = ref(false);
+    const childRef = ref({
+      label: "",
+      message: "",
+      textClass: "",
+      cardClass: "",
+      buttonClass: "",
+      data: {}, 
+    }); 
+
+    return {
+      isPwd: ref(true),
+      formData, 
+      dense:false,
+      pageName,
+      hint,
+      showSpinner: false,
+      router,
+      showMessageDialog,
+      childRef,
+      logonMessage, 
+      emailValidationMsg,
+      passValidationMsg,
+      emailRule: value => validateEmail(value),
+      passwordRule: value => validatePassword(value)
+
+    };
+  },
+  methods : {
+    handleSubmit() {  
+       if (this.$refs.signInForm.validate()) {
+        this.showSpinner = true; 
+        try { 
+          const requestParam = {
+                params :{
+                  email : this.formData.username
+                }
+            } 
+            const userPromise = axios.get(path.FIND_USER_BY_EMAIL,
+                requestParam
+                );  
+                userPromise.then((response) => {
+                    if(response.data.success){ 
+                        
+                        LocalStorage.set("userEmail", this.formData.username); 
+                        const userData = response.data.data;  
+                        if((userData.last_name == null || userData.last_name.trim()=="") && 
+                        (userData.first_name == null || userData.first_name.trim()=="")){
+                          console.log("loading userprofile")
+                            this.router.push({ path: "/userprofile"});
+                        }else{
+
+                            this.authenticateUser();
+                        }
+                    }
+                    
+
+                })
+
+        } catch (error) {
+          console.error("Error submitting form:", error);
+        }
+     }
+    },
+   navigateToForgotPassword() { 
+      this.router.push({ path: "/forgot-password" });// Route to the Forgot Password page
+    },
+
+    navigateToRegister() {
+      console.log("Navigate to Register Page")
+      this.router.push({ path: "/register" });
+    },
+     
+    authenticateUser(){ 
+        try {
+          
+      console.log(">>>>>>>indide authenticate user password and email >>>",this.formData.password, this.formData.username)
+        const promise = axios.post(path.USER_AUTHENTICATEE,
+        
+          {username:this.formData.username, password:this.formData.password}
         );
-        if (response.data) {
-          LocalStorage.set("userEmail", formData.value.username);
-          const authenticated = response.data["access"];
+        promise
+          .then((response) => {
+            // Extract data from the respons  
+          const authenticated = response.data["access"]; 
           LocalStorage.set("token", response.data);
           const headers = {
             Authentication: "Bearer " + response.data["access"],
             "Access-Control-Allow-Origin": path.ORIGIN_PATH,
-          }; 
-          console.log(headers);
-          SessionStorage.set("headers", headers);
-          console.log(authenticated);
+          };  
+          SessionStorage.set("headers", headers); 
           if (authenticated) {
-            // Redirect to the homepage or intended route
-            console.log(router);
-            router.push({ path: "/dashboard" });
+            // Redirect to the homepage or intended route  
+            this.showSpinner = false;
+            this.router.push({ path: "/dashboard" });
           }
-        }
+          })
+          .catch((error) => {
+             console.log(">>>>error response>>>>>",error.response)
+              this.childRef = {
+                message: this.logonMessage,
+                label: "Error",
+                cardClass: "bg-negative text-white error",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal",
+              };
+              this.showSpinner = false;
+              this.showMessageDialog = true;
+             
+          }); 
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    };
-    return {
-      isPwd: ref(true),
-      formData,
-      handleSubmit,
-      dense:false,
-    };
+
+    }
+
+
   },
+   
 };
-</script>
+</script> 

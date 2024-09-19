@@ -1,0 +1,58 @@
+{
+    "greeting": "Hola in English",
+    "dashboard":{
+        "pagename": "Dash Board",
+        "hint":"This page shows detailed information about the user's transactions. It includes payment details, the total amount contributed, attendance records, and the total amount received from various organizations to which the user belongs."
+    },
+    "signin":{
+        "pagename": "Sign In",
+        "hint":"This page allows users to log into the application by entering their email and password, then clicking the 'Login' button" ,
+        "invalduser":"Invalid Username or Password" ,
+        "validation":{
+            "invalidemail": "Invalide Email",
+            "passwordrequired" : "Password is Required"
+        }
+    }, 
+    "selfpaymentereport":{
+        "pagename": "Self Payment Report",
+        "hint":"Self Payment Report is a report Page used by a user to search for details of the payment he or she has made to the various organizations to which the user belongs. "   
+    }, 
+    "registeruser":{
+        "pagename": "User Registration",
+        "hint":"The page is used to register User, Fill in the Form and click on regiser. A Validation Code will be sent into the user Email which will be used to activate the registration "   
+    },
+    "forgotpassword":{
+        "pagename": "Forgot Password",
+        "hint":"Please enter your email address and click the submit button. A validation code will be sent to your email. A new page will appear with fields for the validation code and a new password. Enter the validation code you received and your new password, then click the submit button to complete your password change request"   
+    },
+    "passwordchange":{
+        "pagename": "Password Change Confirmation",
+        "hint":"Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"   
+    },
+    "userregistration":{
+        "pagename": "User Registration",
+        "hint":"Fill in the form and Click on register button, to register a new User. A code will be sent to the email supplied. Use the code to complete your registration.",
+        "validationmsg":"Enter the validation Code you received in your email, then click on submit button to complete the User registration"   
+    },
+    "clientform":{
+        "pagename": "Client Form",
+        "hint":"Fill in the form and Click on Submit button to Create the a new Client."
+      },
+      "organisationform":{
+        "pagename": "Organisation Form",
+        "hint":"This page is use to create, Edit and or view Organisation. Fill in the required Field and click on the approprate button."
+      },
+
+      "userprofile":{
+        "pagename": "User Profile Form",
+        "hint":"Fill in the form and Click on Submit button to Update the User Profile."
+      }
+      
+      
+      
+
+    
+
+    
+
+}

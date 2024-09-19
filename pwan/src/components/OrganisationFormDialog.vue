@@ -1,15 +1,22 @@
 <template>
   <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+     <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
     <q-card
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
-    >
+    > 
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="organisationForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-input
             filled
             bottom-slots
@@ -17,6 +24,7 @@
             label="Code"
             :dense="dense"
             :readonly="isReadonly" 
+            :rules="[requiredRule]"
           />
           <q-input
             filled
@@ -24,6 +32,7 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
+            :rules="[requiredRule]"
           />
           <q-select
             filled
@@ -77,6 +86,7 @@
             rows="3"
             maxlength="300"
             counter
+            :rules="[requiredRule]"
           />
           <q-input
             filled
@@ -155,37 +165,41 @@
             :dense="dense" 
           />
          
+          <div class="row">
+            <q-btn  id="closeBtn"
+                  rounded  
+                  label="Close"
+                  icon="close"
+                  v-close-popup
+                  class="pwan-blue top-margin full-width"
+                />  
+            <q-btn
+                  :label="actionLabel"
+                  rounded
+                  type="submit"
+                  icon="save" 
+                  class="pwan-button top-margin full-width"
+                />
+          </div>
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-import { LocalStorage,SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
+import { LocalStorage,SessionStorage } from "quasar"; 
 import axios from "axios";
 import path from "src/router/urlpath"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { isRequired } from 'src/validation/validation';
 export default {
+
+  components: { 
+    HeaderPage,
+  },
   name: "OrganisationFormDialog",
   props: {
     onClick: {
@@ -214,6 +228,9 @@ export default {
     },
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('organisationform.pagename'))
+    const hint = computed(()=> t('organisationform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -250,7 +267,11 @@ export default {
       stateList: [],
       counties: [],
       dense:true,      
-      isReadonly: false,
+      isReadonly: false, 
+      pageName,
+      hint, 
+      showSpinner: false, 
+      requiredRule: value => isRequired(value), 
     };
   },
   methods: {
@@ -277,15 +298,23 @@ export default {
       console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
     }
     },
-    saveRecord() {   
-      this.formData.client = this.formData.client.value;   
-      this.formData.county = this.formData.county.value;
-      this.formData.country = this.formData.country.value;
-      this.formData.state = this.formData.state.value; 
-      this.formData.createdBy = this.userEmail;
-      this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
+    saveRecord() { 
+      if (this.$refs.organisationForm.validate()) {  
+        console.log(">>>>>>>>>indide the SaveRecord>>>>>>>>>>>")
+        this.formData.client = this.formData.client.value;  
+         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.formData.county = this.formData.county.value;
+         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.formData.country = this.formData.country.value;
+         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.formData.state = this.formData.state.value; 
+         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.formData.createdBy = this.userEmail;
+         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.$emit("formDataSubmitted", this.formData);
+        this.showDialog = true;
+        document.getElementById('closeBtn').click();
+      }
     },
      handleCountryChange(selectedItem) {
       const requestParams = {

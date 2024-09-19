@@ -114,6 +114,7 @@ export default {
         email: this.userEmail,
         client: this.formData.client.value,
         organisation: this.formData.organisation.value,
+        orgName : this.formData.organisation.label,
       };
       LocalStorage.set("turnelParams", turnelParams);
       try {
@@ -133,7 +134,7 @@ export default {
                 let menuitem = {
                   title: menu.name,
                   caption: menu.code,
-                  icon: menu.code,
+                  icon: menu.icon,
                   link: menu.url,
                 };
                 menuitems.push(menuitem);

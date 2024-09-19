@@ -272,15 +272,12 @@ export default {
           path.USERROLE_REMOVE,
           data,
           this.headers
-        ); 
-        console.log(">>>>>>promise>>>>>>>>>>",promise)
+        );  
         promise
           .then((response) => {  
-            
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>response 1111>>>>>>>>>",response.data)
+             
             const result = response.data 
-            
-             console.log(">>>>>>>>>>>>>>>>>>>>>>>>result success>>>>>>>>>",result.success)
+             
             if(result.success){
               this.childRef = {
                 message: result.message,

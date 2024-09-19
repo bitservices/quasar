@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md" style="max-width: 50px">
-    <q-menu auto-close>
-      <q-list style="min-width: 100px" bordered separator> 
+    <q-menu auto-close class="pwan-blue text-white">
+      <q-list style="min-width: 100px" separator> 
           <q-item
             v-for="link in props.menuitems"
             :key="link.title"
@@ -12,12 +12,11 @@
             @click="handleClick(link.link)"
           >
             <q-item-section v-if="link.icon" avatar>
-              <q-icon :name="props.icon" />
+              <q-icon :name="link.icon" />
             </q-item-section>
 
             <q-item-section>
-              <q-item-label>{{ link.title }} </q-item-label>
-              <q-item-label caption>{{ link.caption }}</q-item-label>
+              <q-item-label>{{ link.title }} </q-item-label> 
             </q-item-section>
           </q-item>  
       </q-list> 

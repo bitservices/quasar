@@ -1,15 +1,22 @@
 <template>
   <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+    <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
     <q-card
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
-    >
+    > 
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="clientForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-input
             filled
             bottom-slots
@@ -17,6 +24,7 @@
             label="Code"
             :readonly="isReadonly"
             :dense="dense"
+            :rules="[requiredRule]" 
           />
           <div>
             <q-checkbox v-model="isChecked" label="Is an Affilate" />
@@ -27,6 +35,7 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
+            :rules="[requiredRule]" 
           />
           <q-input
             filled
@@ -53,39 +62,45 @@
                 <img :src="logoFile" alt="Preview" style="max-width: 100%;" />
             </div>
             </div>
+
+              <div class="row">
+                  <q-btn id="closeBtn"
+                        rounded  
+                        label="Close"
+                        icon="close"
+                        v-close-popup
+                        class="pwan-blue top-margin full-width"
+                      />  
+                  <q-btn
+                        :label="actionLabel"
+                        rounded
+                        type="submit"
+                        icon="save" 
+                        class="pwan-button top-margin full-width"
+                      />
+                </div>
+             
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { isRequired } from 'src/validation/validation';
 
 export default {
+  components: { 
+    HeaderPage,
+  },
   name: "StandingDataFormDialog",
   props: {
     onClick: {
@@ -114,12 +129,13 @@ export default {
     },
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('clientform.pagename'))
+    const hint = computed(()=> t('clientform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
-      window.innerHeight || document.documentElement.clientHeight;
-
-    // Set the width and height of the dialog to cover the viewport
+      window.innerHeight || document.documentElement.clientHeight; 
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
@@ -150,25 +166,33 @@ export default {
       logoFile,
       dense:true,
       isReadonly:false,
-      profile,
+      profile, 
+      pageName,
+      hint, 
+      showSpinner: false, 
+      requiredRule: value => isRequired(value), 
     };
   },
   methods: {
     saveRecord() {   
-      this.formData.email = this.profile.email; 
-      
-      if (this.isChecked) {
-        this.formData.isAnAffilate = true;
-      } else {
-        this.formData.isAnAffilate = false;
-      }
-      const requestData = new FormData();
-      for (let key in this.formData) { 
-        requestData.append(key, this.formData[key]);
-      }  
+       if (this.$refs.clientForm.validate()) {
+         this.showSpinner = true; 
+          this.formData.email = this.profile == null? LocalStorage.getItem("userEmail"):this.profile.email;  
+          if (this.isChecked) {
+            this.formData.isAnAffilate = true;
+          } else {
+            this.formData.isAnAffilate = false;
+          }
+          const requestData = new FormData();
+          for (let key in this.formData) { 
+            requestData.append(key, this.formData[key]);
+          }  
 
-      this.$emit("formDataSubmitted", requestData);
-      this.showDialog = true;
+          this.$emit("formDataSubmitted", requestData);
+          document.getElementById('closeBtn').click();
+          this.showDialog = true;
+           this.showSpinner = false;
+       }
     },
     loadUClientLogo(code){ 
        const requestParam = {

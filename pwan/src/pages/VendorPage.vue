@@ -169,7 +169,7 @@ export default {
           requestParam,
           headers
         );
-        console.log(response.data);
+        console.log("",response.data);
         if (response.data) {
           rows.value = response.data.data;
           selected.value = [];

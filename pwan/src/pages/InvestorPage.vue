@@ -106,7 +106,6 @@ export default {
   },
   beforeMount() {
     console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
   },
   mounted() {
     console.log("mounted");

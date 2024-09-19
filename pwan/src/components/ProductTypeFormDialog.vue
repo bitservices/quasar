@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios"; 
 
@@ -94,7 +94,7 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
 
-   const profile = SessionStorage.getItem("turnelParams"); 
+   const profile = LocalStorage.getItem("turnelParams"); 
     const formData = ref({
       code: "",
       name: "", 
