@@ -277,8 +277,7 @@ export default {
   methods: {
     getPosition(){
       try{
-        if ('geolocation' in navigator) {
-          console.log('Geolocation is supported');
+        if ('geolocation' in navigator) { 
           navigator.geolocation.getCurrentPosition(
               (position) => {
                 // Success callbac 
@@ -299,8 +298,10 @@ export default {
     }
     },
     saveRecord() { 
+      console.log(">>>>>this.formData>>>>>>",this.formData)
       if (this.$refs.organisationForm.validate()) {  
         console.log(">>>>>>>>>indide the SaveRecord>>>>>>>>>>>")
+        this.formData.status = this.formData.status != null? this.formData.status.value : "I";  
         this.formData.client = this.formData.client.value;  
          console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
         this.formData.county = this.formData.county.value;
@@ -435,6 +436,10 @@ export default {
               this.formData.county = {
                 value: result.data[0].county.code,
                 label: result.data[0].county.name,
+              };
+              this.formData.status = {
+                value: result.data[0].status.code,
+                label: result.data[0].status.name,
               };
 
             }
