@@ -1,17 +1,16 @@
 <template>
   <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
-     <q-card>
+     
+    <q-card
+      class="card-flex-display"
+      :style="{ width: form.width, height: form.height }"
+    > 
           <q-card-section class="pwan-blue text-white">
             <HeaderPage  
                 :label="pageName"
                 :hint="hint"  
               />
           </q-card-section>
-        </q-card>
-    <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
-    > 
       <q-card-section>
         <q-form @submit.prevent="saveRecord" ref="organisationForm">
           <div class="text-center"> 
@@ -104,7 +103,16 @@
             label="latitude"
             :dense="dense"
             type="number"
-          />
+          >
+              <template v-slot:append>
+            <q-icon
+              name="edit"
+              @click="getPosition"
+              class="cursor-pointer"
+              
+            />
+          </template>
+            </q-input>
           <q-input
             filled
             bottom-slots
@@ -113,7 +121,6 @@
             :dense="dense"
             type="number"
           />
-          
          <q-input
             filled
             bottom-slots
@@ -121,7 +128,6 @@
             label="slogan"
             :dense="dense"
           />
-
           <q-input
             filled
             bottom-slots
@@ -131,7 +137,17 @@
             rows="2"
             maxlength="200"
             counter
-          />
+            :readonly="dense"
+          >  
+              <template v-slot:append>
+                <q-icon
+                  name="edit"
+                  @click="loadMeetingDays"
+                  class="cursor-pointer"
+                  
+                />
+              </template>
+            </q-input>
            <q-checkbox
             v-model="formData.allowSeatAllocation"
             label="Allowed Seet Allocation"
@@ -181,10 +197,88 @@
                   class="pwan-button top-margin full-width"
                 />
           </div>
+          <div v-if="showMeetingDialog">
+            <q-dialog v-model="showMeetingDialog" width="1229px" height="600px">
+                <q-card style="width: 1229px"> 
+                  <q-card-actions align="right">
+                  <q-btn rounded color="green" icon="add" size="sm" @click="addMeetingDays" />
+                   <q-btn rounded color="red" icon="delete" size="sm"  @click="removeMeetingDays" />
+                  </q-card-actions>
+                  <q-card-section class="q-pt-none">
+                    <div v-if="meetingDays" class="row full-width" ref="meetingDaysDiv"> 
+                      <div  v-for="(item, index) in meetingDays" :key="index">
+                              <div class="row meetingdays">
+                             <div class="col-3"> 
+                                    <q-select
+                                    filled
+                                    bottom-slots
+                                    v-model="item.day"
+                                    :options="daysOfWeek"
+                                    label="Select Day" 
+                                    :dense="dense"  
+                                    :ref="'meetingday' + index"
+                                  /> 
+                                </div>
+                                <div class="col-3">
+                                  <q-input
+                                  filled
+                                  bottom-slots
+                                  v-model="item.meetingName" 
+                                  label="Meeting Name" 
+                                  :dense="dense"  
+                                  :ref="'meetingName' + index"
+                                />
+                                </div>
+                                <div class="col-3">
+                                  <q-input
+                                  filled
+                                  bottom-slots
+                                  v-model="item.startTime"
+                                  type="time"
+                                  label="Start  Time"
+                                  :dense="dense" 
+                                  :ref="'starttime' + index"
+                                />
+                                </div>
+                                <div class="col-3">
+                                <q-input
+                                  filled
+                                  bottom-slots
+                                  v-model="item.endTime"
+                                  type="time"
+                                  label="End Time"
+                                  :dense="dense"  
+                                  :ref="'endtime' + index"
+                                />
+                              </div> 
+                              </div>
+                        </div>
+                      </div> 
+                      
+                  </q-card-section>
+                  <q-card-actions align="center">
+                    <q-btn
+                      flat
+                      label="Cancle"
+                      class="pwan-blue text-white"
+                      v-close-popup
+                      rounded
+                    />
+                    <q-btn
+                      @click="saveMeetingDays"
+                      flat
+                      label="Save" 
+                      class="pwan-button text-white"
+                      rounded 
+                    /> 
+                  </q-card-actions>
+                </q-card>
+              </q-dialog>
+          </div>
         </q-form>
       </q-card-section> 
     </q-card>
-  </q-dialog>
+  </q-dialog> 
 </template>
 
 <script>
@@ -242,7 +336,8 @@ export default {
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px"; 
     const userEmail = LocalStorage.getItem("userEmail");
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem("headers"); 
+    const meetingDaysCount = ref(1);
     const formData = ref({
       code: "",
       name: "",
@@ -252,6 +347,12 @@ export default {
       width: "10px",
       height: "10px",
     });
+    const meeting = ref({
+      day : "",
+      startTime : "",
+      endTime : "",
+      meetingName : ""
+    })
     const showDialog = ref(false);
 
     return {
@@ -269,9 +370,16 @@ export default {
       dense:true,      
       isReadonly: false, 
       pageName,
-      hint, 
+      hint,  
+      meeting,
+      meetingDaysCount,
       showSpinner: false, 
       requiredRule: value => isRequired(value), 
+      showMeetingDialog :false,
+      meetingDays : null,
+     daysOfWeek : [{value:'Sunday', label:'Sunday'}, {value:'Monday', label:'Monday'},{value:'Tuesday', label:'Tuesday'},{value:'Wednesday', label:'Wednesday'},
+     {value:'Thursday', label:'Thursday'},{value:'Friday', label:'Friday'},{value:'Saturday', label:'Saturday'}],
+
     };
   },
   methods: {
@@ -297,21 +405,15 @@ export default {
       console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
     }
     },
-    saveRecord() { 
-      console.log(">>>>>this.formData>>>>>>",this.formData)
-      if (this.$refs.organisationForm.validate()) {  
-        console.log(">>>>>>>>>indide the SaveRecord>>>>>>>>>>>")
+    saveRecord() {  
+      if (this.$refs.organisationForm.validate()) {   
+        this.showSpinner=true;
         this.formData.status = this.formData.status != null? this.formData.status.value : "I";  
-        this.formData.client = this.formData.client.value;  
-         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
-        this.formData.county = this.formData.county.value;
-         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
-        this.formData.country = this.formData.country.value;
-         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
-        this.formData.state = this.formData.state.value; 
-         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
-        this.formData.createdBy = this.userEmail;
-         console.log(">>>>>> 111111111111111>>>>>>>>>>>") 
+        this.formData.client = this.formData.client.value;   
+        this.formData.county = this.formData.county.value; 
+        this.formData.country = this.formData.country.value; 
+        this.formData.state = this.formData.state.value;  
+        this.formData.createdBy = this.userEmail;  
         this.$emit("formDataSubmitted", this.formData);
         this.showDialog = true;
         document.getElementById('closeBtn').click();
@@ -355,7 +457,96 @@ export default {
         })
         .catch((error) => {});
     },
+    loadMeetingDays(){ 
+      this.showMeetingDialog=true;  
+      if(this.formData.meetingDays == null || this.formData.meetingDays.trim() == "" || this.formData.meetingDays == "null"){
+           this.meetingDays = [{day:'', meetingName:'',startTime:'', endTime:''}];
+      }else{
+        try { 
+               const meetingDaysStr = this.formData.meetingDays;
+              let days = meetingDaysStr.replace(/\\/g, '')
+
+              if(meetingDaysStr[0] =='"' && meetingDaysStr[0] == meetingDaysStr[meetingDaysStr.length -1])
+              {  
+                console.log("Inside if commane>>>>>>>", meetingDaysStr[0] , meetingDaysStr[meetingDaysStr.length -1])
+                days = meetingDaysStr.replace(/\\/g, '').slice(1, -1); 
+                 
+              } 
+                days = JSON.parse(days); 
+               this.meetingDays = days;   
+
+          } catch (error) {
+              console.error('Invalid JSON string:', error);
+          }
+        
+        //   meetingDays.forEach(obj => {
+        //     console.log(obj);
+        // });
+      }
+    },
+    saveMeetingDays(){
+      let meetingDaysArray = [];
+
+      for (let i = 0; i < this.meetingDays.length; i++) {
+        console.log("day: ",this.$refs['meetingday' + i][0])
+         console.log("meetingName: ",this.$refs['meetingName' + i][0])
+          console.log("starttime: ",this.$refs['starttime' + i][0])
+           console.log("endtime: ",this.$refs['endtime' + i][0])
+
+         let day = this.$refs['meetingday' + i][0].modelValue;
+         let meetingName = this.$refs['meetingName' + i][0].modelValue;
+         let startTime = this.$refs['starttime' + i][0].modelValue;
+         let endTime = this.$refs['endtime' + i][0].modelValue; 
+         let resolvedDay = day.value;
+         if(day.value ==null || day.value==undefined || day.value == "undefined"){
+            resolvedDay = day
+         }        
+         console.log("day",day.value, "meetingName",meetingName, "startTime",startTime, "endTime",endTime)
+         let meetingObj = {"day":resolvedDay, "meetingName":meetingName, "startTime":startTime, "endTime":endTime}
+          meetingDaysArray.push(meetingObj)
+
+      }
+      console.log(">>>>>meetingDaysArray>>>>>>>",meetingDaysArray)
+      this.formData.meetingDays = JSON.stringify(meetingDaysArray);
+
+
+       
+
+      this.showMeetingDialog=false;
+    },
+    validateTime() {
+      const regex = /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/; // HH:MM format
+      if (regex.test(this.time)) {
+        this.submittedTime = this.time; // Set the submitted time if valid
+      } else {
+        this.submittedTime = 'Invalid time format';
+      }
+    },
+    validateTimeRule(val) {
+      return /^(2[0-3]|[01]?[0-9]):[0-5][0-9]$/.test(val) || 'Time must be in HH:MM format';
+    },
+    addMeetingDays(){
+      if(this.meetingDaysCount < 7 ){
+        this.meetingDays.push({day:'', meetingName:'',startTime:'', endTime:''});
+        this.meetingDaysCount++;
+      }else{
+
+      }
+    },
+    removeMeetingDays(){
+      
+      if(this.meetingDaysCount > 1){
+      // let componentDiv = this.$refs.meetingDaysDiv
+      // componentDiv.removeChild(componentDiv.lastChild)
+      this.meetingDays.pop();
+      this.meetingDaysCount--;
+      }else{
+
+      }
+    }
+
   },
+
   beforeCreate() {
     console.log("beforeCreate");
   },

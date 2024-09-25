@@ -46,7 +46,44 @@
       "userprofile":{
         "pagename": "User Profile Form",
         "hint":"Fill in the form and Click on Submit button to Update the User Profile."
+      },
+      "client":{
+        "pagename": "Client Page",
+        "hint":"This Page displays the List of all the client registered by the user through which he or she can create a new client, edit or view an existing one."
+      },
+      "organisation":{
+        "pagename": "Organisation Page",
+        "hint":"This Page sisplays the List of all the Organisation/Center registered by the user through which he or she can create a new Organisation/Center, edit or view an existing one."
+      },
+      "attendance":{
+        "pagename": "Attendance Page",
+        "hint":"This Page is used by an organisation/center to record member's attendance. Search for the member you want to capture his or her attendance, then click on record attendance button."
+      },
+      "selfattendance":{
+        "pagename": "User Attendance Page",
+        "hint":"This Page is begin used to record attendance. Select the Client and also the oraganisation/Center and then click on Record Attendance."
+      },
+      "turnel":{
+        "pagename": "Turnelling Page",
+        "hint":"This Page is  used to Turnel to the Organisation/Center where the User belongs to."
+     
+      },
+      "commissionsettings":{
+        "pagename": "Commission Settings Page",
+        "hint":"This Page is used by an Organisation/Centre to setup the commission rates of different commision levels"
+     
+      },
+      "commission":{
+        "pagename": "Commission Calculation Page",
+        "hint":"User uses this page to calculation commission to enable him or her know exact amount he is expecting from the Affilate/Estate Company"
+     
       }
+      
+      
+
+      
+      
+      
       
       
       

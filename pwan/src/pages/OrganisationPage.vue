@@ -1,6 +1,17 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
+      <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div>  
       <q-table
         class="my-sticky-header-table"
         flat
@@ -97,16 +108,20 @@
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
+import HeaderPage from "src/components/HeaderPage.vue"; 
 import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue";
+import axios from "axios"; 
 import OrganisationFormDialog from "src/components/OrganisationFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
+import { format } from 'date-fns';
 export default {
   components: {
     OrganisationFormDialog,
     ResponseDialog,
+    HeaderPage,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
@@ -139,7 +154,7 @@ export default {
         name: "expirationDate",
         align: "left",
         label: "Renewal Date",
-        field: (row) => row.expirationDate,
+        field: (row) => format(row.expirationDate, 'yyyy-MM-dd'),
         sortable: true,
       },
     ];
@@ -147,6 +162,9 @@ export default {
       code: "",
       name: "",
     });
+     const { t } = useI18n() 
+    const pageName = computed(()=> t('organisation.pagename'))
+    const hint = computed(()=> t('organisation.hint'))
     const urlLink = ref(path.ORGANISATION_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -162,6 +180,7 @@ export default {
     const activate = ref(false); 
      const dialog_header = ref(null);
      const dialog_message= ref(null);
+     const showSpinner = ref(false); 
     
     const childRef = ref({
       label: "",
@@ -215,11 +234,13 @@ export default {
       }
     };
     const saveRecord = (record) => {
+      showSpinner.value=true;
       if (action.value == "add") {
         createRecord(record);
       } else if (action.value == "edit") {
         updateRecord(record);
       }
+      showSpinner.value=true;
     };
     const createRecord = (record) => {
       try {
@@ -349,6 +370,7 @@ export default {
     };
     const activateUser = async () => {
       try {
+        showSpinner.value=true;
         const data = {"id":selected.value[0].id};
         const response = await axios.post(path.ORGANISATION_ACTIVATE, data, headers);
         console.log(">>>response data>>",response.data)
@@ -363,6 +385,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -370,10 +393,10 @@ export default {
     };
     const deactivateUser = async () => {
       try {
+        showSpinner.value=true;
         const data = {"id":selected.value[0].id};
         const response = await axios.post(path.ORGANISATION_DEACTIVATE, data, headers);
-        console.log(">>>response data>>",response.data)
-         const result = response.data;
+        const result = response.data;
         if (result.success) {
           fetchData();
            childRef.value = {
@@ -384,6 +407,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -423,6 +447,9 @@ export default {
       issuperuser, 
       dialog_header,
       dialog_message,
+      pageName,
+      hint, 
+      showSpinner,
     };
   },
   beforeCreate() {

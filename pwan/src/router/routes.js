@@ -218,6 +218,20 @@ const routes = [
         path: "/attendance",
         component: () => import("src/pages/AttendanceRecord.vue"),
       },
+
+      {
+        path: "/selfattendance",
+        component: () => import("src/pages/SelfAttendanceRecord.vue"),
+      },
+      {
+        path: "/comsettings",
+        component: () => import("src/pages/CommissionSettings.vue"),
+      },
+
+      {
+        path: "/calculatecommission",
+        component: () => import("src/pages/CommissionCalculation.vue"),
+      },
       
     ],
     meta: {

@@ -98,6 +98,18 @@ let defaultList = [
         link: "/dashboard",
       }, 
       
+       {
+        title: " Self Attendance",
+        icon: "event",
+        link: "/selfattendance",
+      }, 
+      
+       {
+        title: " Commission ",
+        icon: "event",
+        link: "/calculatecommission",
+      },  
+      
       {
         title: " Expense Report",
         caption: "",

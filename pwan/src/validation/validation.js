@@ -33,8 +33,13 @@ export const validateUsername = (value) => {
     return value.length > 0 || "Phone Number is required";
   }; 
   
-  export const isRequired =  (value) => {
+  export const inputFieldRequired =  (value) => {
     return value.length > 0 || "This field is required";
+  };
+
+
+  export const isRequired =  (value) => {
+    return value || "This field is required";
   }; 
   
   

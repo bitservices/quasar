@@ -1,6 +1,17 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
+       <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div>  
       <q-table
         class="my-sticky-header-table"
         flat
@@ -8,9 +19,8 @@
         title="Client"
         :rows="rows"
         :columns="columns"
-        row-key="name"
-        selection="single"
-        @row-click="handleRowClick"
+        row-key="code"
+        selection="single" 
         v-model:selected="selected"
       >
         <template v-slot:top>
@@ -93,9 +103,11 @@
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
+import HeaderPage from "src/components/HeaderPage.vue"; 
 import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue";
+import axios from "axios"; 
 import ClientFormDialog from "src/components/ClientFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
@@ -103,6 +115,7 @@ export default {
   components: {
     ClientFormDialog,
     ResponseDialog,
+    HeaderPage,
   },
   setup() {
     const headers = SessionStorage.getItem("headers");
@@ -143,6 +156,9 @@ export default {
       code: "",
       name: "",
     });
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('client.pagename'))
+    const hint = computed(()=> t('client.hint'))
     const urlLink = ref(path.CLIENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -158,6 +174,7 @@ export default {
     const activate = ref(false); 
      const dialog_header = ref(null);
      const dialog_message= ref(null);
+     const showSpinner = ref(false); 
 
     const childRef = ref({
       label: "",
@@ -212,11 +229,13 @@ export default {
       }
     };
     const saveRecord = (record) => {
+      showSpinner.value=true;
       if (action.value == "add") {
         createRecord(record);
       } else if (action.value == "edit") {
         updateRecord(record);
       }
+       showSpinner.value=false;
     };
     const createRecord = (record) => {
       try {
@@ -328,20 +347,10 @@ export default {
         actionLabel.value = "Done";
       }
     };
-    const handleRowClick = (event, row) => { 
-      if (row.status.code == "A") {
-        actionBtn.value = "clear";
-      } else {
-        actionBtn.value = "done";
-      } 
-      selected.value = row;
-    };
-    const getSelectedString = (row) => {
-      // Example function to return label for selected row (if needed)
-      return row ? row.name : "No client selected";
-    };
+     
    const activateUser = async () => {
       try {
+        showSpinner.value=true;
         const data = {"code":selected.value[0].code};
         const response = await axios.post(path.CLIENT_ACTIVATE, data, headers);
         const result = response.data
@@ -355,6 +364,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -362,6 +372,7 @@ export default {
     };
     const deactivateUser = async () => {
       try {
+        showSpinner.value=true;
         const data = {"code":selected.value[0].code}; 
         const response = await axios.post(path.CLIENT_DEACTIVATE, data, headers);
         const result = response.data
@@ -375,6 +386,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
         }
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -386,8 +398,7 @@ export default {
       fetchData,
       saveRecord,
       createRecord,
-      updateRecord,
-      handleRowClick,
+      updateRecord, 
       addItem,
       editItem,
       viewItem, 
@@ -414,6 +425,9 @@ export default {
       issuperuser,  
       dialog_header,
       dialog_message, 
+      pageName,
+      hint, 
+      showSpinner, 
     };
   },
   beforeCreate() {

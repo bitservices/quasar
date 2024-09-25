@@ -237,6 +237,19 @@ const path = {
    
   USER_REGISTER: APP_PATH + "userreg/register/", 
   USER_REGISTER_FINALIZE: APP_PATH + "userreg/finalize/", 
+
+  COMMISSION_SETTINGS_CREATE: APP_PATH + "commission/create/", 
+
+  COMMISSION_SETTINGS_SEARCH: APP_PATH + "commission/search/", 
+  
+  COMMISSION_SETTINGS_UPDATE: APP_PATH + "commission/update/", 
+
+  COMMISSION_SETTINGS_DELETE: APP_PATH + "commission/delete/", 
+
+  COMMISSION_SETTINGS_REMOVE: APP_PATH + "commission/remove/", 
+
+  COMMISSION_CALCULATE: APP_PATH + "commission/calculate/",
+  
   
 
   

@@ -1,20 +1,35 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-      <q-card
-      class="card-flex-display" 
+        <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div> 
+        <div class="q-pa-md q-gutter-lg">
+          <q-toggle
+              v-model="toggleValue"
+              label="Attendance Capturing Options "
+            />
+        </div>
+      <q-card  v-if="toggleValue" class="card-flex-display" 
     >
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">Attendance </div>
+          <div class="col-8 text-h6"> </div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
         </div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+      </q-card-section>  
+      <q-card-section> 
+        <q-form @submit.prevent="recordAttendance" ref="attendanceForm">
           <q-hide 
             v-model="formData.email"
           />
@@ -24,8 +39,8 @@
             v-model="formData.userName"
             @keyup="handleInput"
             @keydown.enter="handleEnter"
-            placeholder="Search for PBO"
-            :dense="dense"
+            placeholder="Search for Member"
+            :dense="dense" 
           />
           <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
             <q-item
@@ -51,20 +66,19 @@
             :message="childRef.message"
             :buttonClass="childRef.buttonClass"
           />
-        </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center"> 
+           <q-card-actions align="center"> 
           <q-btn
-            label="Record Attendance"
-            color="secondary"
-            @click="saveRecord"
+            class="pwan-button"
+            label="Record Attendance" 
+            type="submit"
             size="md"
             rounded
             v-close-popup
           />
         </q-card-actions>
+        </q-form>
       </q-card-section>
+      
     </q-card>
      <div class="q-pa-md">
      <q-table
@@ -90,8 +104,11 @@
 
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import { isReadonly, onUnmounted, ref } from "vue";
+import { isReadonly, ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
+import HeaderPage from "src/components/HeaderPage.vue";  
+import { isRequired } from 'src/validation/validation';
+import { LocalStorage, SessionStorage } from "quasar"; 
 import axios from "axios";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger";
@@ -103,15 +120,19 @@ export default {
    
    components: { 
     ResponseDialog,
+    HeaderPage,
   }, 
   data() {
     
-   
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('attendance.pagename'))
+    const hint = computed(()=> t('attendance.hint'))
     const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const selected = ref([]);
     const formData = ref({}); 
-    const medium_dialog = ref(false);  
+    const medium_dialog = ref(false);   
+     const showSpinner = ref(false);
     const rows = ref([]);
      const childRef = ref({
       label: "",
@@ -196,6 +217,12 @@ export default {
       dialog_header:"",
       dialog_message:"",
       position,
+      pageName,
+      hint,
+      showSpinner, 
+      requiredRule: value => isRequired(value), 
+      toggleValue:ref(true),
+       
     };
   },
   methods: {
@@ -268,8 +295,9 @@ export default {
             console.log(error);
           }); 
     },
-    saveRecord() {     
-      
+    recordAttendance() {      
+    if (this.$refs.attendanceForm.validate()) {
+      this.showSpinner= true
       const data = {
         client : this.profile.client,
         organisation:this.profile.organisation,
@@ -291,20 +319,19 @@ export default {
               cardClass: "bg-positive text-white",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog = true;
+            }; 
             this.loadOrganisationAttendance()
-            }else{
-
+            }else{ 
               this.childRef = {
               message: result.message,
               label: "Error",
               cardClass: "bg-negative text-white error",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal"
-            };
-            this.showMessageDialog = true;
+            }; 
             }
+            this.showMessageDialog = true;
+             this.showSpinner= false
  
           })
           .catch((error) => {
@@ -312,7 +339,8 @@ export default {
           });
       } catch (error) {
         debug("Error:", error);
-      } 
+      }
+    } 
     },
      loadOrganisationAttendance(userId) {
          const requestParams = {
@@ -466,6 +494,13 @@ export default {
               (error) => {
                 // Error callback
                 console.log(error)
+                 this.childRef = {
+                  message: error.message,
+                  label: "Error",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal"
+                }; 
               }
             );
         } else {

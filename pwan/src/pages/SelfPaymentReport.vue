@@ -209,8 +209,8 @@ export default {
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.organisations = response.data.data.map((option) => ({
-              label: option.organisation.name,
-              value: option.organisation.code,
+              label: option.name,
+              value: option.code,
             }));
             console.log("this.organisation >>>>>>>>>>>>", this.organisations);
           })
