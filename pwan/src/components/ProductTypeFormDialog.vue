@@ -4,18 +4,25 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
-      <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
+        <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
 
       <q-card-section>
-        <q-form>
+         <q-form @submit.prevent="saveRecord" ref="productTypeForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-input
             filled
             bottom-slots
             v-model="formData.code"
             label="Code"
             :dense="dense"
+            :rules="[inputFieldRule]" 
           />
           <q-input
             filled
@@ -23,38 +30,46 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
+            :rules="[inputFieldRule]" 
           />
+          <q-card-actions align="center">
+          <div class="row">
+            <q-btn id="closeBtn"
+                  rounded  
+                  label="Close"
+                  icon="close"
+                  v-close-popup
+                  class="pwan-blue top-margin full-width"
+                />  
+            <q-btn
+                  :label="actionLabel"
+                  rounded
+                  type="submit"
+                  icon="save" 
+                  class="pwan-button top-margin full-width"
+                />
+          </div>
+          </q-card-actions>
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios"; 
+import axios from "axios";
+import path from "src/router/urlpath";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { inputFieldRequired} from 'src/validation/validation';
 
 export default {
+   components: { 
+    HeaderPage,
+  },
   name: "ProductTypeFormDialog",
   props: {
     onClick: {
@@ -83,6 +98,9 @@ export default {
     },
   },
   data() {
+     const { t } = useI18n() 
+    const pageName = computed(()=> t('producttypeform.pagename'))
+    const hint = computed(()=> t('producttypeform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -116,19 +134,25 @@ export default {
       dialogWidth,
       dialogHeight,
       profile,
+      pageName,
+      hint,
+      showSpinner: false,  
+      inputFieldRule: value => inputFieldRequired(value), 
+
     };
   },
   methods: {
-    saveRecord() {
-      
-      //this.onClick(formData.value);
-      this.formData.client = this.profile.client;
-      this.formData.organisation =  this.profile.organisation;
-      this.formData.createdBy = this.profile.email;
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
+    saveRecord() { 
+      if (this.$refs.productTypeForm.validate()) {
+        this.showSpinner = true; 
+        this.formData.client = this.profile.client;
+        this.formData.organisation =  this.profile.organisation;
+        this.formData.createdBy = this.profile.email; 
+        this.$emit("formDataSubmitted", this.formData); 
+        document.getElementById('closeBtn').click();
+        this.showDialog = true; 
+         this.showSpinner = false; 
+      }
     },
   },
   beforeCreate() {

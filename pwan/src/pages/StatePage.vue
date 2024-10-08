@@ -152,8 +152,7 @@ export default {
 
     const fetchData = async () => {
       try { 
-        const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/state/",
+        const response = await axios.get(path.STATE_SEARCH,
           headers
         );
         if (response.data) {
@@ -210,8 +209,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/state/update/",
+        const promise = axios.put(path.STATE_UPDATE,
           record,
           headers
         );
@@ -282,8 +280,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/state/remove/",
+        const response = await axios.post(path.STATE_REMOVE,
           data,
           headers
         );

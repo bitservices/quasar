@@ -1,12 +1,38 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-      <q-card
+      <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div>
+         <div class="q-pa-md q-gutter-lg">
+          <q-toggle
+              v-model="toggleValue"
+              :label="toggleLabel"
+              @update:model-value="onToggleChange"
+            />
+            <ResponseDialog
+            v-model="showMessageDialog"
+            :cardClass="childRef.cardClass"
+            :textClass="childRef.textClass"
+            :label="childRef.label"
+            :message="childRef.message"
+            :buttonClass="childRef.buttonClass"
+          />
+        </div>
+      <q-card  v-if="toggleValue"
       class="card-flex-display" 
     >
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">User PAyment Transaction</div>
+          <div class="col-8 text-h6"></div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
@@ -14,7 +40,7 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="userPaymentForm">
           <q-select
             filled
             bottom-slots
@@ -23,6 +49,8 @@
             label="Select Member"
             @update:model-value="onChangeUser"
             :dense="dense"
+            :readonly="isreadonly"
+            :rules="[requiredRule]" 
           />
            <q-select
             filled
@@ -34,8 +62,8 @@
             :dense="dense"
           />
           
-          <div v-for="(field, index) in userPayments" :key="index">
-            <div class="row">
+          <div v-for="(field, index) in userPayments" :key="index"> 
+            <div class="row" v-if="field.amount >= 0  ">
                <q-input
                   v-model="field.id"
                   type="hidden"
@@ -50,6 +78,7 @@
                 placeholder="Payable Amount"
                 type="number"
                 :dense="dense"
+                :rules="[amountRule]" 
               />
               </div>
                <div class="col-3"> 
@@ -60,59 +89,65 @@
                     :options="paymentModes"
                     label="Select Payment Mode" 
                     :dense="dense"
+                    :rules="[requiredRule]" 
                   />
               </div>
             </div>
           </div> 
-        </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
-          /> 
-          <q-btn
-            label="Reset"
-            color="primary"
-            @click="reloadPage"
-            size="md"
-            rounded
-            v-close-popup
-          />
-          <q-btn
-            label="Save"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
+           <q-card-actions align="center"> 
+              <q-btn
+                label="Reset"
+                class="pwan-blue"
+                @click="reloadPage"
+                size="md"
+                rounded
+                v-close-popup
+              />
+              <q-btn
+                class="pwan-button"
+                label="Save" 
+                type="submit"
+                size="md"
+                rounded
+                v-close-popup
+              />
         </q-card-actions>
-      </q-card-section>
+        </q-form>
+      </q-card-section> 
     </q-card>
+    <q-card v-else class="q-mt-md">  
+          <QRCodeScanner 
+            @scannedDataSubmitted="readScanCode"
+            />
+      </q-card>
     </div>
   </q-page>
 </template>
 
 
-<script>
+<script> 
+import { useI18n } from 'vue-i18n'
+import HeaderPage from "src/components/HeaderPage.vue"; 
 import { LocalStorage, SessionStorage } from "quasar";
-import { isReadonly, onUnmounted, ref } from "vue";
+import { isReadonly, onUnmounted, ref,computed } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger";
 import ResponseDialog from "src/components/ResponseDialog.vue"; 
+import { isRequired,amountFieldRule } from 'src/validation/validation';  
+import QRCodeScanner from "src/components/QRCodeScanner.vue";
  
 export default {
    components: { 
     ResponseDialog,
+    HeaderPage,
+    QRCodeScanner,
   },
   data() { 
+     const { t } = useI18n() 
+    const pageName = computed(()=> t('userpayment.pagename'))
+    const hint = computed(()=> t('userpayment.hint'))
+    const showSpinner = ref(false); 
    const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const showMessageDialog = ref(false);
@@ -144,55 +179,120 @@ export default {
       childRef, 
       paymentTypes:[],
       backupPayments:[],
+      isreadonly:false,
+      requiredRule: value => isRequired(value), 
+      inputRequiredRule: value => inputFieldRequired(value),  
+      amountRule: value => amountFieldRule(value), 
+      toggleValue:ref(true), 
+      toggleLabel:"Record Attendance By Selecting Member",
+      pageName,
+      hint, 
+      showSpinner,
     };
   },
   methods: {
+    onToggleChange(value){
+      console.log(">>value>>>",value);
+      if(value){
+        this.toggleLabel = "Record Payment By Selecting Member"
+      }else{ 
+         this.toggleLabel = "Record Payment By Scanning"
+      }
+    },
+     readScanCode(record){
+      let data = JSON.parse(record); 
+      console.log(data)
+
+        const userData = { 
+        value : data.id,
+        label:data.name,
+      } 
+      this.formData.userId =  userData;
+      this.toggleValue = true;
+     this.onChangeUser(userData);
+
+   },
     reloadPage(){
       window.location.reload()
     },
-    saveRecord() {      
-        console.log(">>>>>>>>this.userPayments>>>>>>>>>>>>>>",this.userPayments)
-    for (let i = 0; i < this.userPayments.length; i++) { 
-          this.userPayments[i]["client"] = this.userPayments[i]["client"].code 
-          this.userPayments[i]["organisation"] = this.userPayments[i]["organisation"].id 
-          this.userPayments[i]["payerId"] = this.userPayments[i]["userId"].id 
-          this.userPayments[i]["paymentMode"] = this.userPayments[i]["paymentMode"].value 
-          this.userPayments[i]["paymentType"] = this.userPayments[i]["paymentType"].id  
-          this.userPayments[i]["createdBy"] = this.profile.email
-          this.userPayments[i]["status"] = "A"
-
-      }
-      try { 
-        const promise = axios.post(path.USR_PAYMENT_TRANSACTION_CREATE, this.userPayments, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;  
-            if (result.success) {  
-               
-              this.childRef = {
-              message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog = true; 
-             setTimeout(() => {
-                window.location.reload();
-              }, 2000);
+    saveRecord() {   
+      if (this.$refs.userPaymentForm.validate()) {
+          this.showSpinner= true  
+          let data = [];  
+          for (let i = 0; i < this.userPayments.length; i++) { 
+              if(this.userPayments[i]["amount"]  > 0){ 
+                console.log("amount>>>",this.userPayments[i]["amount"])  
+                let item = {
+                  client: this.userPayments[i]["client"].code,
+                  organisation :  this.userPayments[i]["organisation"].id ,
+                  payerId : this.userPayments[i]["userId"].id ,
+                  paymentMode : his.userPayments[i]["paymentMode"].value ,
+                  paymentType : this.userPayments[i]["paymentType"].id ,
+                  createdBy : this.profile.email,
+                  amount : this.userPayments[i]["amount"],
+                  id : this.userPayments[i]["id"],
+                  status : "A"
+                }           
+                data.push(item)
+              }
             }
-            
-            
-  
-          })
-          .catch((error) => {
+          try { 
+            const promise = axios.post(path.USR_PAYMENT_TRANSACTION_CREATE, data, this.headers);
+            promise
+              .then((response) => {
+                // Extract data from the response
+                const result = response.data;  
+                if (result.success) {  
+                  
+                  this.childRef = {
+                  message: result.message,
+                  label: "Success",
+                  cardClass: "bg-positive text-white",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
+                }else{
+                   this.childRef = {
+                  message: result.message,
+                  label: "Success",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                }
+                this.showSpinner = false;
+                this.showMessageDialog = true;
+                
+      
+              })
+              .catch((error) => {
+                debug("Error:", error);
+                  this.childRef = {
+                  message: error.message,
+                  label: "Success",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                this.showSpinner = false;
+                this.showMessageDialog = true;
+              });
+          } catch (error) {
             debug("Error:", error);
-          });
-      } catch (error) {
-        debug("Error:", error);
+              this.childRef = {
+                  message: error.message,
+                  label: "Success",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                this.showSpinner = false;
+                this.showMessageDialog = true;
+          }
       }
-       
       
     },
    
@@ -205,6 +305,7 @@ export default {
          promise
           .then((response) => {
 
+              console.log("result payment >>>>>>>",response.data.data)
             for (let i = 0; i < response.data.data.length; i++) {
               response.data.data[i]["amount"] = response.data.data[i]["currentDebit"]
               response.data.data[i]["paymentMode"] = ""
@@ -216,6 +317,7 @@ export default {
             }
           })
           .catch((error) => {
+            console.log("result payment >>>>>>>",response.data.data)
             console.log(error);
           }); 
     },

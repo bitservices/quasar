@@ -1,6 +1,6 @@
 <template>
   <q-page padding class="flex flex-center app-bg">
-    <q-card style="width: 600px">
+    <q-card style="width: 400px">
       <q-card-section class="pwan-blue text-white">
         <HeaderPage  
             :label="pageName"

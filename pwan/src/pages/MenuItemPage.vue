@@ -9,6 +9,7 @@
         :rows="rows"
         :columns="columns"
         row-key="code"
+        :rows-per-page-options="[25]"
         selection="single"
         @row-click="handleRowClick"
         v-model:selected="selected"
@@ -369,7 +370,7 @@ export default {
 <style lang="sass">
 .my-sticky-header-table
   /* height or max-height is important */
-  height: 310px
+  height: 500px
 
   .q-table__top,
   .q-table__bottom,

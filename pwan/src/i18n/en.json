@@ -6,7 +6,7 @@
     },
     "signin":{
         "pagename": "Sign In",
-        "hint":"This page allows users to log into the application by entering their email and password, then clicking the 'Login' button" ,
+        "hint":"This page enables users to access the application by entering their email and password, followed by clicking the 'Login' button" ,
         "invalduser":"Invalid Username or Password" ,
         "validation":{
             "invalidemail": "Invalide Email",
@@ -57,11 +57,11 @@
       },
       "attendance":{
         "pagename": "Attendance Page",
-        "hint":"This Page is used by an organisation/center to record member's attendance. Search for the member you want to capture his or her attendance, then click on record attendance button."
+        "hint":"This Page is used by an organisation/center to record member's attendance. Search for the member you want to capture his or her attendance, then click on record attendance button by toggling to the scanning option, then scan the QR Code to record attendance"
       },
       "selfattendance":{
         "pagename": "User Attendance Page",
-        "hint":"This Page is begin used to record attendance. Select the Client and also the oraganisation/Center and then click on Record Attendance."
+        "hint":"This Page is begin used to record attendance.You can record attendance by selecting Client and oraganisation/Center and then click on Record Attendance Button or by toggling to the scanning option, then scan the QR Code to record attendance"
       },
       "turnel":{
         "pagename": "Turnelling Page",
@@ -77,7 +77,37 @@
         "pagename": "Commission Calculation Page",
         "hint":"User uses this page to calculation commission to enable him or her know exact amount he is expecting from the Affilate/Estate Company"
      
-      }
+      },
+      "userqrcode":{
+        "pagename": "QR Code",
+        "hint":"This Page display the QR Code of the User. Scan the Code to retrieve the details of the User."
+     
+      },
+      "attendancereport":{
+        "pagename": "Attendance Report",
+        "hint":"Attendance Report Page is used by an Admin User to search for Members that attended a particular meeting by selecting the search criteria. "   
+    },
+    "producttypeform":{
+        "pagename": "Product Type Form",
+        "hint":"The Page is used to create all the Products and Services the Organisation Provides. "   
+    },
+      
+    "producttype":{
+      "pagename": "Product Type",
+      "hint":"The Page list all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one "   
+  },  
+  "producttypedefform":{
+    "pagename": "Product Type Definition Form",
+    "hint":"The Page is used to create detail of the Products and Services the Organisation Provides which includes amount for the products or services "   
+},     
+"producttypedefinition":{
+  "pagename": "Product Type Definition",
+  "hint":"The Page list details of all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one "   
+},
+"properties":{
+  "pagename": "Properties Search",
+  "hint":"The page allows users to search for properties based on location, price, and the company or affiliate managing the property."   
+}
       
       
 

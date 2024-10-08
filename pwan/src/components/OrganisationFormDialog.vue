@@ -5,12 +5,12 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     > 
-          <q-card-section class="pwan-blue text-white">
-            <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
-              />
-          </q-card-section>
+      <q-card-section class="pwan-blue text-white">
+        <HeaderPage  
+            :label="pageName"
+            :hint="hint"  
+          />
+      </q-card-section>
       <q-card-section>
         <q-form @submit.prevent="saveRecord" ref="organisationForm">
           <div class="text-center"> 
@@ -23,7 +23,7 @@
             label="Code"
             :dense="dense"
             :readonly="isReadonly" 
-            :rules="[requiredRule]"
+            :rules="[inputRequiredRule]"
           />
           <q-input
             filled
@@ -31,7 +31,7 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
-            :rules="[requiredRule]"
+            :rules="[inputRequiredRule]"
           />
           <q-select
             filled
@@ -50,6 +50,7 @@
             label="Select Country"
             @update:model-value="handleCountryChange"
             :dense="dense"
+            :rules="[requiredRule]"
           />
           <q-select
             filled
@@ -59,6 +60,7 @@
             label="Select State"
             @update:model-value="handleStateChange"
             :dense="dense"
+            :rules="[requiredRule]"
           />
           <q-select
             filled
@@ -67,6 +69,7 @@
             :options="counties"
             label="Select County"
             :dense="dense"
+            :rules="[requiredRule]"
           />
 
          <q-input
@@ -85,7 +88,7 @@
             rows="3"
             maxlength="300"
             counter
-            :rules="[requiredRule]"
+            :rules="[inputRequiredRule]"
           />
           <q-input
             filled
@@ -288,7 +291,7 @@ import { LocalStorage,SessionStorage } from "quasar";
 import axios from "axios";
 import path from "src/router/urlpath"; 
 import HeaderPage from "src/components/HeaderPage.vue"; 
-import { isRequired } from 'src/validation/validation';
+import { isRequired,inputFieldRequired } from 'src/validation/validation';
 export default {
 
   components: { 
@@ -375,6 +378,7 @@ export default {
       meetingDaysCount,
       showSpinner: false, 
       requiredRule: value => isRequired(value), 
+      inputRequiredRule: value => inputFieldRequired(value),  
       showMeetingDialog :false,
       meetingDays : null,
      daysOfWeek : [{value:'Sunday', label:'Sunday'}, {value:'Monday', label:'Monday'},{value:'Tuesday', label:'Tuesday'},{value:'Wednesday', label:'Wednesday'},
@@ -406,8 +410,10 @@ export default {
     }
     },
     saveRecord() {  
-      if (this.$refs.organisationForm.validate()) {   
-        this.showSpinner=true;
+      if (this.$refs.organisationForm.validate()) {  
+        console.log(">>>>meetingDays >>>>>>",this.formData)  
+        let days = this.formData.meetingDays.replace(/\\/g, '') 
+        this.formData.meetingDays=days.replace(/\\/g, '').slice(days.indexOf("["),  days.indexOf("]") + 1); 
         this.formData.status = this.formData.status != null? this.formData.status.value : "I";  
         this.formData.client = this.formData.client.value;   
         this.formData.county = this.formData.county.value; 
@@ -416,7 +422,7 @@ export default {
         this.formData.createdBy = this.userEmail;  
         this.$emit("formDataSubmitted", this.formData);
         this.showDialog = true;
-        document.getElementById('closeBtn').click();
+        document.getElementById('closeBtn').click(); 
       }
     },
      handleCountryChange(selectedItem) {
@@ -463,16 +469,11 @@ export default {
            this.meetingDays = [{day:'', meetingName:'',startTime:'', endTime:''}];
       }else{
         try { 
-               const meetingDaysStr = this.formData.meetingDays;
-              let days = meetingDaysStr.replace(/\\/g, '')
+               const meetingDaysStr = this.formData.meetingDays; 
+              let days = meetingDaysStr.replace(/\\/g, '') 
 
-              if(meetingDaysStr[0] =='"' && meetingDaysStr[0] == meetingDaysStr[meetingDaysStr.length -1])
-              {  
-                console.log("Inside if commane>>>>>>>", meetingDaysStr[0] , meetingDaysStr[meetingDaysStr.length -1])
-                days = meetingDaysStr.replace(/\\/g, '').slice(1, -1); 
-                 
-              } 
-                days = JSON.parse(days); 
+              days = meetingDaysStr.replace(/\\/g, '').slice(days.indexOf("["),  days.indexOf("]") + 1);  
+                days = JSON.parse(days);  
                this.meetingDays = days;   
 
           } catch (error) {

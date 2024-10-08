@@ -33,11 +33,12 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.openingDebit"
-            label="Enter OPening Debit"
+            v-model="formData.amount"
+            label="Enter Amount"
             type="number"
             step="0.01"
-          />  
+          />   
+            <DatePicker v-model="selectedFRomData" label="Payment Date From" @setDate="setFromDate"/> - <DatePicker v-model="selectedToData" label="PaymentDate To"  @setDate="setToDate"/>
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -47,7 +48,7 @@
             size="md"
             color="primary"
             label="Search"
-            @click="searchAttendanceData"
+            @click="searchData"
             v-close-popup
           />
           <q-btn
@@ -88,11 +89,12 @@ import { ref, computed } from "vue";
 import path from "src/router/urlpath";
 import { format } from 'date-fns';
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue";
-
+import HeaderPage from "src/components/HeaderPage.vue";  
+import DatePicker from "src/components/DatePicker.vue"; 
 export default {
   components: { 
-    HeaderPage,
+    HeaderPage, 
+    DatePicker,
   },
   data() {
     const { t } = useI18n();
@@ -162,6 +164,8 @@ export default {
       organisations:[],  
       pageName,
       hint,
+      selectedFromDate: null,
+      selectedToDate: null,
     };
   },
   methods: {
@@ -221,7 +225,7 @@ export default {
         console.error("Error submitting form:", error);
       }
     },
-    searchAttendanceData() {
+    searchData() {
          const requestParams = {
           params: { 
             payerId: this.profileUserId, 
@@ -233,9 +237,20 @@ export default {
          if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ""){
           requestParams["params"]["organisation"] = this.formData.organisation.value
         }
+        if(this.formData.amount != null && this.formData.amount != null &&  this.formData.amount != ""){
+          requestParams["params"]["amount"] = this.formData.amount
+        }
+        if(this.selectedFromDate != null && this.selectedFromDate != null &&  this.selectedFromDate != ""){
+          requestParams["params"]["fromDate"] = this.selectedFromDate;
+        }
+        if(this.selectedToDate != null && this.selectedToDate != null &&  this.selectedToDate != ""){
+          requestParams["params"]["toDate"] = this.selectedToDate;
+        }
          
       try {
         console.log(">>>>>requestParams>>>>>>>>",requestParams)
+
+         
         const promise = axios.get(
           path.USR_PAYMENT_TRANSACTION_SEARCH,
           requestParams,
@@ -268,6 +283,15 @@ export default {
          if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ""){
           requestParams["params"]["organisation"] = this.formData.organisation.value
         }
+        if(this.formData.amount != null && this.formData.amount != null &&  this.formData.amount != ""){
+          requestParams["params"]["amount"] = this.formData.amount
+        }
+         if(this.selectedFromDate != null && this.selectedFromDate != null &&  this.selectedFromDate != ""){
+          requestParams["params"]["fromDate"] = this.selectedFromDate;
+        }
+        if(this.selectedToDate != null && this.selectedToDate != null &&  this.selectedToDate != ""){
+          requestParams["params"]["toDate"] = this.selectedToDate;
+        }
       try { 
         const promise = axios.get(
           path.USR_PAYMENT_TRANSACTION_REPORT,
@@ -277,7 +301,8 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response 
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            console.log(">>>>>>>>response.data>>>>>>>>",response.data)
+            const blob = new Blob([response.data], { type: 'application/pdf' });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);
@@ -297,7 +322,13 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    }
+    },
+    setFromDate(value){ 
+      this.selectedFromDate = value;
+    },
+    setToDate(value){ 
+      this.selectedToDate = value;
+    },
      
     
   },
@@ -365,4 +396,5 @@ export default {
     /* height of all previous header rows */
     scroll-margin-top: 48px
   tbody tr:nth-child(even)
+ 
 </style>

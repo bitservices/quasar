@@ -24,7 +24,7 @@
             size="sm"
             @click="viewItem"
           />
-          <PaymentTypeDefinitionFormDialog
+          <PaymentTypeDefinitionFormDialog 
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"

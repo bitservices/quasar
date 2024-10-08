@@ -9,13 +9,14 @@
       </q-card-section>
 
       <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="standingDataForm">
           <q-input
             filled
             bottom-slots
             v-model="formData.code"
             label="Code"
             :dense="dense"
+            :rules="[inputFieldRule]"
           />
           <q-input
             filled
@@ -23,36 +24,42 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
+            :rules="[inputFieldRule]"
           />
+           <q-card-actions align="center">
+          <div class="row">
+            <q-btn id="closeBtn"
+                  rounded  
+                  label="Close"
+                  icon="close"
+                  v-close-popup
+                  class="pwan-blue top-margin full-width"
+                />  
+            <q-btn
+                  :label="actionLabel"
+                  rounded
+                  type="submit"
+                  icon="save" 
+                  class="pwan-button top-margin full-width"
+                />
+          </div>
+          </q-card-actions>
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
+
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
+import path from "src/router/urlpath";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import {inputFieldRequired} from 'src/validation/validation';
 
 export default {
   name: "StandingDataFormDialog",
@@ -110,16 +117,21 @@ export default {
       showDialog,
       form,
       dialogWidth,
-      dialogHeight,
+      dialogHeight, 
+      showSpinner: false,   
+      inputFieldRule: value => inputFieldRequired(value), 
     };
   },
   methods: {
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      //this.onClick(formData.value);
-      this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
+       if (this.$refs.standingDataForm.validate()) {
+        this.showSpinner = true;   
+        //this.onClick(formData.value);
+        this.$emit("formDataSubmitted", this.formData);
+         document.getElementById('closeBtn').click();
+          this.showDialog = true;
+           this.showSpinner = false;
+       }
     },
   },
   beforeCreate() {

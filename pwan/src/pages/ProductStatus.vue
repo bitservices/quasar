@@ -91,6 +91,7 @@ import axios from "axios";
 import { ref } from "vue";
 import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
+import path from "src/router/urlpath";
 
 export default {
   components: {
@@ -121,8 +122,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/productstatus/search/"
+    const urlLink = ref(path.PRODUCTSTATUS_SEARCH
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -144,8 +144,7 @@ export default {
     const fetchData = async () => {
       try {
         Loading.show();
-        const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/productstatus/",
+        const response = await axios.get(path.PRODUCTSTATUS_SEARCH,
           headers
         );
         if (response.data) {
@@ -166,8 +165,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/productstatus/save/",
+        const promise = axios.post(path.PRODUCTSTATUS_CREATE,
           record,
           headers
         );
@@ -206,8 +204,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/productstatus/update/",
+        const promise = axios.put(path.PRODUCTSTATUS_UPDATE,
           record,
           headers
         );
@@ -275,8 +272,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/productstatus/remove/",
+        const response = await axios.post(path.PRODUCTSTATUS_REMOVE,
           data,
           headers
         );

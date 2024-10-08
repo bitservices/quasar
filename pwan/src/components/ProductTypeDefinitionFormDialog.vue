@@ -4,12 +4,19 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
-      <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
+       <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
 
       <q-card-section>
-        <q-form>
+         <q-form @submit.prevent="saveRecord" ref="productTypeDefinitionForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div> 
+          <div v-if="!showBytes"> 
           <q-select
             filled
             bottom-slots
@@ -18,6 +25,7 @@
             label="Select Product Type"
             :readonly="isReadonly" 
             :dense="dense"
+            :rules="[requiredRule]"
           />
 
           <q-input
@@ -26,6 +34,7 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
+            :rules="[inputFieldRule]"
           />
           <q-input
             filled
@@ -41,6 +50,7 @@
             label="Enter Amount"
             type="number"
             step="0.01"
+            :rules="[inputFieldRule]"
           />
           <q-input
             filled
@@ -71,8 +81,72 @@
             v-model="formData.allowedInspection"
             label="Allowed Inspection"
             color="secondary"
+          /> 
+           <q-input
+              filled
+              bottom-slots
+              v-model="formData.inspectionTime"
+              type="time"
+              label="Inspection Time"
+              :dense="dense"  
+            /> 
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.productStatus"
+            :options="productStatusList"
+            label="Select Product Status"
+            :dense="dense" 
+            :rules="[requiredRule]"
           />
-          <div class="row">
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.totalMeasurement"
+            label="Enter Total Size"
+            type="number"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.dimension"
+            :options="dimensions"
+            label="Select Dimension"
+            :dense="dense" 
+            :rules="[requiredRule]"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.country"
+            :options="countries"
+            label="Select Country"
+            @update:model-value="handleCountryChange"
+            :dense="dense" 
+            :rules="[requiredRule]"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.state"
+            :options="stateList"
+            label="Select State"
+            @update:model-value="handleStateChange"
+            :dense="dense"
+            :rules="[requiredRule]"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.county"
+            :options="counties"
+            label="Select County"
+            :dense="dense"
+            :rules="[requiredRule]"
+          />
+          </div>
+          <div ref="byteObjects" v-else>
+            <div class="row" v-if="updateImage">
             <div class="col-6">
               <q-file
                 bottom-slots
@@ -89,7 +163,24 @@
               <img :src="imageFile" alt="Preview" style="max-width: 100%" />
             </div>
           </div>
-          <div class="row">
+          <div class="row" v-if="updateSubscription">
+            <div class="col-6">
+              <q-file
+                bottom-slots
+                filled
+                v-model="formData.subscriptionFormByte"
+                label="Subscription Form"
+              >
+                <template v-slot:append>
+                  <q-icon name="attachment" />
+                </template>
+              </q-file>
+            </div>
+            <div v-if="subscriptionFile" class="col-6 q-mt-md"> 
+               <a :href="subscriptionFile" target="_blank" rel="noopener noreferrer">Subscription Form</a>
+            </div>
+          </div>
+          <div class="row" v-if="updateVideo">>
             <div class="col-6">
               <q-file filled v-model="formData.videoByte" label="Product Video">
                 <template v-slot:append>
@@ -106,95 +197,45 @@
               />
             </div>
           </div>
-          <q-time
-            v-model="formData.inspectionTime"
-            format24h
-            mask="HH:mm:ss"
-            bordered
-            model-value="formData.inspectionTime"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.productStatus"
-            :options="productStatusList"
-            label="Select Product Status"
-            :dense="dense"
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.totalMeasurement"
-            label="Enter Total Size"
-            type="number"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.dimension"
-            :options="dimensions"
-            label="Select Dimension"
-            :dense="dense"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.country"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.state"
-            :options="stateList"
-            label="Select State"
-            @update:model-value="handleStateChange"
-            :dense="dense"
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.county"
-            :options="counties"
-            label="Select County"
-            :dense="dense"
-          />
+          </div>
+          <q-card-actions align="center">
+          <div class="row">
+            <q-btn id="closeBtn"
+                  rounded  
+                  label="Close"
+                  icon="close"
+                  v-close-popup
+                  class="pwan-blue top-margin full-width"
+                />  
+            <q-btn
+                  :label="actionLabel"
+                  rounded
+                  type="submit"
+                  icon="save" 
+                  class="pwan-button top-margin full-width"
+                />
+          </div>
+          </q-card-actions>
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
       </q-card-section>
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { isRequired ,inputFieldRequired} from 'src/validation/validation';
 
 export default {
+  components:{
+    HeaderPage
+  }, 
   name: "ProductTypeFormDialog",
   props: {
     onClick: {
@@ -221,8 +262,28 @@ export default {
       type: String,
       required: true,
     },
+     showByte: {
+      type: Boolean,
+      required: true,
+    },
+     updateSubscription: {
+      type: Boolean,
+      required: true,
+    },
+     updateVideo: {
+      type: Boolean,
+      required: true,
+    },
+     updateImage: {
+      type: Boolean,
+      required: true,
+    }, 
+    
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('producttypedefform.pagename'))
+    const hint = computed(()=> t('producttypedefform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -236,9 +297,7 @@ export default {
 
     const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
-    const formData = ref({
-      code: "",
-      name: "",
+    const formData = ref({ 
       client: "",
       organisation: "",
       createdBy: "",
@@ -266,6 +325,13 @@ export default {
       isReadonly: false,
       imageFile: null,
       videoFile: null,
+      subscriptionFile: null,
+      pageName,
+      hint, 
+      showSpinner: false, 
+      showBytes:false,
+      requiredRule: value => isRequired(value), 
+      inputFieldRule: value => inputFieldRequired(value), 
     };
   },
   methods: {
@@ -278,26 +344,33 @@ export default {
 
     saveRecord() {
       //this.onClick(formData.value);
-      let productType = this.formData.productType.value;
-      this.formData.client = this.profile.client;
-      this.formData.organisation = this.profile.organisation;
-      this.formData.createdBy = this.profile.email;
-      this.formData.productType = productType;
-      this.formData.dimension = this.formData.dimension.value;
-      this.formData.code = productType; //this.formData.productType.value;
-      this.formData.productStatus = this.formData.productStatus.value;
-      this.formData.county = this.formData.county.value;
-      this.formData.country = this.formData.country.value;
-      this.formData.state = this.formData.state.value;
-      this.formData.status = this.formData.status.value;
-      this.formData.inspectionTime = this.time;
-      const requestData = new FormData();
-      for (let key in this.formData) {
-        requestData.append(key, this.formData[key]);
-      }
-
-      this.$emit("formDataSubmitted", requestData);
-      this.showDialog = true;
+     if (this.$refs.productTypeDefinitionForm.validate()) { 
+        this.showSpinner = true;
+        let data = this.formData; 
+        if(!this.updateImage && !this.updateVideo && !this.updateSubscription){ 
+      
+        let productType = this.formData.productType.value;   
+        data.productType = productType;
+        data.dimension = this.formData.dimension.value;
+        data.code = productType; //this.formData.productType.value;
+        data.productStatus = this.formData.productStatus.value;
+        data.county = this.formData.county.value;
+        data.country = this.formData.country.value;
+        data.state = this.formData.state.value;
+        }
+        data.status = 'A'; 
+        data.client = this.profile.client;
+        data.organisation = this.profile.organisation;
+        data.createdBy = this.profile.email; 
+        const requestData = new FormData(); 
+        for (let key in data) {  
+          requestData.append(key, data[key]);
+        } 
+        this.$emit("formDataSubmitted", requestData); 
+        document.getElementById('closeBtn').click();
+        this.showDialog = true; 
+         this.showSpinner = false;  
+     }
     },
     handleCountryChange(selectedItem) {
       const requestParams = {
@@ -337,6 +410,10 @@ export default {
         })
         .catch((error) => {});
     },
+    setShowByte(value){
+      this.showBytes = value
+    },
+    
   },
 
   beforeCreate() {
@@ -348,13 +425,11 @@ export default {
   beforeMount() {
     console.log("before Mount");
   },
-  mounted() {
-    const turnelParams = LocalStorage.getItem("turnelParams");
-    const requestParams = {
+  mounted() { 
+     const requestParams = {
       params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
-        email: turnelParams.email,
+        client: this.profile.client,
+        organisation: this.profile.organisation, 
       },
     };
 
@@ -404,23 +479,113 @@ export default {
       .catch((error) => {});
   },
   unmounted() {
-    debug("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    debug("Calling unmounted>>>>>>>>>>"); 
+
   },
   updated() {
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
-      this.isReadonly = true;
-      try {
-        const requestParams = {
+      const requestParams = {
           params: {
-            code: this.searchValue,
+            id: this.searchValue,
             client: this.profile.client,
             organisation: this.profile.organisation,
           },
         };
+    if(this.showByte){
+      this.showBytes = true
+      if(this.updateImage){
+         const promise = axios.get(path.PRODUCTDEF_IMAGE, requestParams, this.headers);
+        promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+
+            if (result.success) {
+              debug("fetched product Type Definition>>>>>>", result.data); 
+              this.formData.id = result.data.id; 
+              this.imageFile =
+                "data:image/jpeg;base64," + result.data.imageByte; 
+            }
+          })
+          .catch((error) => {
+            debug(error);
+          });
+              
+      }
+      if(this.updateSubscription){
+         const promise = axios.get(path.PRODUCTDEF_SUBSCRIPTION_FORM, requestParams, this.headers);
+        promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+
+            if (result.success) {
+              debug("fetched product Type Definition>>>>>>", result.data);   
+               const byteCharacters = atob(result.data.subscriptionFormByte); // Extract Base64 part
+              const byteArrays = [];
+              for (
+                let offset = 0;
+                offset < byteCharacters.length;
+                offset += 512
+              ) {
+                const slice = byteCharacters.slice(offset, offset + 512);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                  byteNumbers[i] = slice.charCodeAt(i);
+                }
+                byteArrays.push(new Uint8Array(byteNumbers));
+              }
+              const blob = new Blob(byteArrays, { type: "application/pdf" }); // Create Blob with MIME type
+              // Create Object URL and set as video source
+              this.subscriptionFile = URL.createObjectURL(blob); 
+            }
+          })
+          .catch((error) => {
+            debug(error);
+          });
+      }
+       if(this.updateVideo)  {   
+               const promise = axios.get(path.PRODUCTDEF_VIDEO, requestParams, this.headers);
+        promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+
+            if (result.success) {
+              debug("fetched product Type Video*********>>>>>>", result.data);   
+               this.formData.id = result.data.id;
+                 const byteCharacters = atob(result.data.videoByte); // Extract Base64 part
+              const byteArrays = [];
+              for (
+                let offset = 0;
+                offset < byteCharacters.length;
+                offset += 512
+              ) {
+                const slice = byteCharacters.slice(offset, offset + 512);
+                const byteNumbers = new Array(slice.length);
+                for (let i = 0; i < slice.length; i++) {
+                  byteNumbers[i] = slice.charCodeAt(i);
+                }
+                byteArrays.push(new Uint8Array(byteNumbers));
+              }
+              const blob = new Blob(byteArrays, { type: "video/mp4" }); // Create Blob with MIME type
+              // Create Object URL and set as video source
+              this.videoFile = URL.createObjectURL(blob);
+            }
+          })
+          .catch((error) => {
+            debug(error);
+          });
+                           
+             
+        }
+    }else{
+      this.showBytes = false 
+    if (this.action == "edit" || this.action == "view") {
+      this.isReadonly = true;
+      try { 
         const promise = axios.get(this.urlLink, requestParams, this.headers);
         promise
           .then((response) => {
@@ -461,28 +626,7 @@ export default {
                 value: result.data[0].status.code,
                 label: result.data[0].status.name,
               };
-              this.imageFile =
-                "data:image/jpeg;base64," + result.data[0].imageByte;
-              //const blob = new Blob([result.data[0].videoByte], { type: 'video/mp4' });
-
-              //this.videoFile = URL.createObjectURL(blob);
-              const byteCharacters = atob(result.data[0].videoByte); // Extract Base64 part
-              const byteArrays = [];
-              for (
-                let offset = 0;
-                offset < byteCharacters.length;
-                offset += 512
-              ) {
-                const slice = byteCharacters.slice(offset, offset + 512);
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                  byteNumbers[i] = slice.charCodeAt(i);
-                }
-                byteArrays.push(new Uint8Array(byteNumbers));
-              }
-              const blob = new Blob(byteArrays, { type: "video/mp4" }); // Create Blob with MIME type
-              // Create Object URL and set as video source
-              this.videoFile = URL.createObjectURL(blob);
+              
             }
           })
           .catch((error) => {
@@ -493,13 +637,8 @@ export default {
       }
     } else {
       this.isReadonly = false;
-      this.formData = {
-        code: "",
-        name: "",
-        client: "",
-        organisation: "",
-        createdBy: "",
-      };
+      
+    }
     }
   },
 };

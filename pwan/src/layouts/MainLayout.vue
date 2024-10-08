@@ -141,6 +141,13 @@ let defaultList = [
         link: "/prospect",
       },
       {
+        title: "QR Code",
+        caption: "",
+        icon: "event",
+        link: "/userqrcode",
+      },
+      
+      {
         title: " Investors",
         caption: "Investors",
         icon: "record_voice_over",

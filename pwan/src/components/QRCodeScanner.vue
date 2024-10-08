@@ -1,55 +1,80 @@
 <template>
-  <q-page class="flex flex-center">
-    <div>
-      <p class="error">{{ error }}</p>
-
-      <p class="decode-result">
-        Last result: <b>{{ result }}</b>
-      </p>
-
-      <qrcode-stream @decode="onDecode" @init="onInit" />
-    </div>
-  </q-page>
+  <q-card
+      class="card-flex-display"
+      
+    >
+    <q-card-section>
+    <video ref="video" width="300" height="300" autoplay></video>
+    <canvas ref="canvas" style="display: none;"></canvas> 
+    </q-card-section>
+    <q-card-section>
+       <q-card-actions align="center"> 
+        <q-btn
+            class="pwan-button top-margin"
+            label="  Scan   " 
+             @click="startCamera"
+            size="md"
+            rounded 
+            
+          />
+      </q-card-actions>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
-import { defineComponent } from "vue";
-//importing QrcodeStream component from vue-qrcode-reader.
-import { QrcodeStream } from "vue-qrcode-reader";
-export default defineComponent({
-  name: "PageIndex",
-  components: { QrcodeStream },
+import jsQR from "jsqr";
+
+export default {
   data() {
-    return {
-      result: "",
-      error: "",
+    return {  
+      videoStream: null,
     };
   },
   methods: {
-    //Creating onCode method to change result state to data receiving through scanner
-    onDecode(result) {
-      this.result = result;
+    async startCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      this.videoStream = stream;
+      this.$refs.video.srcObject = stream;
+      this.$refs.video.play();
+      this.scanQRCode();
+      console.log(stream, "Stream>>>")
     },
-    // cretaing onInit method to check for error or permission or browser not supported
-    async onInit(promise) {
-      try {
-        await promise;
-      } catch (error) {
-        if (error.name === "NotAllowedError") {
-          this.error = "ERROR: you need to grant camera access permisson";
-        } else if (error.name === "NotFoundError") {
-          this.error = "ERROR: no camera on this device";
-        } else if (error.name === "NotSupportedError") {
-          this.error = "ERROR: secure context required (HTTPS, localhost)";
-        } else if (error.name === "NotReadableError") {
-          this.error = "ERROR: is the camera already in use?";
-        } else if (error.name === "OverconstrainedError") {
-          this.error = "ERROR: installed cameras are not suitable";
-        } else if (error.name === "StreamApiNotSupportedError") {
-          this.error = "ERROR: Stream API is not supported in this browser";
+    scanQRCode() {
+      const canvas = this.$refs.canvas;
+      const context = canvas.getContext("2d");
+
+      const scan = () => {
+        if (this.videoStream) {
+          context.drawImage(this.$refs.video, 0, 0, canvas.width, canvas.height);
+          const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+          const code = jsQR(imageData.data, canvas.width, canvas.height);
+ 
+
+          if (code) {  
+            console.log(code, "Code before stop stopCamera")
+            this.$emit("scannedDataSubmitted", code.data);
+            this.stopCamera();
+          }
         }
+        requestAnimationFrame(scan);
+      };
+
+      requestAnimationFrame(scan);
+    },
+    stopCamera() {
+      if (this.videoStream) {
+        console.log("Stop Camera...")
+        const tracks = this.videoStream.getTracks();
+        tracks.forEach(track => track.stop());
       }
     },
   },
-});
+};
 </script>
+
+<style scoped>
+video {
+  border: 1px solid black;
+}
+</style>

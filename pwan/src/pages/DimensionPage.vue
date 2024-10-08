@@ -28,7 +28,7 @@
             size="sm"
             @click="viewItem"
           />
-          <MenuFormDialog
+          <StandingDataFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
@@ -89,15 +89,15 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
+import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import MenuFormDialog from "src/components/MenuFormDialog.vue";
+import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
 export default {
   components: {
-    MenuFormDialog,
+    StandingDataFormDialog,
     ResponseDialog,
   },
   data() {
@@ -179,16 +179,14 @@ export default {
       }
     },
     fetchData() {
-      try {
-        Loading.show();
+      try { 
         const promise = axios.get(path.DIMENSION_SEARCH_ALL, this.headers);
         console.log("promise in the Fetch Data>>>>>>>>>>", promise);
         promise
           .then((response) => {
             // Extract data from the response
             this.rows = response.data;
-            this.selected = [];
-            Loading.hide();
+            this.selected = []; 
             // You can access properties of the response data as needed
           })
           .catch((error) => {

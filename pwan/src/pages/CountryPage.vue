@@ -90,7 +90,8 @@ import { SessionStorage, Loading } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import CountryFormDialog from "src/components/CountryFormDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue";
+import ResponseDialog from "src/components/ResponseDialog.vue"; 
+import path from "src/router/urlpath";
 
 export default {
   components: {
@@ -121,8 +122,7 @@ export default {
       code: "",
       name: "",
     });
-    const urlLink = ref(
-      "http://localhost:8000/api/pwanproperties/country/search/"
+    const urlLink = ref(path.COUNTRY_SEARCH
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -144,8 +144,7 @@ export default {
     const fetchData = async () => {
       try {
         Loading.show();
-        const response = await axios.get(
-          "http://localhost:8000/api/pwanproperties/country/",
+        const response = await axios.get(path.COUNTRY_SEARCH,
           headers
         );
         if (response.data) {
@@ -166,8 +165,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/country/save/",
+        const promise = axios.post(path.COUNTRY_CREATE,
           record,
           headers
         );
@@ -206,8 +204,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/country/update/",
+        const promise = axios.put(path.COUNTRY_UPDATE,
           record,
           headers
         );
@@ -275,8 +272,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/country/remove/",
+        const response = await axios.post(path.COUNTRY_REMOVE,
           data,
           headers
         );

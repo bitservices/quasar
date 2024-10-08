@@ -23,6 +23,13 @@ export const validateUsername = (value) => {
     return true
   };
 
+  export const amountFieldRule =  (value, password) => {
+    console.log(">>>>>>password >>>>>>>",password)
+    if (value.length <= 0)  return "This field is required";
+    if(value < 0) return "Amount must not not be less than zero";
+    return true
+  }; 
+  
   
 
   export const validateCode =  (value) => {

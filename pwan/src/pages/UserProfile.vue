@@ -63,11 +63,9 @@
             :rules="[requiredRule]" 
           />
           <div class="q-pa-md">
-           <q-date 
-            v-model="formData.dateOfBirth"
-            label="Date of Birth"  
-            mask="YYYY-MM-DD" 
-          />
+           
+          <DatePicker v-model="formData.dateOfBirth" label="Date of Birth" @setDate="setDateOfBirth"  
+           ref="birthDate" />
           </div>
            <q-input
             filled
@@ -145,11 +143,14 @@ import path from "src/router/urlpath";
 import debug from "src/router/debugger"; 
 import { useRouter } from "vue-router"; 
 import HeaderPage from "src/components/HeaderPage.vue"; 
-import { isRequired } from 'src/validation/validation';
+import { inputFieldRequired } from 'src/validation/validation';
+import DatePicker from "src/components/DatePicker.vue";  
+import { format } from 'date-fns';
 
 export default {
    components: { 
     HeaderPage,  
+    DatePicker,
   }, 
    
   data() {
@@ -177,7 +178,8 @@ export default {
       showSpinner: false, 
       pageName,
       hint,
-      requiredRule: value => isRequired(value), 
+      requiredRule: value => inputFieldRequired(value), 
+      dateOfBirth:null,
     };
   },
   methods: {
@@ -253,7 +255,10 @@ export default {
               .catch((error) => {
                 console.log(error);
               }); 
-    }
+    },
+    setDateOfBirth(value){
+      this.formData.dateOfBirth = value;
+    }, 
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -282,14 +287,17 @@ export default {
          promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;   
+            const result = response.data;    
             if (result.success) { 
               this.formData = result.data; 
               this.formData.gender = {
                 value : result.data.gender == null? "" : result.data.gender.code,
                 label : result.data.gender == null? "" : result.data.gender.name,
               }
+              this.dateOfBirth = format(this.formData.dateOfBirth, 'yyyy-MM-dd'); 
              // this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte   
+             this.$refs.birthDate.onChangeDate(this.dateOfBirth)
+
              this.loadUserImage(result.data.id)
 
             }

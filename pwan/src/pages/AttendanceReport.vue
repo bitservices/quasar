@@ -1,5 +1,13 @@
 <template>
   <q-page padding>
+    <q-card>
+        <q-card-section class="pwan-blue text-white">
+          <HeaderPage  
+              :label="pageName"
+              :hint="hint"  
+            />
+        </q-card-section>
+      </q-card>
     <q-card
       class="card-flex-display" 
     > 
@@ -13,28 +21,13 @@
           <q-select
             filled
             bottom-slots
-            v-model="formData.payerId"
+            v-model="formData.userId"
             :options="orgUsers"
             label="Select Member" 
             @update:model-value="loadUserImage"
             :dense="dense"
           />
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.paymentType"
-            :options="paymentTypes"
-            label="Select Payment Type"
-            :dense="dense"
-          />
-           <q-select
-            filled
-            bottom-slots
-            v-model="formData.paymentMode"
-            :options="paymentModes"
-            label="Select Payment Mode" 
-            :dense="dense"
-          /> 
+           <DatePicker v-model="attendanceDate" label="Attendance Date" @setDate="setAttendanceDate"/> 
         </q-form>
       </q-card-section>
       <q-card-section>
@@ -81,12 +74,22 @@
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
-import { ref } from "vue"; 
+import { ref, computed } from "vue"; 
 import path from "src/router/urlpath";
 import { format } from 'date-fns';
+import { useI18n } from 'vue-i18n';
+import HeaderPage from "src/components/HeaderPage.vue";  
+import DatePicker from "src/components/DatePicker.vue"; 
 export default {
+  components: { 
+    HeaderPage, 
+    DatePicker,
+  },
    
   data() {
+    const { t } = useI18n();
+    const pageName = computed(()=> t('attendancereport.pagename'))
+    const hint = computed(()=> t('attendancereport.hint'))
     const headers = SessionStorage.getItem("headers"); 
     const profile = LocalStorage.getItem("turnelParams"); 
    const columns = [
@@ -156,6 +159,9 @@ export default {
       paymentModes:[], 
       paymentTypes:[],
       imageFile:null,
+      attendanceDate: null,
+      pageName,
+      hint,
     };
   },
   methods: {
@@ -167,9 +173,15 @@ export default {
             organisation: this.profile.organisation
           },
         };
+        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
+          requestParams["params"]["userId"] = this.formData.userId.value
+        }
+        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ""){
+          requestParams["params"]["attendanceDate"] = this.attendanceDate
+        }
+        console.log("requestParams>>>>>>>>",requestParams)
         
-      try {
-        console.log(">>>>>requestParam 11111111111s>>>>>>>>",requestParams)
+      try { 
         const promise = axios.get(
           path.ATTENDANCE_SEARCH,
           requestParams,
@@ -198,6 +210,13 @@ export default {
           },
         };
           
+        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
+          requestParams["params"]["userId"] = this.formData.userId.value
+        }
+        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ""){
+          requestParams["params"]["attendanceDate"] = this.attendanceDate
+        }
+        console.log("requestParams>>>>>>>>",requestParams)
       try { 
         const promise = axios.get(
           path.ATTENDANCE_REPORT,
@@ -249,6 +268,9 @@ export default {
             console.log(error);
           }); 
     },
+    setAttendanceDate(value){
+      this.attendanceDate = value;
+    }
      
     
   },
@@ -262,6 +284,36 @@ export default {
   },
  
  mounted() { 
+  console.log(">>>>>>this.profile>>>>>",this.profile)
+      const requestParams = {
+        params: {
+          client: this.profile.client,
+          organisation: this.profile.organisation,
+        },
+      };
+      const promise = axios.get(
+        path.ORGUSER_SEARCH,
+        requestParams,
+        this.headers
+      );
+      console.log(">>>>>>>>promise>>>>>>>", promise);
+      promise
+        .then((response) => {
+          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
+          this.orgUsers = response.data.data.map((option) => ({
+            label: option.userId.last_name +
+          " " +
+          option.userId.first_name +
+          " " +
+          option.userId.middle_name,
+            value: option.userId.id,
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+
      
   },
   updated() {},
@@ -271,7 +323,7 @@ export default {
 <style lang="sass">
 .my-sticky-header-table
   /* height or max-height is important */
-  height: 310px
+  height: 500px
 
   .q-table__top,
   .q-table__bottom,

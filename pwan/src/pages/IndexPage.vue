@@ -44,7 +44,8 @@
 import { ref } from 'vue'
 import axios from 'axios';
 import { LocalStorage, SessionStorage } from 'quasar';
-import router from 'src/router/routes';
+import router from 'src/router/routes'; 
+import path from "src/router/urlpath";
 export default {
 
 
@@ -60,7 +61,7 @@ export default {
     async handleSubmit() {
     try { 
       console.log(this.formData)
-      const response = await axios.post('http://localhost:8000/api/token/', this.formData);
+      const response = await axios.post(path.USER_AUTHENTICATEE, this.formData);
       if(response.data){
         const authenticated = response.data['access']
         LocalStorage.set('token', response.data);

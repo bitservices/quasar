@@ -232,6 +232,17 @@ const routes = [
         path: "/calculatecommission",
         component: () => import("src/pages/CommissionCalculation.vue"),
       },
+
+      {
+        path: "/userqrcode",
+        component: () => import("src/pages/UserProfileQrCode.vue"),
+      },
+
+      {
+        path: "/properties",
+        component: () => import("src/pages/PropertiesDetails.vue"),
+      }, 
+      
       
     ],
     meta: {

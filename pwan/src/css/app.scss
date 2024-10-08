@@ -18,7 +18,7 @@
 }
 
 .app-bg {
-    background-image: url('http://cloud.traisoft.com:8081/EliteMobile/resources/images/background.jpg');
+    background-image: url('/images/background-image.png');
     background-size: cover; /* adjust as needed */
     background-position: center; /* adjust as needed */
     min-height: 100vh; /* ensure full viewport height */
@@ -27,5 +27,17 @@
       background: linear-gradient(45deg, #d58787, #a40303);
       height: 100vh; /* Full viewport height */
     }
+
+    .card-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px; /* Space between cards */
+      }
+      
+      .my-card {
+        width: 200px; /* Fixed width */
+        height: 100px; /* Fixed height */
+        cursor: pointer;
+      }
 
   

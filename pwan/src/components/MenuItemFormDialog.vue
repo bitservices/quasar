@@ -31,6 +31,13 @@
             label="Url"
             :dense="dense"
           />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.icon"
+            label="Icon"
+            :dense="dense"
+          />
           <q-checkbox
             v-model="formData.restrictAccess"
             label="Restrict Access"

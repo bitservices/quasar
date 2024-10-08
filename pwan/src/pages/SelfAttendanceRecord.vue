@@ -15,12 +15,21 @@
         <div class="q-pa-md q-gutter-lg">
           <q-toggle
               v-model="toggleValue"
-              label="Attendance Capturing Options "
+              :label="toggleLabel"
+              @update:model-value="onToggleChange"
             />
+            <ResponseDialog
+            v-model="showMessageDialog"
+            :cardClass="childRef.cardClass"
+            :textClass="childRef.textClass"
+            :label="childRef.label"
+            :message="childRef.message"
+            :buttonClass="childRef.buttonClass"
+          />
         </div>
       <q-card  v-if="toggleValue" class="card-flex-display">
         <q-card-section> 
-          <q-form @submit.prevent="recordAttendance" ref="selfAttendanceForm">
+          <q-form @submit.prevent="recordFormAttendance" ref="selfAttendanceForm">
             <q-select
               filled
               bottom-slots
@@ -38,14 +47,7 @@
               label="Select Organisation"
               :rules="[requiredRule]" 
             />
-            <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
-          />
+            
             <q-card-actions align="center"> 
             <q-btn
             class="pwan-button"
@@ -59,9 +61,10 @@
         </q-form>
         </q-card-section> 
     </q-card>
-    <q-card v-else class="q-mt-md">
-          <QRCodeScanner />
-     
+    <q-card v-else class="q-mt-md">  
+          <QRCodeScanner 
+            @scannedDataSubmitted="recordScannedAttendance"
+            />
       </q-card>
     </div>
   </q-page>
@@ -77,14 +80,16 @@ import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios"; 
 import path from "src/router/urlpath";
 import { useRouter } from "vue-router";  
-import QRCodeScanner from 'src/components/QRCodeScanner.vue';
+import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
+import QRCodeScanner from "src/components/QRCodeScanner.vue";
 
 const router = useRouter();
 export default {
   components: { 
     HeaderPage,
-    ResponseDialog, 
+    ResponseDialog,  
     QRCodeScanner,
+
   },
   data() {
     const { t } = useI18n() 
@@ -127,12 +132,19 @@ export default {
       childRef,  
       showMessageDialog:false, 
       requiredRule: value => isRequired(value), 
-      toggleValue:ref(true),
-      decodedResult: null,
-      scanning:false
+      toggleValue:ref(true), 
+      toggleLabel:"Record Attendance By Filling Form"
     };
   },
   methods: {
+    onToggleChange(value){
+      console.log(">>value>>>",value);
+      if(value){
+        this.toggleLabel = "Record Attendance By Filling Form"
+      }else{ 
+         this.toggleLabel = "Record Attendance By Scanning"
+      }
+    },
     loadUserClients() {
       try { 
         axios
@@ -180,16 +192,34 @@ export default {
         console.error("Error submitting form:", error);
       }
     },
-   recordAttendance() { 
+   recordScannedAttendance(record){
+      let data = JSON.parse(record); 
+      console.log(data)
+
+        const attendanceData = { 
+        client : data.client,
+        organisation:data.organisation,
+        email : data.email,
+        longitude:   this.position.longitude ,  
+        latitude: this.position.latitude,
+      } 
+     this.recordAttendance(attendanceData);
+   },
+   recordFormAttendance() { 
     if (this.$refs.selfAttendanceForm.validate()) {
-      this.showSpinner= true
-      const data = { 
+       const data = { 
         client : this.formData.client.value,
         organisation:this.formData.organisation.value,
         email : this.userEmail,
         longitude:   this.position.longitude ,  
         latitude: this.position.latitude,
       }
+      this.recordAttendance(data);
+    } 
+    },
+
+    recordAttendance(data){
+       this.showSpinner= true 
       console.log(">>>>>>>>>>>>>>>",data)
       try { 
         const promise = axios.post(path.REGISTER_ATTENDANCE, data, this.headers);
@@ -207,44 +237,45 @@ export default {
               buttonClass: "bg-white text-teal",
             };  
             }else{ 
-              this.childRef = {
-              message: result.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal"
-            }; 
+                this.childRef = {
+                message: result.message,
+                label: "Error",
+                cardClass: "bg-negative text-white error",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal"
+              }; 
             }
             this.showMessageDialog = true;
-             this.showSpinner= false
+             this.showSpinner= false;
  
           })
           .catch((error) => {
-            console.log("Error:", error);
+            console.log("Error>>>>>>>>Axios error:", error);
+                this.childRef = {
+                message: error.message,
+                label: "Error",
+                cardClass: "bg-negative text-white error",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal"
+              }; 
+               this.showMessageDialog = true;
+             this.showSpinner= false;
           });
       } catch (error) {
-        console.log("Error:", error);
+        
+        console.log("Error try Catch error>>>>:", error);
+           this.childRef = {
+                message: error.message,
+                label: "Error",
+                cardClass: "bg-negative text-white error",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal"
+              }; 
+              this.showMessageDialog = true;
+             this.showSpinner= false
       } 
-    } 
     },
-    startScan() {
-      this.scanning = true;
-    },
-    stopScan() {
-      this.scanning = false;
-      this.decodedResult = null;
-    },
-    onDecode(result) {
-      this.decodedResult = result;
-      this.stopScan();
-    },
-    onInit(promise) {
-      promise.then(() => {
-        console.log("QR Code reader initialized.");
-      }).catch(error => {
-        console.error("QR Code reader error:", error);
-      });
-    }
+    
   },
   beforeCreate() {
     console.log("beforeCreate");

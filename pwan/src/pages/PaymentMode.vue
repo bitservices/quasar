@@ -163,8 +163,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        const promise = axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/save/",
+        const promise = axios.post(path.PAYMENTMODE_CREATE,
           record,
           headers
         );
@@ -203,8 +202,7 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log("calling Update Record from Child Component", record);
-        const promise = axios.put(
-          "http://localhost:8000/api/pwanproperties/paymentmode/update/",
+        const promise = axios.put(path.PAYMENTMODE_UPDATE,
           record,
           headers
         );
@@ -272,8 +270,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          "http://localhost:8000/api/pwanproperties/paymentmode/remove/",
+        const response = await axios.post(path.PAYMENTMODE_REMOVE,
           data,
           headers
         );

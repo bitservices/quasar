@@ -1,17 +1,16 @@
 <template>
   <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
-    <q-card>
-          <q-card-section class="pwan-blue text-white">
+   
+    <q-card
+      class="card-flex-display"
+      :style="{ width: form.width, height: form.height }"
+    > 
+    <q-card-section class="pwan-blue text-white">
             <HeaderPage  
                 :label="pageName"
                 :hint="hint"  
               />
           </q-card-section>
-        </q-card>
-    <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
-    > 
       <q-card-section>
         <q-form @submit.prevent="saveRecord" ref="clientForm">
           <div class="text-center"> 
@@ -24,7 +23,7 @@
             label="Code"
             :readonly="isReadonly"
             :dense="dense"
-            :rules="[requiredRule]" 
+            :rules="[inputFieldRule]" 
           />
           <div>
             <q-checkbox v-model="isChecked" label="Is an Affilate" />
@@ -35,7 +34,7 @@
             v-model="formData.name"
             label="Name"
             :dense="dense"
-            :rules="[requiredRule]" 
+            :rules="[inputFieldRule]" 
           />
           <q-input
             filled
@@ -95,7 +94,7 @@ import axios from "axios";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger"; 
 import HeaderPage from "src/components/HeaderPage.vue"; 
-import { isRequired } from 'src/validation/validation';
+import { isRequired ,inputFieldRequired} from 'src/validation/validation';
 
 export default {
   components: { 
@@ -171,6 +170,7 @@ export default {
       hint, 
       showSpinner: false, 
       requiredRule: value => isRequired(value), 
+      inputFieldRule: value => inputFieldRequired(value), 
     };
   },
   methods: {

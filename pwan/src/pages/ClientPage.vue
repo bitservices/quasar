@@ -239,6 +239,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
+        showSpinner.value=true;
         const promise = axios.post(path.CLIENT_CREATE, record, headers);
         promise
           .then((response) => {
@@ -256,6 +257,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -267,6 +269,7 @@ export default {
               buttonClass: "bg-white text-teal",
             };
             showMessageDialog.value = true;
+            showSpinner.value=false;
           });
       } catch (error) {
         console.error("Error:", error);

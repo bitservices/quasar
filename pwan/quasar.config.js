@@ -44,7 +44,10 @@ module.exports = configure(function (/* ctx */) {
       target: {
         browser: ["es2019", "edge88", "firefox78", "chrome87", "safari13.1"],
         node: "node20",
-      },
+      //   appName: 'Property Connect App',  // Set the app name
+      //   version: '1.0.0',           // Set the app version
+      //   description: 'An app for showcasing where an estate company has landed properties and other services operated by the estate company. This app is also used to record attendance for attending meetings and seminars',  // Set the app 
+       },
 
       vueRouterMode: "hash", // available values: 'hash', 'history'
       // vueRouterBase,
@@ -166,6 +169,13 @@ module.exports = configure(function (/* ctx */) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-cordova-apps/configuring-cordova
     cordova: {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
+
+      // id: 'com.bitingerated.propconnect.app', // Set the app ID (package name)
+      // name: 'Property Connect App',          // Set the Cordova app name (can be different from above)
+      // version: '1.0.0',               // Set the Cordova app version (can be different from above)  
+      // description: 'An app for showcasing where an estate company has landed properties and other services operated by the estate company. This app is also used to record attendance for attending meetings and seminars',  // Set the app 
+      
+
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor

@@ -84,6 +84,10 @@ const path = {
   PRODUCTDEF_UPDATE: APP_PATH + "productdef/update/",
   PRODUCTDEF_SEARCH: APP_PATH + "productdef/search/",
   PRODUCTDEF_REMOVE: APP_PATH + "productdef/remove/",
+  PRODUCTDEF_IMAGE: APP_PATH + "productdef/getProductTypeDefImage/",
+  PRODUCTDEF_BYTES: APP_PATH + "productdef/getProductTypeDefBytes/",   
+  PRODUCTDEF_VIDEO: APP_PATH + "productdef/getProductTypeDefVideo/",
+  PRODUCTDEF_SUBSCRIPTION_FORM: APP_PATH + "productdef/getProductTypeDefSubscription/",
 
   PAYMENTDEF_CREATE: APP_PATH + "paymentdef/create/",
   PAYMENTDEF_UPDATE: APP_PATH + "paymentdef/update/",
@@ -239,20 +243,81 @@ const path = {
   USER_REGISTER_FINALIZE: APP_PATH + "userreg/finalize/", 
 
   COMMISSION_SETTINGS_CREATE: APP_PATH + "commission/create/", 
-
   COMMISSION_SETTINGS_SEARCH: APP_PATH + "commission/search/", 
-  
   COMMISSION_SETTINGS_UPDATE: APP_PATH + "commission/update/", 
+  COMMISSION_SETTINGS_DELETE: APP_PATH + "commission/delete/",  
+  COMMISSION_SETTINGS_REMOVE: APP_PATH + "commission/remove/",  
+  COMMISSION_CALCULATE: APP_PATH + "commission/calculate/", 
 
-  COMMISSION_SETTINGS_DELETE: APP_PATH + "commission/delete/", 
 
-  COMMISSION_SETTINGS_REMOVE: APP_PATH + "commission/remove/", 
+  BANK_CREATE: APP_PATH + "bank/create/", 
+  BANK_SEARCH: APP_PATH + "bank/search/", 
+  BANK_UPDATE: APP_PATH + "bank/update/", 
+  BANK_DELETE: APP_PATH + "bank/delete/",  
+  BANK_REMOVE: APP_PATH + "bank/remove/",
 
-  COMMISSION_CALCULATE: APP_PATH + "commission/calculate/",
+
+  COUNTRY_CREATE: APP_PATH + "country/create/", 
+  COUNTRY_SEARCH: APP_PATH + "country/search/", 
+  COUNTRY_UPDATE: APP_PATH + "country/update/", 
+  COUNTRY_DELETE: APP_PATH + "country/delete/",  
+  COUNTRY_REMOVE: APP_PATH + "country/remove/",
+
+  GENDER_CREATE: APP_PATH + "gender/create/", 
+  GENDER_SEARCH: APP_PATH + "gender/search/", 
+  GENDER_UPDATE: APP_PATH + "gender/update/", 
+  GENDER_DELETE: APP_PATH + "gender/delete/",  
+  GENDER_REMOVE: APP_PATH + "gender/remove/",
+
+
+  MARITALSTATUS_CREATE: APP_PATH + "maritalstatus/create/", 
+  MARITALSTATUS_SEARCH: APP_PATH + "maritalstatus/search/", 
+  MARITALSTATUS_UPDATE: APP_PATH + "maritalstatus/update/", 
+  MARITALSTATUS_DELETE: APP_PATH + "maritalstatus/delete/",  
+  MARITALSTATUS_REMOVE: APP_PATH + "maritalstatus/remove/",
+
   
+  MEMBERSHIP_TYPE_CREATE: APP_PATH + "membershiptype/create/", 
+  MEMBERSHIP_TYPE_SEARCH: APP_PATH + "membershiptype/search/", 
+  MEMBERSHIP_TYPE_UPDATE: APP_PATH + "membershiptype/update/", 
+  MEMBERSHIP_TYPE_DELETE: APP_PATH + "membershiptype/delete/",  
+  MEMBERSHIP_TYPE_REMOVE: APP_PATH + "membershiptype/remove/",
+
+
+   
+  PAYMENTMODE_CREATE: APP_PATH + "paymentmode/create/", 
+  PAYMENTMODE_SEARCH: APP_PATH + "paymentmode/search/", 
+  PAYMENTMODE_UPDATE: APP_PATH + "paymentmode/update/", 
+  PAYMENTMODE_DELETE: APP_PATH + "paymentmode/delete/",  
+  PAYMENTMODE_REMOVE: APP_PATH + "paymentmode/remove/",
   
 
+  PAYMENTSTATUS_CREATE: APP_PATH + "paymentstatus/create/", 
+  PAYMENTSTATUS_SEARCH: APP_PATH + "paymentstatus/search/", 
+  PAYMENTSTATUS_UPDATE: APP_PATH + "paymentstatus/update/", 
+  PAYMENTSTATUS_DELETE: APP_PATH + "paymentstatus/delete/",  
+  PAYMENTSTATUS_REMOVE: APP_PATH + "paymentstatus/remove/",
+
+  STATUS_CREATE: APP_PATH + "status/create/", 
+  STATUS_SEARCH: APP_PATH + "status/search/", 
+  STATUS_UPDATE: APP_PATH + "status/update/", 
+  STATUS_DELETE: APP_PATH + "status/delete/",  
+  STATUS_REMOVE: APP_PATH + "status/remove/",
   
+
+  STATE_CREATE: APP_PATH + "state/create/", 
+  STATE_SEARCH: APP_PATH + "state/search/", 
+  STATE_UPDATE: APP_PATH + "state/update/", 
+  STATE_DELETE: APP_PATH + "state/delete/",  
+  STATE_REMOVE: APP_PATH + "state/remove/",
+
+  PRODUCTSTATUS_CREATE: APP_PATH + "productstatus/create/", 
+  PRODUCTSTATUS_SEARCH: APP_PATH + "productstatus/search/", 
+  PRODUCTSTATUS_UPDATE: APP_PATH + "productstatus/update/", 
+  PRODUCTSTATUS_DELETE: APP_PATH + "productstatus/delete/",  
+  PRODUCTSTATUS_REMOVE: APP_PATH + "productstatus/remove/",
+  
+
   
 
 

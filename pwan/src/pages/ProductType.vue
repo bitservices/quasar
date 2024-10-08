@@ -148,7 +148,6 @@ export default {
           params: {
             client: turnelParams.client,
             organisation:turnelParams.organisation,
-            email : turnelParams.email,
           },
         };
         

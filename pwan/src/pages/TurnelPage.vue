@@ -126,8 +126,8 @@ export default {
             console.log("client Response >>>>>>>>>>>>", response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.clients = response.data.data.map((option) => ({
-              label: option.client.name,
-              value: option.client.code,
+              label: option.name,
+              value: option.code,
             }));
             console.log("this.clients >>>>>>>>>>>>", this.clients);
           })

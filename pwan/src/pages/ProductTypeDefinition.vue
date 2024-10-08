@@ -32,7 +32,11 @@
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
-            :urlLink="urlLink"
+            :urlLink="urlLink" 
+            :updateImage="updateImage"
+            :updateVideo="updateVideo"
+            :updateSubscription="updateSubscription"
+            :showByte="showByte"
           />
           <ResponseDialog
             v-model="showMessageDialog"
@@ -80,6 +84,32 @@
           </q-btn>
         </template>
       </q-table>
+      <div>
+         <q-btn
+                    @click="handleProductImage"
+                    flat
+                    label="Product Image" 
+                     class="pwan-blue full-width"
+                     style="top-margin:10px"
+                    rounded 
+                  />
+                  <q-btn
+                   @click="handleProductVideo"
+                    flat
+                    label="Prouct Video"
+                    class="pwan-button top-margin full-width" 
+                     style="top-margin:10px"
+                    rounded
+                  />
+                  <q-btn
+                   @click="handleSubscriptionForm"
+                    flat
+                    label="SubScribtion Form"
+                     class="pwan-button top-margin full-width"
+                     style="top-margin:10px"
+                    rounded
+                  />
+      </div>
     </div>
   </q-page>
 </template>
@@ -131,6 +161,12 @@ export default {
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
+
+    const showByte = ref(false); 
+    const updateImage = ref(false);
+    const updateVideo = ref(false);
+    const updateSubscription = ref(false);
+
     const childRef = ref({
       label: "",
       message: "",
@@ -183,15 +219,24 @@ export default {
             console.log(">>>>>>>>>result>>>>>>", result);
             if (result.success) {
               fetchData();
-            }
-
-            childRef.value = {
+               childRef.value = {
               message: result.message,
               label: "Success",
               cardClass: "bg-positive text-white",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
+            }else{
+              childRef.value = {
+              message: result.message,
+              label: "Error", 
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            }; 
+            }
+
+           
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
           })
@@ -211,6 +256,7 @@ export default {
     };
     const updateRecord = (record) => {
       debug(">>>>>>>>>update record >>>>>>>>>", record);
+     
       try {
         headers["Content-Type"] = "multipart/form-data";
         const promise = axios.put(path.PRODUCTDEF_UPDATE, record, headers);
@@ -223,16 +269,24 @@ export default {
             console.log(result);
             if (result.success) {
               fetchData();
-            }
-
-            childRef.value = {
+              childRef.value = {
               message: result.message,
               label: "Success",
               cardClass: "bg-positive text-white",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
-            };
+            }; 
+            }else{
+                childRef.value = {
+              message: result.message,
+              label: "Error", 
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            }; 
+            }
             showMessageDialog.value = true;
+            
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -257,24 +311,31 @@ export default {
       }
     };
     const addItem = () => {
+      showByte.value = false;
       showFormDialog.value = true;
       action.value = "add";
       actionLabel.value = "Submit";
     };
-    const editItem = () => {
-      if (selected.value.length > 0) {
+    const setEditItemValues= () => {
+      if (selected.value.length > 0) { 
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
-        console.log("searchValue >>>>>", searchValue.value);
-
+        searchValue.value = selected.value[0]["id"];  
         action.value = "edit";
-        actionLabel.value = "Update";
+        actionLabel.value = "Update"; 
       }
     };
-    const viewItem = () => {
+    const editItem = () => {
+         showByte.value = false;
+        updateSubscription.value = false;
+        updateImage.value = false;
+        updateVideo.value = false;
+        setEditItemValues()
+    };
+    const viewItem = () => { 
+      showByte.value = false;
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
+        searchValue.value = selected.value[0]["id"];
         action.value = "view";
         actionLabel.value = "Done";
       }
@@ -294,6 +355,40 @@ export default {
         console.error("Error submitting form:", error);
       }
     };
+     const handleSubscriptionForm = async () => {
+      try {
+        showByte.value = true;
+        updateSubscription.value = true;
+        updateImage.value = false;
+        updateVideo.value = false;
+        setEditItemValues()
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+    
+    const handleProductImage = async () => {
+      try {
+        showByte.value = true;
+        updateSubscription.value = false;
+        updateImage.value = true;
+        updateVideo.value = false;
+        setEditItemValues()
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
+    const handleProductVideo = async () => {
+      try {
+        showByte.value = true;
+        updateSubscription.value = false;
+        updateImage.value = false;
+        updateVideo.value = true;
+        setEditItemValues()
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    };
 
     return {
       fetchData,
@@ -302,9 +397,13 @@ export default {
       updateRecord,
       addItem,
       editItem,
+      setEditItemValues,
       viewItem,
       deleteItem,
       showDialog,
+      handleSubscriptionForm,
+      handleProductVideo,
+      handleProductImage,
       urlLink,
       actionLabel,
       searchValue,
@@ -317,6 +416,10 @@ export default {
       medium_dialog,
       action,
       showFormDialog,
+      updateImage,
+      updateVideo,
+      updateSubscription,
+      showByte
     };
   },
   beforeCreate() {

@@ -24,27 +24,25 @@
             label="Name"
             :dense="dense"
           />
+           <div class="row">
+              <q-btn id="closeBtn"
+                    rounded  
+                    label="Close"
+                    icon="close"
+                    v-close-popup
+                    class="pwan-blue top-margin full-width"
+                  />  
+              <q-btn
+                    :label="actionLabel"
+                    rounded
+                    type="submit"
+                    icon="save" 
+                    class="pwan-button top-margin full-width"
+                  />
+            </div>
+             
         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Cancel"
-            v-close-popup
-          />
-          <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-      </q-card-section>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
@@ -127,6 +125,7 @@ export default {
       this.formData.createdBy = this.profile.email;
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       this.$emit("formDataSubmitted", this.formData);
+      document.getElementById('closeBtn').click();
       this.showDialog = true; 
     },
   },

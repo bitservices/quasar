@@ -8,7 +8,23 @@
               />
           </q-card-section>
         </q-card>
-      <div class="q-pa-md row items-start q-gutter-md"> 
+         <div class="card-container">
+           <q-card
+            v-for="item in items"
+            :key="item.id"
+            :style="{ background: item.gradient }"
+             class="my-card text-white"
+          >
+              <router-link :to="`${item.link}`" class="q-card-link" style="text-decoration: none; color: white;">
+                <q-card-section>
+                  <div class="text-h6">{{ item.title }}</div>
+                  <div>{{ item.description }}</div>
+                </q-card-section>
+              </router-link>
+           </q-card>
+        </div>
+      
+      <div class="q-pa-md row items-start q-gutter-md">  
         <q-card
           class="my-card text-white"
           style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
@@ -88,6 +104,16 @@ export default {
       benefits:[],
       pageName,
       hint,
+       items: [
+        
+        { id: 1, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',}, 
+        { id: 2, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
+        { id: 3, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
+        { id: 4, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)' },
+        { id: 5, title: 'Client', description: 'Client/Affilate',link:'/client' ,gradient: 'linear-gradient(to right, #FF5733, #FFC300)',},
+        { id: 6, title: 'Organisation', description: 'Organisation/Center Page',link:'/organisation',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
+        { id: 7, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)'},  
+      ],
     };
   },
     methods:{
@@ -168,4 +194,5 @@ export default {
     /* height of all previous header rows */
     scroll-margin-top: 48px
   tbody tr:nth-child(even)
+  
 </style>

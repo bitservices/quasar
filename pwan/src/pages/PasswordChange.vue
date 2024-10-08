@@ -199,8 +199,7 @@ export default {
     },
     authenticateUser(){ 
         try {
-        const promise = axios.post(
-          "http://localhost:8000/api/token/",
+        const promise = axios.post(path.USER_AUTHENTICATEE,
           {username:this.formData.email, password:this.formData.password}
         );
         promise

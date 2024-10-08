@@ -154,7 +154,7 @@ export default {
         name: "expirationDate",
         align: "left",
         label: "Renewal Date",
-        field: (row) => format(row.expirationDate, 'yyyy-MM-dd'),
+        field: (row) => row.expirationDate ?format(row.expirationDate, 'yyyy-MM-dd'):'',
         sortable: true,
       },
     ];
@@ -225,6 +225,7 @@ export default {
           requestParam,
           headers
         ); 
+        console.log("response.data>>>>>>>",response.data)
         if (response.data) {
           rows.value = response.data;
           selected.value = []; 
@@ -240,7 +241,7 @@ export default {
       } else if (action.value == "edit") {
         updateRecord(record);
       }
-      showSpinner.value=true;
+      showSpinner.value=false;
     };
     const createRecord = (record) => {
       try {
