@@ -1,7 +1,10 @@
+//const BASEPATH = "https://pwan.traisoft.com";
 const BASEPATH = "http://localhost:8000";
 const APP_PATH = BASEPATH + "/api/pwanproperties/";
 const path = {
-  ORIGIN_PATH: "http://localhost:9000", 
+  //ORIGIN_PATH: "https://propertyconnect.traisoft.com",
+  ESTATE_AGENCY_URL: "https://google.com?ref=",
+  ORIGIN_PATH: "https://localhost:9000", 
   USER_AUTHENTICATEE: BASEPATH + "/api/token/",
   CLIENT_CREATE: APP_PATH + "client/create/",
   CLIENT_UPDATE: APP_PATH + "client/update/",
@@ -316,6 +319,11 @@ const path = {
   PRODUCTSTATUS_UPDATE: APP_PATH + "productstatus/update/", 
   PRODUCTSTATUS_DELETE: APP_PATH + "productstatus/delete/",  
   PRODUCTSTATUS_REMOVE: APP_PATH + "productstatus/remove/",
+
+  USER_WEBSITE_CREATE: APP_PATH + "userwebsitesetup/create/",
+  USER_WEBSITE_ACTIVATE: APP_PATH + "userwebsitesetup/activate/",
+  USER_WEBSITE_DEACTIVATE: APP_PATH + "userwebsitesetup/deactivate/",
+  USER_WEBSITE_SEARCH : APP_PATH + "userwebsitesetup/search/",
   
 
   

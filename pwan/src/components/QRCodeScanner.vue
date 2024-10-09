@@ -33,12 +33,23 @@ export default {
   },
   methods: {
     async startCamera() {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      this.videoStream = stream;
-      this.$refs.video.srcObject = stream;
-      this.$refs.video.play();
-      this.scanQRCode();
-      console.log(stream, "Stream>>>")
+      const constraints = [
+        { video: { facingMode: { exact: "environment" } } }, // Back camera
+        { video: { facingMode: "user" } } // Front camera
+      ];
+      for (const constraint of constraints) {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia( constraint);
+            this.videoStream = stream;
+            this.$refs.video.srcObject = stream;
+            this.$refs.video.play();
+            this.scanQRCode();
+            break; 
+            console.log(stream, "Stream>>>")
+          } catch (err) {
+              console.warn("Camera not accessible, trying next option...", err);
+            }
+      }
     },
     scanQRCode() {
       const canvas = this.$refs.canvas;

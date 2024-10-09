@@ -243,6 +243,10 @@ const routes = [
         component: () => import("src/pages/PropertiesDetails.vue"),
       }, 
       
+      {
+        path: "/userwebsitesetup",
+        component: () => import("src/pages/UserWebsiteSetup.vue"),
+      }, 
       
     ],
     meta: {

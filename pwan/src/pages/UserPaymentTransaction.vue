@@ -183,8 +183,8 @@ export default {
       requiredRule: value => isRequired(value), 
       inputRequiredRule: value => inputFieldRequired(value),  
       amountRule: value => amountFieldRule(value), 
-      toggleValue:ref(true), 
-      toggleLabel:"Record Attendance By Selecting Member",
+      toggleValue:ref(false), 
+      toggleLabel:"Record Payment By Scanning Member QR Code",
       pageName,
       hint, 
       showSpinner,
@@ -196,7 +196,7 @@ export default {
       if(value){
         this.toggleLabel = "Record Payment By Selecting Member"
       }else{ 
-         this.toggleLabel = "Record Payment By Scanning"
+         this.toggleLabel = "Record Payment By Scanning QR Code"
       }
     },
      readScanCode(record){

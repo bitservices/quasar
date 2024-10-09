@@ -8,7 +8,26 @@
               />
           </q-card-section>
         </q-card>
-         <div class="card-container">
+        <q-card v-if="websitelink != null" style="margin-bottom: 10px;">
+          <q-card-section class="text-center">
+          Your Estate Agency Link is :  <a :href="websitelink" target="_blank"   rel="noopener noreferrer"> {{websitelink}}</a> 
+           </q-card-section>
+        </q-card>
+          
+         <div class="card-container"> 
+          <q-card
+            v-if="isSupperUser"
+            key="websitesetup"
+            style="background:linear-gradient(to right, #3357FF, #C300FF)"
+             class="my-card text-white"
+          > 
+              <router-link to="/userwebsitesetup" class="q-card-link" style="text-decoration: none; color: white;">
+                <q-card-section>
+                  <div class="text-h6">Website Setup</div>
+                  <div>Website Setup</div>
+                </q-card-section>
+              </router-link>
+           </q-card>
            <q-card
             v-for="item in items"
             :key="item.id"
@@ -94,6 +113,7 @@ export default {
     const hint = computed(()=> t('dashboard.hint'))
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail"); 
+    const websitelink = ref(null)
     
     return { 
       headers,
@@ -104,15 +124,18 @@ export default {
       benefits:[],
       pageName,
       hint,
+      websitelink,
+      isSupperUser:false,
        items: [
         
         { id: 1, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',}, 
-        { id: 2, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
-        { id: 3, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
+        { id: 2, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
+        { id: 3, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
         { id: 4, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)' },
-        { id: 5, title: 'Client', description: 'Client/Affilate',link:'/client' ,gradient: 'linear-gradient(to right, #FF5733, #FFC300)',},
-        { id: 6, title: 'Organisation', description: 'Organisation/Center Page',link:'/organisation',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
-        { id: 7, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)'},  
+        { id: 5, title: 'Client', description: 'Client/Affilate',link:'/client' ,gradient: 'linear-gradient(to right, #33FF57, #33FFC3)',},
+        { id: 6, title: 'Organisation', description: 'Organisation/Center Page',link:'/organisation',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
+        { id: 7, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)'},
+       
       ],
     };
   },
@@ -130,8 +153,7 @@ export default {
           promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;  
-            console.log("Attendanc data result>>>>>>>>>>>>",result) 
+            const result = response.data;   
             if (result.success) {   
               this.contributions =  result.data.usertransaction
               this.attendance = result.data.attendance
@@ -147,7 +169,60 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    }
+    },
+    loadUser(){
+       const requestParam = {
+        params: {
+          email: this.userEmail,
+        },
+      }; 
+      try {
+         const promise = axios.get(path.USER_SEARCH_BY_EMAIL, requestParam, this.headers);
+
+          promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;   
+            if (result.success) {   
+              this.isSupperUser =  result.data.is_superuser
+ 
+            }  
+  
+          })
+          .catch((error) => {
+            debug("Error:", error);
+          });
+ 
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+    loadUserWebsiteSetup() { 
+      try { 
+        const requestParam = {
+            params: {
+              email: this.userEmail,
+            },
+          }; 
+        const promise = axios.get(
+          path.USER_WEBSITE_SEARCH, 
+          requestParam,
+          this.headers
+        ); 
+        promise
+          .then((response) => {
+            // Extract data from the response
+            console.log("response data>>>>>>>", response.data.data); 
+            const result =  response.data.data;
+            this.websitelink = path.ESTATE_AGENCY_URL + result[0].refId 
+          })
+          .catch((error) => {
+             
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
     
   },
   beforeCreate() {
@@ -162,6 +237,8 @@ export default {
   mounted() {
     console.log("mounted");
     this.fetchData();
+    this.loadUser();
+    this.loadUserWebsiteSetup()
   },
 };
 </script>

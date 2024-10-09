@@ -107,7 +107,13 @@
 "properties":{
   "pagename": "Properties Search",
   "hint":"The page allows users to search for properties based on location, price, and the company or affiliate managing the property."   
+},
+
+"userpayment":{
+  "pagename": "User Payment Recording",
+  "hint":"The page allows financial Secretary or an Accountant to record the payment of the members or staff of the organisation. You can either scan the User QR code to record the member's due or you can click on the toggle to capture individual member's account record."   
 }
+
       
       
 

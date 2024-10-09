@@ -23,11 +23,12 @@
         <div class="parent"> 
             <div class="child" v-if="value">
               <qrcode-vue :value="value" :size="size" level="H" render-as="svg" /> 
-            </div>
-        </div>
+            </div> 
+        </div>  
       </q-card-section>
-    </q-card>
+    </q-card> 
     </div>
+    
   </q-page>
 </template>
 
@@ -55,7 +56,7 @@ export default {
     const hint = computed(()=> t('userqrcode.hint'))
     const router = useRouter();
     const headers = SessionStorage.getItem("headers");
-    const value = ref(null);
+    const value = ref(null); 
     const formData = ref({
       last_name: "",
       middle_name: "",
@@ -74,7 +75,7 @@ export default {
       pageName,
       hint,
       value,
-      size: 200,
+      size: 200, 
     };
   },
   methods: {

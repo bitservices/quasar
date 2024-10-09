@@ -1,44 +1,20 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
-        <q-card>
-          <q-card-section class="pwan-blue text-white">
-            <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
-              />
-          </q-card-section>
-        </q-card>
-        <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
-        </div> 
-        <div class="q-pa-md q-gutter-lg">
-          <q-toggle
-              v-model="toggleValue"
-              :label="toggleLabel"
-              @update:model-value="onToggleChange"
-            />
-             <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
-          />
-        </div>
-      <q-card  v-if="toggleValue" class="card-flex-display" 
+      <q-card
+      class="card-flex-display" 
     >
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6"> </div>
+          <div class="col-8 text-h6">Organisation User Assignment </div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
         </div>
-      </q-card-section>  
-      <q-card-section> 
-        <q-form @submit.prevent="recordFormAttendance" ref="attendanceForm">
+      </q-card-section>
+
+      <q-card-section>
+        <q-form>
           <q-hide 
             v-model="formData.email"
           />
@@ -48,8 +24,8 @@
             v-model="formData.userName"
             @keyup="handleInput"
             @keydown.enter="handleEnter"
-            placeholder="Search for Member"
-            :dense="dense" 
+            placeholder="Search for User/PBO"
+            :dense="dense"
           />
           <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
             <q-item
@@ -66,25 +42,29 @@
                 </q-item-label>
               </q-item-section>
             </q-item>
-          </q-list> 
-           <q-card-actions align="center"> 
+          </q-list>
+          <ResponseDialog
+            v-model="showMessageDialog"
+            :cardClass="childRef.cardClass"
+            :textClass="childRef.textClass"
+            :label="childRef.label"
+            :message="childRef.message"
+            :buttonClass="childRef.buttonClass"
+          />
+        </q-form>
+      </q-card-section>
+      <q-card-section>
+        <q-card-actions align="center"> 
           <q-btn
+            label="Create"
             class="pwan-button"
-            label="Record Attendance" 
-            type="submit"
+            @click="saveRecord"
             size="md"
-            rounded
-            v-close-popup
+            rounded 
           />
         </q-card-actions>
-        </q-form>
-      </q-card-section> 
+      </q-card-section>
     </q-card>
-     <q-card v-else class="q-mt-md">  
-          <QRCodeScanner 
-            @scannedDataSubmitted="recordScannedAttendance"
-            />
-      </q-card>
      <div class="q-pa-md">
      <q-table
         class="my-sticky-header-table"
@@ -98,7 +78,51 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Attendance List</q-label>
+          <q-label>User Website Setup</q-label>
+          <q-space /> 
+          <q-btn 
+            rounded
+            color="blue" 
+            icon="edit" size="sm" 
+            @click="showDialog"
+          >
+            <q-dialog v-model="medium_dialog">
+              <q-card style="width: 700px" class="bg-info text-white">
+                <q-card-section>
+                  <div class="text-h6">{{dialog_header}}</div>
+                </q-card-section>
+
+                <q-card-section class="q-pt-none">
+                  {{dialog_message}}
+                </q-card-section>
+                <q-card-actions align="center" class="bg-white text-teal">
+                   <q-btn v-if="activate"
+                    @click="activateUser"
+                    flat
+                    label="Activate"
+                    class="bg-secondary text-white"
+                    v-close-popup
+                    rounded 
+                  />
+                   <q-btn v-if="deactivate"
+                    @click="deactivateUser"
+                    flat
+                    label="De-Activate"
+                    v-close-popup
+                    class="bg-negative text-white"
+                    rounded 
+                  />
+                  <q-btn
+                    flat
+                    label="Cancle"
+                    class="bg-primary text-white"
+                    v-close-popup
+                    rounded
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+          </q-btn>
         </template> 
 
       </q-table>
@@ -109,37 +133,28 @@
 
 
 <script>
-import { isReadonly, ref, computed } from "vue"; 
-import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue";  
-import { isRequired } from 'src/validation/validation';
-import { LocalStorage, SessionStorage } from "quasar"; 
+import { LocalStorage, SessionStorage } from "quasar";
+import { isReadonly, onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger";
 import ResponseDialog from "src/components/ResponseDialog.vue"; 
-import { format } from 'date-fns'; 
-import QRCodeScanner from "src/components/QRCodeScanner.vue";
+import { format } from 'date-fns';
  
  
 export default {
    
    components: { 
     ResponseDialog,
-    HeaderPage,
-    QRCodeScanner,
   }, 
   data() {
     
-    const { t } = useI18n() 
-    const pageName = computed(()=> t('attendance.pagename'))
-    const hint = computed(()=> t('attendance.hint'))
-    const profile = LocalStorage.getItem("turnelParams");
+   
+    const userEmail = LocalStorage.getItem("userEmail");
     const headers = SessionStorage.getItem("headers");
     const selected = ref([]);
     const formData = ref({}); 
-    const medium_dialog = ref(false);   
-     const showSpinner = ref(false);
+    const medium_dialog = ref(false);  
     const rows = ref([]);
      const childRef = ref({
       label: "",
@@ -149,10 +164,6 @@ export default {
       buttonClass: "",
       data: {},
     });
-    const position ={
-      longitude : 0,
-      latitude: 0,
-    }
     const columns = [
       {
         name: "name",
@@ -160,54 +171,45 @@ export default {
         label: "Name",
         align: "left",
         field: (row) =>
-          row.userId.last_name +" "+row.userId.first_name + " "+row.userId.middle_name,
+          row.user.last_name +" "+row.user.first_name + " "+row.user.middle_name,
         format: (val) => `${val}`,
         sortable: true,
+      }, 
+      
+       {
+        name: "status",
+        align: "left",
+        label: "Status",
+        field: (row) => row.status.name,
+        sortable: true,
       },
-     
+       {
+        name: "refId",
+        align: "left",
+        label: "Reference Id",
+        field: (row) => row.refId,
+        sortable: true,
+      },
       {
-        name: "email",
+        name: "activationDate",
         align: "left",
-        label: "Email",
-        field: (row) => row.userId.email,
+        label: "Activation Date",
+        field: (row) => format(row.activationDate, 'yyyy-MM-dd'),
         sortable: true,
-      },
-       {
-        name: "seatNumber",
+      }, 
+      {
+        name: "expirationDate",
         align: "left",
-        label: "Seat Number",
-        field: (row) => row.seatNumber,
+        label: "Expiration Date",
+        field: (row) => format(row.expirationDate, 'yyyy-MM-dd'),
         sortable: true,
-      },
-       {
-        name: "membershipType",
-        align: "left",
-        label: "MembeShip Type",
-        field: (row) => row.membership.name,
-        sortable: true,
-      },
-       {
-        name: "attendanceDate",
-        align: "left",
-        label: "Attendance Date",
-        field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
-        sortable: true,
-      },
-       {
-        name: "attendanceTime",
-        align: "left",
-        label: "Attendance Time",
-        field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
-        sortable: true,
-      },
-       
+      }, 
        
     ]; 
 
     return {
       formData,
-      childRef, 
-      profile,
+      childRef,  
       headers, 
       dense:true, 
       imageFile : null, 
@@ -223,24 +225,10 @@ export default {
       activate:false,
       dialog_header:"",
       dialog_message:"",
-      position,
-      pageName,
-      hint,
-      showSpinner, 
-      requiredRule: value => isRequired(value), 
-      toggleValue:ref(false),
-      toggleLabel:"Record Attendance By Scanning Member QR Code",
-       
+      userEmail,
     };
   },
   methods: {
-     onToggleChange(value){ 
-      if(value){
-        this.toggleLabel = "Record Attendance By Filling Form"
-      }else{ 
-         this.toggleLabel = "Record Attendance By Scanning Member QR Code"
-      }
-    },
     handleInput() {
       if (this.formData.userName === "" || this.formData.userName.length < 4) {
         this.filteredSuggestions = [];
@@ -254,8 +242,7 @@ export default {
         axios
           .get(path.USER_SEARCH_AUTOCOMPLETER, filter, this.headers)
           .then((response) => {
-            // Assuming the response data is an array of objects with 'value' and 'label' properties
-            debug(response.data.data);
+            
             this.filteredSuggestions = response.data.data.map((option) => ({
               name:
                 option.last_name +
@@ -275,7 +262,8 @@ export default {
       }
     },
     handleEnter() {
-      if (this.filteredSuggestions.length > 0) { 
+      if (this.filteredSuggestions.length > 0) {
+        console.log("this.filteredSuggestions[0]:::::::::",this.filteredSuggestions[0])
         this.selectRecord(this.filteredSuggestions[0]);
       }
     },
@@ -283,62 +271,42 @@ export default {
       console.log(">>>>>>>>>>>>value>>>>>>>>",userObj)
       this.formData.userName = userObj.name;
       this.formData.email = userObj.email;
-      this.formData.userId = userObj.id;
+      this.formData.id = userObj.id;
       this.showSuggestions = false;
       this.loadUserImage(userObj)
-      this.loadOrganisationAttendance(userObj.id)
       // Optionally, emit an event or perform other actions when a suggestion is selected
     },
     loadUserImage(userObj){
-      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
        const requestParam = {
         params: {
           userId: userObj.id, 
         },
       };  
+      
+      console.log(">>>>>>>inside requestParam>>>>>>>>>",requestParam )
       const promise =  axios.get(
           path.USER_IMAGE,
           requestParam,
           this.headers
-        );  
+        );   
          promise
           .then((response) => {
- 
+          console.log("response data>>>>>",response.data)
             this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
           })
           .catch((error) => {
             console.log(error);
           }); 
     },
-    recordScannedAttendance(record){
-      let data = JSON.parse(record);  
-
-        const attendanceData = { 
-        client : this.profile.client,
-        organisation:this.profile.organisation,
-        email : data.email,
-        longitude:   this.position.longitude ,  
-        latitude: this.position.latitude,
+    saveRecord() {       
+      console.log(">>>>>>userEmail>>>>>>>",this.userEmail) 
+      const data = {
+        userId : this.formData.id,
+        email : this.userEmail
       } 
-     this.recordAttendance(attendanceData);
-   },
-    recordFormAttendance(){
-      if (this.$refs.attendanceForm.validate()) {
-          const data = {
-          client : this.profile.client,
-          organisation:this.profile.organisation,
-          email : this.formData.email,
-          longitude:   this.position.longitude ,  
-          latitude: this.position.latitude,
-        }
-      }
-    },
-    recordAttendance(data) {      
-      this.showSpinner= true
-    
-      console.log(">>>>>>>>>>>>>>>",data)
+      console.log(">>>>>data>>>>>>>>",data)
       try { 
-        const promise = axios.post(path.REGISTER_ATTENDANCE, data, this.headers);
+        const promise = axios.post(path.USER_WEBSITE_CREATE, data, this.headers);
         promise
           .then((response) => { 
             console.log(">>>>>>>response>>>>>>>>>>>>>>>",response)
@@ -350,62 +318,33 @@ export default {
               cardClass: "bg-positive text-white",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
-            }; 
-            this.loadOrganisationAttendance()
-            }else{ 
+            };
+            this.showMessageDialog = true;
+            this.loadUserWebsiteSetup()
+            }else{
+
               this.childRef = {
               message: result.message,
               label: "Error",
               cardClass: "bg-negative text-white error",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal"
-            }; 
-            }
+            };
             this.showMessageDialog = true;
-             this.showSpinner= false
+            }
  
           })
           .catch((error) => {
             debug("Error:", error);
-            this.childRef = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal"
-            }; 
-            
-            this.showMessageDialog = true;
-             this.showSpinner= false
           });
       } catch (error) {
-            debug("Error:", error);
-            this.childRef = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal"
-            };  
-            this.showMessageDialog = true;
-             this.showSpinner= false
+        debug("Error:", error);
       } 
     },
-     loadOrganisationAttendance(userId) {
-         const requestParams = {
-          params: { 
-            client: this.profile.client,
-            organisation: this.profile.organisation,
-          },
-        };
-        if(userId != null && userId != ""){
-          requestParams["params"]["userId"]=userId
-        }
-      try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+     loadUserWebsiteSetup() { 
+      try { 
         const promise = axios.get(
-          path.ATTENDANCE_SEARCH,
-          requestParams,
+          path.USER_WEBSITE_SEARCH, 
           this.headers
         ); 
         promise
@@ -461,7 +400,7 @@ export default {
           .then((response) => {
             // Extract data from the response
             console.log("response data>>>>>>>", response.data.data); 
-             this.loadOrganisationAttendance()
+             this.loadUserWebsiteSetup()
              this.childRef = {
               message: response.data.message,
               label: "Success",
@@ -495,7 +434,7 @@ export default {
           .then((response) => {
             // Extract data from the response
             console.log("response data>>>>>>>", response.data); 
-             this.loadOrganisationAttendance()
+             this.loadUserWebsiteSetup()
               this.childRef = {
               message: response.data.message,
               label: "Success",
@@ -527,37 +466,7 @@ export default {
   },
   mounted() {
     console.log(">>>>>>>>>mounted>>>>>>>>>>");
-    this.loadOrganisationAttendance()
-    try{
-        if ('geolocation' in navigator) {
-          console.log('Geolocation is supported');
-          navigator.geolocation.getCurrentPosition(
-              (position) => {
-                // Success callback
-                this.position = {
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
-                };
-                console.log(">>>>>>>>>>this.position>>>>>>>>",this.position)
-              },
-              (error) => {
-                // Error callback
-                console.log(error)
-                 this.childRef = {
-                  message: error.message,
-                  label: "Error",
-                  cardClass: "bg-negative text-white error",
-                  textClass: "q-pt-none",
-                  buttonClass: "bg-white text-teal"
-                }; 
-              }
-            );
-        } else {
-          console.log('Geolocation is not supported by this browser');
-        }
-    }catch(error){
-      console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
-    }
+    this.loadUserWebsiteSetup()
         
   },
   unmounted() { 

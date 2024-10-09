@@ -79,8 +79,7 @@ import { isRequired } from 'src/validation/validation';
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios"; 
 import path from "src/router/urlpath";
-import { useRouter } from "vue-router";  
-import { QrcodeStream, QrcodeDropZone, QrcodeCapture } from 'vue-qrcode-reader'
+import { useRouter } from "vue-router";   
 import QRCodeScanner from "src/components/QRCodeScanner.vue";
 
 const router = useRouter();
@@ -132,17 +131,16 @@ export default {
       childRef,  
       showMessageDialog:false, 
       requiredRule: value => isRequired(value), 
-      toggleValue:ref(true), 
-      toggleLabel:"Record Attendance By Filling Form"
+      toggleValue:ref(false), 
+      toggleLabel:"Record Attendance By Scanning Member QR Code"
     };
   },
   methods: {
-    onToggleChange(value){
-      console.log(">>value>>>",value);
+    onToggleChange(value){ 
       if(value){
         this.toggleLabel = "Record Attendance By Filling Form"
       }else{ 
-         this.toggleLabel = "Record Attendance By Scanning"
+         this.toggleLabel = "Record Attendance By Scanning Member QR Code"
       }
     },
     loadUserClients() {
