@@ -61,7 +61,7 @@
       },
       "selfattendance":{
         "pagename": "User Attendance Page",
-        "hint":"This Page is begin used to record attendance.You can record attendance by selecting Client and oraganisation/Center and then click on Record Attendance Button or by toggling to the scanning option, then scan the QR Code to record attendance"
+        "hint":"This Page is begin used to record attendance. Click on the scan button to scan the QR Code to be able to record attendance or by toggling to the form option, then You can record attendance by selecting Client and oraganisation/Center and then click on Record Attendance Buttone"
       },
       "turnel":{
         "pagename": "Turnelling Page",

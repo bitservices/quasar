@@ -27,45 +27,66 @@
             :buttonClass="childRef.buttonClass"
           />
         </div>
-      <q-card  v-if="toggleValue" class="card-flex-display">
-        <q-card-section> 
-          <q-form @submit.prevent="recordFormAttendance" ref="selfAttendanceForm">
-            <q-select
-              filled
-              bottom-slots
-              v-model="formData.client"
-              @update:model-value="handleClientChange"
-              :options="clients"
-              label="Select Client"
-              :rules="[requiredRule]" 
-            />
-            <q-select
-              filled
-              bottom-slots
-              v-model="formData.organisation"
-              :options="organisations"
-              label="Select Organisation"
-              :rules="[requiredRule]" 
-            />
-            
-            <q-card-actions align="center"> 
-            <q-btn
-            class="pwan-button"
-              label="Record Attendance" 
-              type="submit"
-              size="md"
-              rounded 
-              :disabled="isDisabled"
-            />
-          </q-card-actions>
-        </q-form>
-        </q-card-section> 
-    </q-card>
+      <div  v-if="toggleValue">
+        <q-card  v-if="position.isSet" class="card-flex-display">
+          <q-card-section> 
+            <q-form @submit.prevent="recordFormAttendance" ref="selfAttendanceForm">
+              <q-select
+                filled
+                bottom-slots
+                v-model="formData.client"
+                @update:model-value="handleClientChange"
+                :options="clients"
+                label="Select Client"
+                :rules="[requiredRule]" 
+              />
+              <q-select
+                filled
+                bottom-slots
+                v-model="formData.organisation"
+                :options="organisations"
+                label="Select Organisation"
+                :rules="[requiredRule]" 
+              />
+              
+              <q-card-actions align="center"> 
+              <q-btn
+              class="pwan-button"
+                label="Record Attendance" 
+                type="submit"
+                size="md"
+                rounded 
+                :disabled="isDisabled"
+              />
+            </q-card-actions>
+          </q-form>
+          </q-card-section> 
+      </q-card>
+      </div>
     <q-card v-else class="q-mt-md">  
-          <QRCodeScanner 
+          <QRCodeScanner v-if="position.isSet" ref="qrcodescanner"
             @scannedDataSubmitted="recordScannedAttendance"
             />
       </q-card>
+
+      <div class="q-pa-md">
+     <q-table
+        class="my-sticky-header-table"
+        flat
+        bordered
+        title="Attendance"
+        :rows="rows"
+        :columns="columns"
+        row-key="id"         
+        selection="single" 
+        v-model:selected="selected"
+      >
+        <template v-slot:top>
+          <q-label>Attendance List</q-label>
+        </template> 
+
+      </q-table>
+    </div>
     </div>
   </q-page>
 </template>
@@ -80,7 +101,8 @@ import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios"; 
 import path from "src/router/urlpath";
 import { useRouter } from "vue-router";   
-import QRCodeScanner from "src/components/QRCodeScanner.vue";
+import QRCodeScanner from "src/components/QRCodeScanner.vue"; 
+import { format } from 'date-fns'; 
 
 const router = useRouter();
 export default {
@@ -98,8 +120,9 @@ export default {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail");
     const clients = ref([]);
-    const organisations = ref([]);
-    const menus = ref([]);
+    const selected = ref([]);
+    const organisations = ref([]); 
+     const rows = ref([]);
     const formData = ref({
       client: null,
       organisation: null,
@@ -107,6 +130,7 @@ export default {
     const position ={
       longitude : 0,
       latitude: 0,
+      isSet : false
     }
      const childRef = ref({
       label: "",
@@ -116,11 +140,51 @@ export default {
       buttonClass: "",
       data: {},
     });
+    const columns = [
+      
+      
+       {
+        name: "organisation",
+        align: "left",
+        label: "Organisation/Center",
+        field: (row) => row.organisation.name,
+        sortable: true,
+      },
+      {
+        name: "client",
+        align: "left",
+        label: "Client/Center",
+        field: (row) => row.client.name,
+        sortable: true,
+      },
+       {
+        name: "attendanceDate",
+        align: "left",
+        label: "Attendance Date",
+        field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
+        sortable: true,
+      },
+       {
+        name: "attendanceTime",
+        align: "left",
+        label: "Attendance Time",
+        field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
+        sortable: true,
+      },
+       
+       {
+        name: "seatNumber",
+        align: "left",
+        label: "Seat Number",
+        field: (row) => row.seatNumber,
+        sortable: true,
+      },
+       
+    ]; 
     return {
       formData,
       clients,
-      organisations,
-      menus,
+      organisations, 
       headers,
       userEmail,
       pageName,
@@ -132,7 +196,10 @@ export default {
       showMessageDialog:false, 
       requiredRule: value => isRequired(value), 
       toggleValue:ref(false), 
-      toggleLabel:"Record Attendance By Scanning Member QR Code"
+      toggleLabel:"Record Attendance By Scanning Member QR Code",
+      columns,
+      rows,
+      selected,
     };
   },
   methods: {
@@ -141,7 +208,9 @@ export default {
         this.toggleLabel = "Record Attendance By Filling Form"
       }else{ 
          this.toggleLabel = "Record Attendance By Scanning Member QR Code"
-      }
+      } 
+      if(this.$refs.qrcodescanner != null)
+          this.$refs.qrcodescanner.stopCamera();
     },
     loadUserClients() {
       try { 
@@ -197,7 +266,7 @@ export default {
         const attendanceData = { 
         client : data.client,
         organisation:data.organisation,
-        email : data.email,
+        email : this.userEmail,
         longitude:   this.position.longitude ,  
         latitude: this.position.latitude,
       } 
@@ -217,15 +286,12 @@ export default {
     },
 
     recordAttendance(data){
-       this.showSpinner= true 
-      console.log(">>>>>>>>>>>>>>>",data)
+       this.showSpinner= true  
       try { 
         const promise = axios.post(path.REGISTER_ATTENDANCE, data, this.headers);
         promise
-          .then((response) => { 
-            console.log(">>>>>>>response>>>>>>>>>>>>>>>",response)
-            const result = response.data;  
-             console.log(">>>>>>>result>>>>>>>>>>>>>>>",result)
+          .then((response) => {  
+            const result = response.data;   
             if (result.success) {    
                this.childRef = {
               message: response.data.message,
@@ -241,8 +307,9 @@ export default {
                 cardClass: "bg-negative text-white error",
                 textClass: "q-pt-none",
                 buttonClass: "bg-white text-teal"
-              }; 
+              };  
             }
+            this.loadUserAttendance();
             this.showMessageDialog = true;
              this.showSpinner= false;
  
@@ -273,6 +340,35 @@ export default {
              this.showSpinner= false
       } 
     },
+     loadUserAttendance() {
+         const requestParams = {
+          params: { 
+            email: this.userEmail,
+            order_by : "-attendanceDate" 
+          },
+        };
+         
+      try {
+        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        const promise = axios.get(
+          path.ATTENDANCE_SEARCH,
+          requestParams,
+          this.headers
+        ); 
+        promise
+          .then((response) => {
+            // Extract data from the response
+            console.log("response data>>>>>>>", response.data.data); 
+            this.rows = response.data.data;  
+            this.selected = [];
+          })
+          .catch((error) => {
+             
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
     
   },
   beforeCreate() {
@@ -286,6 +382,7 @@ export default {
   },
   mounted() {
     this.loadUserClients();
+    this.loadUserAttendance()
     console.log(">>>>>>>>mounted>>>>>>>>>>");
     try{
         if ('geolocation' in navigator) {
@@ -295,7 +392,9 @@ export default {
                 // Success callback
                 this.position = {
                   latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
+                  longitude: position.coords.longitude,
+                  isSet : true,
+
                 };
                 this.isDisabled = false
               },

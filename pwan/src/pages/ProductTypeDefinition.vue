@@ -32,11 +32,7 @@
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
-            :urlLink="urlLink" 
-            :updateImage="updateImage"
-            :updateVideo="updateVideo"
-            :updateSubscription="updateSubscription"
-            :showByte="showByte"
+            :urlLink="urlLink"  
           />
           <ResponseDialog
             v-model="showMessageDialog"
@@ -83,33 +79,7 @@
             </q-dialog>
           </q-btn>
         </template>
-      </q-table>
-      <div>
-         <q-btn
-                    @click="handleProductImage"
-                    flat
-                    label="Product Image" 
-                     class="pwan-blue full-width"
-                     style="top-margin:10px"
-                    rounded 
-                  />
-                  <q-btn
-                   @click="handleProductVideo"
-                    flat
-                    label="Prouct Video"
-                    class="pwan-button top-margin full-width" 
-                     style="top-margin:10px"
-                    rounded
-                  />
-                  <q-btn
-                   @click="handleSubscriptionForm"
-                    flat
-                    label="SubScribtion Form"
-                     class="pwan-button top-margin full-width"
-                     style="top-margin:10px"
-                    rounded
-                  />
-      </div>
+      </q-table> 
     </div>
   </q-page>
 </template>
@@ -161,11 +131,7 @@ export default {
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
-
-    const showByte = ref(false); 
-    const updateImage = ref(false);
-    const updateVideo = ref(false);
-    const updateSubscription = ref(false);
+ 
 
     const childRef = ref({
       label: "",
@@ -324,11 +290,7 @@ export default {
         actionLabel.value = "Update"; 
       }
     };
-    const editItem = () => {
-         showByte.value = false;
-        updateSubscription.value = false;
-        updateImage.value = false;
-        updateVideo.value = false;
+    const editItem = () => { 
         setEditItemValues()
     };
     const viewItem = () => { 
@@ -354,42 +316,7 @@ export default {
       } catch (error) {
         console.error("Error submitting form:", error);
       }
-    };
-     const handleSubscriptionForm = async () => {
-      try {
-        showByte.value = true;
-        updateSubscription.value = true;
-        updateImage.value = false;
-        updateVideo.value = false;
-        setEditItemValues()
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    };
-    
-    const handleProductImage = async () => {
-      try {
-        showByte.value = true;
-        updateSubscription.value = false;
-        updateImage.value = true;
-        updateVideo.value = false;
-        setEditItemValues()
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    };
-    const handleProductVideo = async () => {
-      try {
-        showByte.value = true;
-        updateSubscription.value = false;
-        updateImage.value = false;
-        updateVideo.value = true;
-        setEditItemValues()
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    };
-
+    }; 
     return {
       fetchData,
       saveRecord,
@@ -400,10 +327,7 @@ export default {
       setEditItemValues,
       viewItem,
       deleteItem,
-      showDialog,
-      handleSubscriptionForm,
-      handleProductVideo,
-      handleProductImage,
+      showDialog, 
       urlLink,
       actionLabel,
       searchValue,
@@ -415,11 +339,7 @@ export default {
       headers,
       medium_dialog,
       action,
-      showFormDialog,
-      updateImage,
-      updateVideo,
-      updateSubscription,
-      showByte
+      showFormDialog, 
     };
   },
   beforeCreate() {

@@ -211,10 +211,9 @@ export default {
         ); 
         promise
           .then((response) => {
-            // Extract data from the response
-            console.log("response data>>>>>>>", response.data.data); 
+            // Extract data from the response 
             const result =  response.data.data;
-            this.websitelink = path.ESTATE_AGENCY_URL + result[0].refId 
+            this.websitelink = path.ESTATE_AGENCY_URL + result[0].refId
           })
           .catch((error) => {
              

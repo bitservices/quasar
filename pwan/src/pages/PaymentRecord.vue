@@ -81,7 +81,7 @@
       </q-card-section> 
     </q-card>
      <q-card v-else class="q-mt-md">  
-          <QRCodeScanner 
+          <QRCodeScanner v-if="position.isSet" ref="qrcodescanner"
             @scannedDataSubmitted="recordScannedAttendance"
             />
       </q-card>
@@ -152,6 +152,7 @@ export default {
     const position ={
       longitude : 0,
       latitude: 0,
+      isSet:false,
     }
     const columns = [
       {
@@ -235,6 +236,7 @@ export default {
   },
   methods: {
      onToggleChange(value){ 
+      console.log("qrcode refs >>>>",this.$refs.qrcodescanner)
       if(value){
         this.toggleLabel = "Record Attendance By Filling Form"
       }else{ 
@@ -536,7 +538,8 @@ export default {
                 // Success callback
                 this.position = {
                   latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
+                  longitude: position.coords.longitude,
+                  isSet : true,
                 };
                 console.log(">>>>>>>>>>this.position>>>>>>>>",this.position)
               },

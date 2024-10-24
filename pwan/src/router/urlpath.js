@@ -1,10 +1,14 @@
-//const BASEPATH = "https://pwan.traisoft.com";
-const BASEPATH = "http://localhost:8000";
-const APP_PATH = BASEPATH + "/api/pwanproperties/";
+
+
+
+// const BASEPATH = "http://localhost:8000";
+// const QUASR_PATH = "http://localhost:9000"; 
+const BASEPATH = "https://pwan.traisoft.com";
+const QUASR_PATH =  "https://propertyconnect.traisoft.com";
+const APP_PATH = BASEPATH + "/api/pwanproperties/"; 
 const path = {
-  //ORIGIN_PATH: "https://propertyconnect.traisoft.com",
-  ESTATE_AGENCY_URL: "https://google.com?ref=",
-  ORIGIN_PATH: "https://localhost:9000", 
+  ESTATE_AGENCY_URL: "https://estateagency.traisoft.com/?ref=",
+  ORIGIN_PATH: QUASR_PATH, 
   USER_AUTHENTICATEE: BASEPATH + "/api/token/",
   CLIENT_CREATE: APP_PATH + "client/create/",
   CLIENT_UPDATE: APP_PATH + "client/update/",
@@ -91,6 +95,9 @@ const path = {
   PRODUCTDEF_BYTES: APP_PATH + "productdef/getProductTypeDefBytes/",   
   PRODUCTDEF_VIDEO: APP_PATH + "productdef/getProductTypeDefVideo/",
   PRODUCTDEF_SUBSCRIPTION_FORM: APP_PATH + "productdef/getProductTypeDefSubscription/",
+  PRODUCTDEF_UPDATE_IMAGE: APP_PATH + "productdef/updateimage/",
+  PRODUCTDEF_UPDATE_SUBSCRIPTION: APP_PATH + "productdef/updatesubscription/",
+  PRODUCTDEF_UPDATE_VIDEO: APP_PATH + "productdef/updatevideo/",
 
   PAYMENTDEF_CREATE: APP_PATH + "paymentdef/create/",
   PAYMENTDEF_UPDATE: APP_PATH + "paymentdef/update/",
@@ -324,6 +331,13 @@ const path = {
   USER_WEBSITE_ACTIVATE: APP_PATH + "userwebsitesetup/activate/",
   USER_WEBSITE_DEACTIVATE: APP_PATH + "userwebsitesetup/deactivate/",
   USER_WEBSITE_SEARCH : APP_PATH + "userwebsitesetup/search/",
+
+  LEADS_SEARCH: APP_PATH + "leadcontact/search/",
+  IMAGE_UPLOAD : QUASR_PATH + "/upload_image", 
+  VIDEO_UPLOAD : QUASR_PATH + "/upload_video", 
+  SUBSCRIPTION_UPLOAD : QUASR_PATH + "/upload_subscription/", 
+  UPLOAD_DESINATION: QUASR_PATH + "/uploads/", 
+
   
 
   

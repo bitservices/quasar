@@ -223,7 +223,7 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response 
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="user_payment_transaction.pdf"' });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);
@@ -231,7 +231,7 @@ export default {
           // Create a link element to trigger the download
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = 'example.pdf'; // Set the filename for download
+          a.download = 'user_payment_transaction.pdf'; // Set the filename for download
           a.textContent = 'Download File';
           document.body.appendChild(a);
           a.click();

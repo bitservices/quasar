@@ -27,61 +27,62 @@
             :buttonClass="childRef.buttonClass"
           />
         </div>
-      <q-card  v-if="toggleValue" class="card-flex-display" 
-    >
-      <q-card-section>
-        <div class="row">
-          <div class="col-8 text-h6"> </div>
-          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
-                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
-          </div>
-        </div>
-      </q-card-section>  
-      <q-card-section> 
-        <q-form @submit.prevent="recordFormAttendance" ref="attendanceForm">
-          <q-hide 
-            v-model="formData.email"
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model="formData.userName"
-            @keyup="handleInput"
-            @keydown.enter="handleEnter"
-            placeholder="Search for Member"
-            :dense="dense" 
-          />
-          <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
-            <q-item
-              clickable
-              v-for="item in filteredSuggestions"
-              :key="item.email"
-              @click="selectRecord(item)"
-            >
-              <q-item-section>{{ item.name }}</q-item-section>
-              <q-item-section side>
-                <!-- Side content -->
-                <q-item-label caption lines="1">
-                  <img :src="item.image" />
-                </q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list> 
-           <q-card-actions align="center"> 
-          <q-btn
-            class="pwan-button"
-            label="Record Attendance" 
-            type="submit"
-            size="md"
-            rounded
-            v-close-popup
-          />
-        </q-card-actions>
-        </q-form>
-      </q-card-section> 
-    </q-card>
+       <div  v-if="toggleValue">
+          <q-card  v-if="position.isSet" class="card-flex-display">
+          <q-card-section>
+            <div class="row">
+              <div class="col-8 text-h6"> </div>
+              <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
+                      <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
+              </div>
+            </div>
+          </q-card-section>  
+          <q-card-section> 
+            <q-form @submit.prevent="recordFormAttendance" ref="attendanceForm">
+              <q-hide 
+                v-model="formData.email"
+              />
+              <q-input
+                filled
+                bottom-slots
+                v-model="formData.userName"
+                @keyup="handleInput"
+                @keydown.enter="handleEnter"
+                placeholder="Search for Member"
+                :dense="dense" 
+              />
+              <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
+                <q-item
+                  clickable
+                  v-for="item in filteredSuggestions"
+                  :key="item.email"
+                  @click="selectRecord(item)"
+                >
+                  <q-item-section>{{ item.name }}</q-item-section>
+                  <q-item-section side>
+                    <!-- Side content -->
+                    <q-item-label caption lines="1">
+                      <img :src="item.image" />
+                    </q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list> 
+              <q-card-actions align="center"> 
+              <q-btn
+                class="pwan-button"
+                label="Record Attendance" 
+                type="submit"
+                size="md"
+                rounded
+                v-close-popup
+              />
+            </q-card-actions>
+            </q-form>
+          </q-card-section> 
+        </q-card>
+      </div>
      <q-card v-else class="q-mt-md">  
-          <QRCodeScanner 
+          <QRCodeScanner v-if="position.isSet" ref="qrcodescanner"
             @scannedDataSubmitted="recordScannedAttendance"
             />
       </q-card>
@@ -152,6 +153,7 @@ export default {
     const position ={
       longitude : 0,
       latitude: 0,
+      isSet:false,
     }
     const columns = [
       {
@@ -240,6 +242,8 @@ export default {
       }else{ 
          this.toggleLabel = "Record Attendance By Scanning Member QR Code"
       }
+        if(this.$refs.qrcodescanner != null)
+          this.$refs.qrcodescanner.stopCamera();
     },
     handleInput() {
       if (this.formData.userName === "" || this.formData.userName.length < 4) {
@@ -445,75 +449,6 @@ export default {
     getSelectedString(value){
       console.log(value)
     },
-    deactivateUser(){
-      console.log("indide deactive method >>>>>>>>", this.selected)
-        const data = {
-            id: this.selected[0].id, 
-        };
-      try {
-        console.log(">>>>>data>>>>>>>>",data)
-        const promise = axios.post(
-          path.ORGUSER_DEACTIVATE,
-          data,
-          this.headers
-        ); 
-        promise
-          .then((response) => {
-            // Extract data from the response
-            console.log("response data>>>>>>>", response.data.data); 
-             this.loadOrganisationAttendance()
-             this.childRef = {
-              message: response.data.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog = true;
-          })
-          .catch((error) => { 
-              
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    },
-    activateUser(){
-      console.log(this.selected)
-       console.log("indide deactive method >>>>>>>>", this.selected)
-        const data = { 
-            id: this.selected[0].id,  
-        };
-      try {
-        console.log(">>>>>requestParams>>>>>>>>",data)
-        const promise = axios.post(
-          path.ORGUSER_ACTIVATE,
-          data,
-          this.headers
-        ); 
-        promise
-          .then((response) => {
-            // Extract data from the response
-            console.log("response data>>>>>>>", response.data); 
-             this.loadOrganisationAttendance()
-              this.childRef = {
-              message: response.data.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };
-            this.showMessageDialog = true;
-          })
-          .catch((error) => {
-             
-             
-          });
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
-    }
-
 
   },
   beforeCreate() {
@@ -536,7 +471,8 @@ export default {
                 // Success callback
                 this.position = {
                   latitude: position.coords.latitude,
-                  longitude: position.coords.longitude
+                  longitude: position.coords.longitude,
+                  isSet : true,
                 };
                 console.log(">>>>>>>>>>this.position>>>>>>>>",this.position)
               },

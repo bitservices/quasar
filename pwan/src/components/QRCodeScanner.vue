@@ -11,8 +11,16 @@
        <q-card-actions align="center"> 
         <q-btn
             class="pwan-button top-margin"
-            label="  Scan   " 
+            label="  Start Scan   " 
              @click="startCamera"
+            size="md"
+            rounded 
+            
+          />
+          <q-btn
+            class="pwan-blue top-margin"
+            label="  Stop Scan   " 
+             @click="stopCamera"
             size="md"
             rounded 
             

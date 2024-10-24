@@ -116,7 +116,7 @@
       </q-card-section> 
     </q-card>
     <q-card v-else class="q-mt-md">  
-          <QRCodeScanner 
+          <QRCodeScanner ref="qrcodescanner"
             @scannedDataSubmitted="readScanCode"
             />
       </q-card>
@@ -191,13 +191,14 @@ export default {
     };
   },
   methods: {
-    onToggleChange(value){
-      console.log(">>value>>>",value);
+    onToggleChange(value){  
       if(value){
         this.toggleLabel = "Record Payment By Selecting Member"
       }else{ 
          this.toggleLabel = "Record Payment By Scanning QR Code"
       }
+        if(this.$refs.qrcodescanner != null)
+          this.$refs.qrcodescanner.stopCamera();
     },
      readScanCode(record){
       let data = JSON.parse(record); 

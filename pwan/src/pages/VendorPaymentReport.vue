@@ -181,7 +181,7 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response 
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="vendor_payment_report.pdf"'  });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);

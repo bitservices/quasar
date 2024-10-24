@@ -96,20 +96,15 @@ let defaultList = [
         caption: "Dashboard Page",
         icon: "event",
         link: "/dashboard",
-      }, 
-      
-       {
-        title: " Self Attendance",
-        icon: "event",
-        link: "/selfattendance",
-      }, 
-      
-       {
-        title: " Commission ",
-        icon: "event",
-        link: "/calculatecommission",
       },  
       
+      {
+        title: " Leads",
+        caption: "Leads",
+        icon: "record_voice_over",
+        link: "/leads",
+      },
+
       {
         title: " Expense Report",
         caption: "",
@@ -122,31 +117,20 @@ let defaultList = [
         icon: "event",
         link: "/selfvendorrpt",
       },      
-      {
-        title: " Client",
-        caption: "Client Definition",
-        icon: "chat",
-        link: "/client",
-      },
-      {
-        title: " Organisation",
-        caption: "Maintain Definition",
-        icon: "chat",
-        link: "/organisation",
-      },
+      
       {
         title: " Prospecting Customer",
         caption: "Prospecting Customers",
         icon: "record_voice_over",
         link: "/prospect",
       },
+       
       {
-        title: "QR Code",
+        title: "User Profile",
         caption: "",
         icon: "event",
-        link: "/userqrcode",
-      },
-      
+        link: "/userprofile",
+      }, 
       {
         title: " Investors",
         caption: "Investors",
@@ -159,12 +143,7 @@ let defaultList = [
         icon: "rss_feed",
         link: "/sales",
       },
-      {
-        title: " Turnel ",
-        caption: "@QuasarFramework",
-        icon: "public",
-        link: "/turnel",
-      },
+       
       {
         title: " Contact Info",
         caption: "Community Quasar projects",

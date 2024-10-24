@@ -143,60 +143,41 @@
             label="Select County"
             :dense="dense"
             :rules="[requiredRule]"
-          />
-          </div>
-          <div ref="byteObjects" v-else>
-            <div class="row" v-if="updateImage">
-            <div class="col-6">
-              <q-file
-                bottom-slots
-                filled
-                v-model="formData.imageByte"
-                label="Product Image"
-              >
-                <template v-slot:append>
-                  <q-icon name="attachment" />
-                </template>
-              </q-file>
-            </div>
-            <div v-if="imageFile" class="col-6 q-mt-md">
-              <img :src="imageFile" alt="Preview" style="max-width: 100%" />
-            </div>
-          </div>
-          <div class="row" v-if="updateSubscription">
-            <div class="col-6">
-              <q-file
-                bottom-slots
-                filled
-                v-model="formData.subscriptionFormByte"
-                label="Subscription Form"
-              >
-                <template v-slot:append>
-                  <q-icon name="attachment" />
-                </template>
-              </q-file>
-            </div>
-            <div v-if="subscriptionFile" class="col-6 q-mt-md"> 
-               <a :href="subscriptionFile" target="_blank" rel="noopener noreferrer">Subscription Form</a>
-            </div>
-          </div>
-          <div class="row" v-if="updateVideo">>
-            <div class="col-6">
-              <q-file filled v-model="formData.videoByte" label="Product Video">
-                <template v-slot:append>
-                  <q-icon name="attachment" />
-                </template>
-              </q-file>
-            </div>
-            <div v-if="videoFile" class="col-6 q-mt-md">
-              <q-video
-                :src="videoFile"
-                autoplay="false"
-                controls
-                class="my-video"
-              />
-            </div>
-          </div>
+          /> 
+            <q-card>
+              <q-card-section>
+              <q-uploader 
+                  label="Drag and drop Image file or click to select"
+                  single 
+                  @added="handleImageFilesAdded"
+                /> 
+              </q-card-section>
+            </q-card>
+            <q-card>
+              <q-card-section>
+              <q-uploader 
+                  label="Drag and drop Subscription file or click to select"
+                  single 
+                  @added="handleSubscriptionFilesAdded"
+                /> 
+            </q-card-section>
+            </q-card>
+            <q-card>
+            <q-card-section>
+            <q-uploader 
+                label="Drag and drop files or click to select"
+                single 
+                @added="handleVideoFilesAdded"
+              /> 
+            </q-card-section>
+            <q-card-section>
+            <q-video
+              :src="formData.videoUrl"
+              autoplay="false"
+              controls 
+            />  
+            </q-card-section>
+            </q-card>
           </div>
           <q-card-actions align="center">
           <div class="row">
@@ -261,23 +242,7 @@ export default {
     urlLink: {
       type: String,
       required: true,
-    },
-     showByte: {
-      type: Boolean,
-      required: true,
-    },
-     updateSubscription: {
-      type: Boolean,
-      required: true,
-    },
-     updateVideo: {
-      type: Boolean,
-      required: true,
-    },
-     updateImage: {
-      type: Boolean,
-      required: true,
-    }, 
+    },  
     
   },
   data() {
@@ -323,15 +288,18 @@ export default {
       stateList: [],
       counties: [],
       isReadonly: false,
-      imageFile: null,
-      videoFile: null,
-      subscriptionFile: null,
+      imageUrl: null,
+      videoUrl: null,
+      subscriptionUrl: null,
       pageName,
       hint, 
       showSpinner: false, 
       showBytes:false,
       requiredRule: value => isRequired(value), 
       inputFieldRule: value => inputFieldRequired(value), 
+      imageUpload :path.IMAGE_UPLOAD, 
+      videoUpload :path.VIDEO_UPLOAD, 
+      lastUploadedFile: null,
     };
   },
   methods: {
@@ -346,9 +314,7 @@ export default {
       //this.onClick(formData.value);
      if (this.$refs.productTypeDefinitionForm.validate()) { 
         this.showSpinner = true;
-        let data = this.formData; 
-        if(!this.updateImage && !this.updateVideo && !this.updateSubscription){ 
-      
+        let data = this.formData;  
         let productType = this.formData.productType.value;   
         data.productType = productType;
         data.dimension = this.formData.dimension.value;
@@ -356,8 +322,7 @@ export default {
         data.productStatus = this.formData.productStatus.value;
         data.county = this.formData.county.value;
         data.country = this.formData.country.value;
-        data.state = this.formData.state.value;
-        }
+        data.state = this.formData.state.value; 
         data.status = 'A'; 
         data.client = this.profile.client;
         data.organisation = this.profile.organisation;
@@ -413,7 +378,68 @@ export default {
     setShowByte(value){
       this.showBytes = value
     },
-    
+   
+     handleImageFilesAdded(files) { 
+        files.forEach(file => { 
+          console.log(">>>this.formdata", this.formData)
+                const formData = new FormData();
+                formData.append('imageFile', file); // 'file' should match the multer field name
+                formData.append("id",this.formData.id)
+                formData.append("destination",path.UPLOAD_DESINATION)
+                formData.append("client",this.profile.client)
+                formData.append("organisation",this.profile.organisation)
+                // Use Axios to send the file
+                axios.post(path.PRODUCTDEF_UPDATE_IMAGE, formData)
+                  .then(response => {
+                    console.log('Upload successful:', response.data);
+                  })
+                  .catch(error => {
+                    console.error('Upload error:', error);
+                  });
+        });
+    },
+     handleSubscriptionFilesAdded(files){
+       files.forEach(file => { 
+        
+      console.log(">>>this.formdata", this.formData)
+             const formData = new FormData();
+                formData.append('imageFile', file); // 'file' should match the multer field name
+                formData.append("id",this.formData.id)
+                formData.append("destination",path.UPLOAD_DESINATION)
+                formData.append("client",this.profile.client)
+                formData.append("organisation",this.profile.organisation)
+                // Use Axios to send the file
+                axios.post(path.PRODUCTDEF_UPDATE_SUBSCRIPTION, formData)
+                  .then(response => {
+                    console.log('Upload successful:', response.data);
+                  })
+                  .catch(error => {
+                    console.error('Upload error:', error);
+                  }); 
+             });
+    },
+
+     handleVideoFilesAdded(files){
+       files.forEach(file => { 
+        
+      console.log(">>>this.formdata", this.formData)
+             const formData = new FormData();
+                formData.append('imageFile', file); // 'file' should match the multer field name
+                formData.append("id",this.formData.id)
+                formData.append("destination",path.UPLOAD_DESINATION)
+                formData.append("client",this.profile.client)
+                formData.append("organisation",this.profile.organisation)
+                // Use Axios to send the file
+                axios.post(path.PRODUCTDEF_UPDATE_VIDEO, formData)
+                  .then(response => {
+                    console.log('Upload successful:', response.data);
+                  })
+                  .catch(error => {
+                    console.error('Upload error:', error);
+                  }); 
+             });
+    },
+  
   },
 
   beforeCreate() {
@@ -492,97 +518,7 @@ export default {
             client: this.profile.client,
             organisation: this.profile.organisation,
           },
-        };
-    if(this.showByte){
-      this.showBytes = true
-      if(this.updateImage){
-         const promise = axios.get(path.PRODUCTDEF_IMAGE, requestParams, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-
-            if (result.success) {
-              debug("fetched product Type Definition>>>>>>", result.data); 
-              this.formData.id = result.data.id; 
-              this.imageFile =
-                "data:image/jpeg;base64," + result.data.imageByte; 
-            }
-          })
-          .catch((error) => {
-            debug(error);
-          });
-              
-      }
-      if(this.updateSubscription){
-         const promise = axios.get(path.PRODUCTDEF_SUBSCRIPTION_FORM, requestParams, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-
-            if (result.success) {
-              debug("fetched product Type Definition>>>>>>", result.data);   
-               const byteCharacters = atob(result.data.subscriptionFormByte); // Extract Base64 part
-              const byteArrays = [];
-              for (
-                let offset = 0;
-                offset < byteCharacters.length;
-                offset += 512
-              ) {
-                const slice = byteCharacters.slice(offset, offset + 512);
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                  byteNumbers[i] = slice.charCodeAt(i);
-                }
-                byteArrays.push(new Uint8Array(byteNumbers));
-              }
-              const blob = new Blob(byteArrays, { type: "application/pdf" }); // Create Blob with MIME type
-              // Create Object URL and set as video source
-              this.subscriptionFile = URL.createObjectURL(blob); 
-            }
-          })
-          .catch((error) => {
-            debug(error);
-          });
-      }
-       if(this.updateVideo)  {   
-               const promise = axios.get(path.PRODUCTDEF_VIDEO, requestParams, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-
-            if (result.success) {
-              debug("fetched product Type Video*********>>>>>>", result.data);   
-               this.formData.id = result.data.id;
-                 const byteCharacters = atob(result.data.videoByte); // Extract Base64 part
-              const byteArrays = [];
-              for (
-                let offset = 0;
-                offset < byteCharacters.length;
-                offset += 512
-              ) {
-                const slice = byteCharacters.slice(offset, offset + 512);
-                const byteNumbers = new Array(slice.length);
-                for (let i = 0; i < slice.length; i++) {
-                  byteNumbers[i] = slice.charCodeAt(i);
-                }
-                byteArrays.push(new Uint8Array(byteNumbers));
-              }
-              const blob = new Blob(byteArrays, { type: "video/mp4" }); // Create Blob with MIME type
-              // Create Object URL and set as video source
-              this.videoFile = URL.createObjectURL(blob);
-            }
-          })
-          .catch((error) => {
-            debug(error);
-          });
-                           
-             
-        }
-    }else{
-      this.showBytes = false 
+        };  
     if (this.action == "edit" || this.action == "view") {
       this.isReadonly = true;
       try { 
@@ -635,10 +571,7 @@ export default {
       } catch (error) {
         console.error("Error:", error);
       }
-    } else {
-      this.isReadonly = false;
-      
-    }
+    
     }
   },
 };

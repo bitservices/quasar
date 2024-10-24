@@ -6,7 +6,7 @@
     >
       <q-card-section>
         <div class="row">
-          <div class="col-8 text-h6">Organisation User Assignment </div>
+          <div class="col-8 text-h6">User Assignment </div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
           </div>
@@ -24,7 +24,7 @@
             v-model="formData.userName"
             @keyup="handleInput"
             @keydown.enter="handleEnter"
-            placeholder="Search for PBO"
+            placeholder="Search for Member/PBO"
             :dense="dense"
           />
           <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
