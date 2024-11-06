@@ -30,9 +30,8 @@
 								</q-card>
 							</q-list>
 						</q-menu>
-					</q-btn> 
-					 
-      				<q-btn dense flat round icon="logout" @click="logout" />
+					</q-btn>  
+      		 <q-btn dense flat round icon="logout" @click="logout" />
 				</div>
       </q-toolbar>
     </q-header>
@@ -106,6 +105,12 @@ let defaultList = [
       },
 
       {
+        title: " Testimonial", 
+        icon: "record_voice_over",
+        link: "/testimonial",
+      },
+
+      {
         title: " Expense Report",
         caption: "",
         icon: "event",
@@ -149,6 +154,12 @@ let defaultList = [
         caption: "Community Quasar projects",
         icon: "favorite",
         link: "/usercontact",
+      },
+      {
+        title: " Change PAssword",
+        caption: "Change Password",
+        icon: "key",
+        link: "/changepassword",
       },
     ],
   },

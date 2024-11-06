@@ -128,15 +128,47 @@
             v-for="(image, index) in productImages"
             :key="index"
             :name="index" 
-          > 
+          >   
+          <q-card>
+               <q-card-section>    
+                  <q-input
+                    filled
+                    bottom-slots
+                    v-model="image.description"
+                    label="Description"
+                    type="textarea"
+                    rows="2"
+                    maxlength="200"
+                    counter
+                    readonly="true"
+                  />
+                  <q-input
+                    filled
+                    bottom-slots
+                    v-model="image.landmark"
+                    label="Landmark"
+                    type="textarea"
+                    rows="3"
+                    maxlength="300"
+                    counter
+                    readonly="true"
+                  />  
+                </q-card-section>   
+            </q-card>
+             
             <div v-if="image.imageUrl">
               <q-card>
                 <q-card-section>
                     <img  style="max-width: 100%;  height: auto;" alt="Google Drive Image"
                       :src="image.imageUrl" 
                       @load="updateCarouselHeight"
-                    />  
-                 <a :href="image.imageUrl" target="_blank" download="product_flyer.png" rel="noopener noreferrer">Download Flyer</a>
+                    />    
+                      <q-btn
+                        label="Download Flyer"
+                        icon="download"
+                        @click="downloadImage(image.imageUrl)"
+                        color="primary"
+                      />  
                  </q-card-section>
               </q-card>
             </div>
@@ -151,15 +183,26 @@
                     allowfullscreen
                     >
                   </iframe>
-                   <a :href="image.videoUrl" target="_blank" download="video.mp4" rel="noopener noreferrer">Download Video</a> 
+                  <q-btn
+                        label="Download Video"
+                        icon="download"
+                        @click="downloadVideo(image.videoUrl)"
+                        color="primary"
+                      />                    
                    </q-card-section>
+
               </q-card>
                 </div>  
               <div v-if="image.subscriptionFormUrl">
                 <q-card>
                 <q-card-section>
-                <a :href="image.subscriptionFormUrl" target="_blank" download="subscription_form.pdf"  rel="noopener noreferrer">Download Subscription Form</a>
-                </q-card-section>
+                  <q-btn
+                        label="Download Subscription Form"
+                        icon="download"
+                        @click="downloadSubscription(image.subscriptionFormUrl)"
+                        color="primary"
+                      />    
+                 </q-card-section>
               </q-card>
               </div>
           </q-carousel-slide>
@@ -172,7 +215,7 @@
           <q-btn
             rounded
             size="md"
-            color="primary"
+            class="pwan-button"
             label="Close"
             @click="showSearchForm=true"
             v-close-popup
@@ -299,6 +342,32 @@ export default {
     };
   },
   methods: { 
+      downloadImage(imageUrl){
+        console.log(">>>>>>>>>image url >>>>>>>>>>>",imageUrl) 
+          const link = document.createElement('a');
+          link.href = imageUrl;
+          link.download = 'product-fliyer.jpg'; // Set the download filename
+          link.target = "_blank"
+          link.click();
+      },
+       downloadVideo(videoUrl){
+        console.log(">>>>>>>>>videoUrl url >>>>>>>>>>>",videoUrl) 
+          const link = document.createElement('a');
+          link.href = videoUrl;
+          link.download = 'product-video.mp4'; // Set the download filename
+          link.target = "_blank"
+          link.click();
+      },
+
+      downloadSubscription(subscriptionFormUrl){
+        console.log(">>>>>>>>>videoUrl url >>>>>>>>>>>",subscriptionFormUrl) 
+          const link = document.createElement('a');
+          link.href = subscriptionFormUrl;
+          link.download = 'product-subscription-form.pdf'; // Set the download filename
+          link.target = "_blank"
+          link.click();
+      },
+            
       loadClients() {
       try { 
         const requestParam = {

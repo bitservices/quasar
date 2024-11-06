@@ -1,10 +1,10 @@
 
 
 
-// const BASEPATH = "http://localhost:8000";
-// const QUASR_PATH = "http://localhost:9000"; 
-const BASEPATH = "https://pwan.traisoft.com";
-const QUASR_PATH =  "https://propertyconnect.traisoft.com";
+const BASEPATH = "http://localhost:8000";
+const QUASR_PATH = "http://localhost:9000"; 
+// const BASEPATH = "https://pwan.traisoft.com";
+// const QUASR_PATH =  "https://propertyconnect.traisoft.com";
 const APP_PATH = BASEPATH + "/api/pwanproperties/"; 
 const path = {
   ESTATE_AGENCY_URL: "https://estateagency.traisoft.com/?ref=",
@@ -246,7 +246,7 @@ const path = {
   REGISTER_ATTENDANCE: APP_PATH + "attendance/register/", 
 
   PASSWORD_CHANGE: APP_PATH + "pwdchange/forgetpass/", 
-  PASSWORD_FINALIZE: APP_PATH + "pwdchange/finalize/", 
+  PASSWORD_FINALIZE: APP_PATH + "pwdchange/finalize/",  
 
    
   USER_REGISTER: APP_PATH + "userreg/register/", 
@@ -337,6 +337,17 @@ const path = {
   VIDEO_UPLOAD : QUASR_PATH + "/upload_video", 
   SUBSCRIPTION_UPLOAD : QUASR_PATH + "/upload_subscription/", 
   UPLOAD_DESINATION: QUASR_PATH + "/uploads/", 
+
+
+  TESTIMONIAL_CREATE: APP_PATH + "testimonial/create/",
+  TESTIMONIAL_UPDATE: APP_PATH + "testimonial/update/",
+  TESTIMONIAL_SEARCH: APP_PATH + "testimonial/search/",
+  TESTIMONIAL_REMOVE: APP_PATH + "testimonial/remove/",  
+  TESTIMONIAL_UPDATE_IMAGE: APP_PATH + "testimonial/updatetestimonialimage/",
+  USER_UPLOAD: APP_PATH + "userupload/upload/",
+  USER_UPLOAD_PROCESS: APP_PATH + "userupload/processupload/",
+
+  
 
   
 

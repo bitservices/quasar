@@ -16,7 +16,7 @@
           <div class="text-center"> 
                 <q-spinner v-if="showSpinner" color="primary" size="60px" />
             </div> 
-          <div v-if="!showBytes"> 
+          <div> 
           <q-select
             filled
             bottom-slots
@@ -144,6 +144,7 @@
             :dense="dense"
             :rules="[requiredRule]"
           /> 
+          <div v-if="showBytes">
             <q-card>
               <q-card-section>
               <q-uploader 
@@ -178,7 +179,9 @@
             />  
             </q-card-section>
             </q-card>
+           </div>
           </div>
+
           <q-card-actions align="center">
           <div class="row">
             <q-btn id="closeBtn"
@@ -243,6 +246,10 @@ export default {
       type: String,
       required: true,
     },  
+    showBytes: {
+      type: Boolean,
+      required: true,
+    },  
     
   },
   data() {
@@ -293,8 +300,7 @@ export default {
       subscriptionUrl: null,
       pageName,
       hint, 
-      showSpinner: false, 
-      showBytes:false,
+      showSpinner: false,  
       requiredRule: value => isRequired(value), 
       inputFieldRule: value => inputFieldRequired(value), 
       imageUpload :path.IMAGE_UPLOAD, 
@@ -375,9 +381,7 @@ export default {
         })
         .catch((error) => {});
     },
-    setShowByte(value){
-      this.showBytes = value
-    },
+    
    
      handleImageFilesAdded(files) { 
         files.forEach(file => { 

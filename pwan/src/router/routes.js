@@ -252,6 +252,20 @@ const routes = [
         path: "/userwebsitesetup",
         component: () => import("src/pages/UserWebsiteSetup.vue"),
       }, 
+      {
+        path: "/testimonial",
+        component: () => import("src/pages/UserTestimonial.vue"),
+      }, 
+
+      {
+        path: "/changepassword",
+        component: () => import("src/pages/ChangePassword.vue"),
+      }, 
+      {
+        path: "/userupload",
+        component: () => import("src/pages/UserUpload.vue"),
+      }, 
+      
       
     ],
     meta: {

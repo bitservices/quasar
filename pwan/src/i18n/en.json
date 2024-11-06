@@ -112,7 +112,23 @@
 "userpayment":{
   "pagename": "User Payment Recording",
   "hint":"The page allows financial Secretary or an Accountant to record the payment of the members or staff of the organisation. You can either scan the User QR code to record the member's due or you can click on the toggle to capture individual member's account record."   
+},
+"testimonial":{
+  "pagename": "User Testimonial",
+  "hint":"The page is used to record the testimonies by a realtor or Agent for the success of his or her business."   
+},
+ "changepassword":{
+        "pagename": "Change Password",
+        "hint":"Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"   
+},
+"upserupload":{
+       "pagename": "User Upload",
+       "hint":"This page is used to upload Users, Generate a CSV file int the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"   
 }
+
+
+    
+
 
       
       

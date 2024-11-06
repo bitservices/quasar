@@ -5,7 +5,7 @@
         class="my-sticky-header-table"
         flat
         bordered
-        title="Product Type Definition"
+        title="User Testimonials"
         :rows="rows"
         :columns="columns"
         row-key="name"
@@ -24,16 +24,16 @@
             size="sm"
             @click="viewItem"
           />
-          <ProductTypeDefinitionFormDialog ref="productTypeRef" 
+          <UserTestimoinalFormDialog
             v-model="showFormDialog"
             :onClick="saveRecord"
             @formDataSubmitted="saveRecord"
-            label="Product Type Definition"
+            label="User Testimonials"
             :searchValue="searchValue"
             :action="action"
             :actionLabel="actionLabel"
-            :urlLink="urlLink"
-            :showBytes="showByte"  
+            :urlLink="urlLink"  
+            :showBytes="showByte"
           />
           <ResponseDialog
             v-model="showMessageDialog"
@@ -89,41 +89,41 @@
 import { SessionStorage, Loading, LocalStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
-import ProductTypeDefinitionFormDialog from "src/components/ProductTypeDefinitionFormDialog.vue";
+import UserTestimoinalFormDialog from "src/components/UserTestimoinalFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
 import debug from "src/router/debugger";
 
 export default {
   components: {
-    ProductTypeDefinitionFormDialog,
+    UserTestimoinalFormDialog,
     ResponseDialog,
   },
   setup() {
     let headers = SessionStorage.getItem("headers");
     const columns = [
-      {
-        name: "code",
-        required: false,
-        label: "Code",
-        align: "left",
-        field: (row) => row.code,
-        format: (val) => `${val}`,
-        sortable: true,
-      },
+      
       {
         name: "name",
         align: "center",
-        label: "Name",
+        label: "Client Name",
         field: (row) => row.name,
         sortable: true,
       },
+       {
+        name: "message",
+        align: "center",
+        label: "Testimonials",
+        field: (row) => row.message,
+        sortable: true,
+      },
+        
     ];
     const parentData = ref({
       code: "",
       name: "",
     });
-    const urlLink = ref(path.PRODUCTDEF_SEARCH);
+    const urlLink = ref(path.TESTIMONIAL_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref("");
@@ -131,7 +131,7 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref("Submit");
-    const medium_dialog = ref(false);
+    const medium_dialog = ref(false); 
     const showByte = ref(false);
  
 
@@ -144,23 +144,16 @@ export default {
       data: {},
     });
 
-    const turnelParams = LocalStorage.getItem("turnelParams");
-    const requestParams = {
-      params: {
-        client: turnelParams.client,
-        organisation: turnelParams.organisation,
-      },
-    };
-
+   
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          path.PRODUCTDEF_SEARCH,
-          requestParams,
+          path.TESTIMONIAL_SEARCH, 
           headers
         );
         if (response.data) {
           rows.value = response.data.data;
+          console.log(">response.data.data>>>>>",response.data.data)
           selected.value = [];
         }
       } catch (error) {
@@ -179,7 +172,7 @@ export default {
       try {
         headers["Content-Type"] = "multipart/form-data";
 
-        const promise = axios.post(path.PRODUCTDEF_CREATE, record, headers);
+        const promise = axios.post(path.TESTIMONIAL_CREATE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
@@ -227,7 +220,7 @@ export default {
      
       try {
         headers["Content-Type"] = "multipart/form-data";
-        const promise = axios.put(path.PRODUCTDEF_UPDATE, record, headers);
+        const promise = axios.put(path.TESTIMONIAL_UPDATE, record, headers);
         debug(">>>>>>>>>promise>>>>>>>>>", promise);
         promise
           .then((response) => {
@@ -278,7 +271,7 @@ export default {
         medium_dialog.value = false;
       }
     };
-    const addItem = () => {
+    const addItem = () => { 
       showByte.value = false;
       showFormDialog.value = true;
       action.value = "add";
@@ -292,13 +285,12 @@ export default {
         actionLabel.value = "Update"; 
       }
     };
-    const editItem = () => {  
-       showByte.value = true;
+    const editItem = () => { 
+      showByte.value = true;
         setEditItemValues()
     };
-    const viewItem = () => { 
+    const viewItem = () => {  
       showByte.value = true;
-      
       if (selected.value.length > 0) {
         showFormDialog.value = true;
         searchValue.value = selected.value[0]["id"];
@@ -310,7 +302,7 @@ export default {
       try {
         const data = selected.value;
         const response = await axios.post(
-          path.PRODUCTDEF_REMOVE,
+          path.TESTIMONIAL_REMOVE,
           data,
           headers
         );
