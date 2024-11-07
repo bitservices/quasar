@@ -25,15 +25,7 @@
                   <template v-slot:append>
                     <q-icon name="attachment" />
                   </template>
-                </q-file>  
-                 <ResponseDialog
-                  v-model="showMessageDialog"
-                  :cardClass="childRef.cardClass"
-                  :textClass="childRef.textClass"
-                  :label="childRef.label"
-                  :message="childRef.message"
-                  :buttonClass="childRef.buttonClass"
-                />
+                </q-file>   
                <q-btn
                           label="Preview" 
                           rounded
@@ -51,14 +43,33 @@
                   :rows="rows"
                   :columns="columns"
                   row-key="id"/>
-                   <q-btn
-                          label="process" 
-                          rounded 
-                          icon="save"
-                          @click="processUpload"
-                          class="pwan-button top-margin full-width"
-                        />  
+                  <div class="text-center"> 
+                      <q-btn
+                              label="Close" 
+                              rounded 
+                              icon="close"
+                              @click="preview=false"
+                              class="pwan-blue top-margin" 
+                              v-close-popup
+                            />  
+                      <q-btn
+                              label="process" 
+                              rounded 
+                              icon="save"
+                              @click="processUpload"
+                              class="pwan-button top-margin"
+                              :disable="disabled"
+                            />  
+                    </div>
             </div>
+             <ResponseDialog
+                  v-model="showMessageDialog"
+                  :cardClass="childRef.cardClass"
+                  :textClass="childRef.textClass"
+                  :label="childRef.label"
+                  :message="childRef.message"
+                  :buttonClass="childRef.buttonClass"
+                />
         </q-form>
       </q-card-section> 
     </q-card>
@@ -166,6 +177,13 @@ export default {
         sortable: true,
       },
       {
+        name: "reason",
+        align: "center",
+        label: "Reason",
+        field: (row) => row.reason,
+        sortable: true,
+      },
+      {
         name: "organisation",
         align: "center",
         label: "Organisation",
@@ -198,6 +216,7 @@ export default {
       rows,
       batchNo : 0,
       childRef,
+      disabled:false,
     };
   },
   methods: {
@@ -224,6 +243,7 @@ export default {
                   this.rows = result.data
                   this.batchNo = result.data[0].batchNo;
                   this.showSpinner=false;
+                  this.disabled = result.disabled;
                 }
     
                 // You can access properties of the response data as needed
