@@ -1,10 +1,10 @@
 
 
 
-const BASEPATH = "http://localhost:8000";
-const QUASR_PATH = "http://localhost:9000"; 
-// const BASEPATH = "https://pwan.traisoft.com";
-// const QUASR_PATH =  "https://propertyconnect.traisoft.com";
+// const BASEPATH = "http://localhost:8000";
+// const QUASR_PATH = "http://localhost:9000"; 
+const BASEPATH = "https://pwan.traisoft.com";
+const QUASR_PATH =  "https://propertyconnect.traisoft.com";
 const APP_PATH = BASEPATH + "/api/pwanproperties/"; 
 const path = {
   ESTATE_AGENCY_URL: "https://estateagency.traisoft.com/?ref=",
@@ -178,6 +178,7 @@ const path = {
   USR_OUTSTANDING_PAYMENT_UPDATE: APP_PATH + "useroutstanding/update/",
   USR_OUTSTANDING_PAYMENT_SEARCH: APP_PATH + "useroutstanding/search/",
   USR_OUTSTANDING_PAYMENT_REMOVE: APP_PATH + "useroutstanding/remove/",
+  USRS_OUTSTANDING_PAYMENT_CREATE: APP_PATH + "useroutstanding/generateMembersOutStandingPayment/",
 
   ORGUSER_SEARCH: APP_PATH + "orguser/search/", 
   ORGUSER_SAVE: APP_PATH + "orguser/save/",

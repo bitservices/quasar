@@ -14,7 +14,13 @@
            </q-card-section>
         </q-card>
           
-         <div class="card-container"> 
+           <q-toggle
+              v-model="toggleValue"
+              :label="toggleLabel"
+              @update:model-value="onToggleChange"
+            />
+
+         <div class="card-container" v-if="toggleValue"> 
           <q-card
             v-if="isSupperUser"
             key="websitesetup"
@@ -43,11 +49,10 @@
            </q-card>
         </div>
       
-      <div class="q-pa-md row items-start q-gutter-md">  
+      <div class="q-pa-md row items-start q-gutter-md" v-else>  
         <q-card
-          class="my-card text-white"
-          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)"
-        v-if="outstanding.length > 0">
+          class="my-card-d text-white"
+          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)" v-if="outstanding.length > 0">
           <q-card-section>
             <div class="text-h6 text-center">OutStanding Payment(s)</div> 
           </q-card-section>  
@@ -60,7 +65,7 @@
             </q-card-section>
         </q-card>
 
-        <q-card dark bordered class="bg-red-9 my-card text-white"  v-if="contributions.length > 0">
+        <q-card dark bordered class="bg-red-9 my-card-d text-white"  v-if="contributions.length > 0">
           <q-card-section>
             <div class="text-h6 text-center">Total Contribution(s)</div> 
           </q-card-section>
@@ -69,7 +74,7 @@
                 <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-puple-9 my-card text-white"  v-if="attendance.length > 0">
+        <q-card dark bordered class="bg-puple-9 my-card-d text-white"  v-if="attendance.length > 0">
           <q-card-section>
             <div class="text-h6 text-center">Attendance</div> 
           </q-card-section>
@@ -78,7 +83,7 @@
                 <div class="col-3">{{field.organisation__name}}: <b>{{field.count}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-green-9 my-card text-white"  v-if="benefits.length > 0">
+        <q-card dark bordered class="bg-green-9 my-card-d text-white"  v-if="benefits.length > 0">
           <q-card-section>
             <div class="text-h6 text-center">Total Receivable(s)</div> 
           </q-card-section>
@@ -114,18 +119,24 @@ export default {
     const headers = SessionStorage.getItem("headers");
     const userEmail = LocalStorage.getItem("userEmail"); 
     const websitelink = ref(null)
+    const contributions = ref([])
+    const attendance = ref([])
+    const outstanding = ref([])
+    const benefits = ref([])
     
     return { 
       headers,
       userEmail,
-      contributions:[], 
-      attendance:[],
-      outstanding:[],
-      benefits:[],
+      contributions, 
+      attendance,
+      outstanding,
+      benefits,
       pageName,
       hint,
       websitelink,
       isSupperUser:false,
+      toggleValue:ref(false), 
+      toggleLabel:"Dashboard Transaction Details",
        items: [
         
         { id: 1, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',}, 
@@ -153,14 +164,14 @@ export default {
           promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;   
+            const result = response.data;    
             if (result.success) {   
               this.contributions =  result.data.usertransaction
               this.attendance = result.data.attendance
               this.outstanding= result.data.outstanding 
               this.benefits= result.data.benefits 
             } 
-  
+              
           })
           .catch((error) => {
             debug("Error:", error);
@@ -223,6 +234,15 @@ export default {
       }
     },
     
+    onToggleChange(value){  
+      if(value){
+          this.toggleLabel = "Dashboard Actions"
+      }else{          
+         this.toggleLabel = "Dashboard Transaction Details"
+      }
+         
+    },
+
   },
   beforeCreate() {
     console.log("beforeCreate");

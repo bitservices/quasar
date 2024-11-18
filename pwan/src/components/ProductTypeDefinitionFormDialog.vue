@@ -143,12 +143,12 @@
             label="Select County"
             :dense="dense"
             :rules="[requiredRule]"
-          /> 
+          />  
           <div v-if="showBytes">
             <q-card>
               <q-card-section>
               <q-uploader 
-                  label="Drag and drop Image file or click to select"
+                  label="Drag and drop Image file or click to select one"
                   single 
                   @added="handleImageFilesAdded"
                 /> 
@@ -157,7 +157,7 @@
             <q-card>
               <q-card-section>
               <q-uploader 
-                  label="Drag and drop Subscription file or click to select"
+                  label="Drag and drop Subscription file or click to select one"
                   single 
                   @added="handleSubscriptionFilesAdded"
                 /> 
@@ -166,7 +166,7 @@
             <q-card>
             <q-card-section>
             <q-uploader 
-                label="Drag and drop files or click to select"
+                label="Drag and drop Video file or click to select one"
                 single 
                 @added="handleVideoFilesAdded"
               /> 
@@ -294,6 +294,7 @@ export default {
       countries: [],
       stateList: [],
       counties: [],
+      productTypes:[],
       isReadonly: false,
       imageUrl: null,
       videoUrl: null,
@@ -477,6 +478,7 @@ export default {
       .get(path.PRODUCTTYPE_SEARCH, requestParams, this.headers)
       .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
+        console.log(">>>>>>>product type response>>>>>>>>>",response.data.data)
         this.productTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,

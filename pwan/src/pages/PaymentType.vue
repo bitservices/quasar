@@ -14,7 +14,7 @@
         v-model:selected="selected"
       >
         <template v-slot:top>
-          <q-label>Product</q-label>
+          <q-label>Payment Type</q-label>
           <q-space />
           <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
           <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
@@ -153,6 +153,7 @@ export default {
         
     const fetchData = async () => {
       try { 
+        console.log(">>>>>>>>requestParams>>>>>>>>>>",requestParams)
        const response = await axios.get(path.PAYMENTTYPE_SEARCH,requestParams,
           headers
         );

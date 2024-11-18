@@ -4,12 +4,17 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
+       <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="orgAnnualPmtForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-select
             filled
             bottom-slots
@@ -52,12 +57,18 @@
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
 
 export default {
+  components: { 
+    HeaderPage,
+  },
   name: "OrgAnnualPaymentFormDialog",
   props: {
     onClick: {
@@ -86,6 +97,9 @@ export default {
     },
   },
   data() {
+     const { t } = useI18n() 
+    const pageName = computed(()=> t('orgpmtform.pagename'))
+    const hint = computed(()=> t('orgpmtform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -120,6 +134,8 @@ export default {
       dense: true,
       profile,
       headers,
+      pageName,
+      hint,
     };
   },
   methods: {

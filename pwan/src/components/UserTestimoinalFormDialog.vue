@@ -42,7 +42,7 @@
             <q-card>
               <q-card-section>
               <q-uploader 
-                  label="Drag and drop Image file or click to select"
+                  label="Drag and drop Client Image file or click to select"
                   single 
                   @added="handleImageFilesAdded"
                 /> 

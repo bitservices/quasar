@@ -530,20 +530,13 @@ export default {
       if(this.meetingDaysCount < 7 ){
         this.meetingDays.push({day:'', meetingName:'',startTime:'', endTime:''});
         this.meetingDaysCount++;
-      }else{
-
-      }
+      } 
     },
-    removeMeetingDays(){
-      
-      if(this.meetingDaysCount > 1){
-      // let componentDiv = this.$refs.meetingDaysDiv
-      // componentDiv.removeChild(componentDiv.lastChild)
+    removeMeetingDays(){ 
+      if(this.meetingDaysCount > 0){ 
       this.meetingDays.pop();
       this.meetingDaysCount--;
-      }else{
-
-      }
+      } 
     }
 
   },
@@ -567,12 +560,11 @@ export default {
     axios
       .get(path.CLIENT_FIND_BY_CREATOR, requestParam, this.headers)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data); 
+        console.log("client Response >>>>>>>>>>>>", response.data); 
         this.clients = response.data.map((option) => ({
           label: option.name,
           value: option.code,
-        }));
-        console.log("this.countries >>>>>>>>>>>>", this.clients);
+        })); 
       })
       .catch((error) => {
         console.error("Error fetching options:", error);

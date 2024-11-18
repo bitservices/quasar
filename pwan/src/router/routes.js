@@ -265,7 +265,11 @@ const routes = [
         path: "/userupload",
         component: () => import("src/pages/UserUpload.vue"),
       }, 
-      
+      {
+        path: "/orgprofile",
+        component: () => import("src/pages/OrganisationalProfile.vue"),
+      }, 
+ 
       
     ],
     meta: {

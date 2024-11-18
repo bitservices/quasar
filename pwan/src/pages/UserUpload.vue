@@ -81,15 +81,14 @@
 <script>
 import { LocalStorage, SessionStorage } from "quasar";
 import { isReadonly, computed, ref } from "vue"; 
-import { useI18n } from 'vue-i18n'
+import { useI18n } from 'vue-i18n' 
 import axios from "axios";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import { useRouter } from "vue-router"; 
+import debug from "src/router/debugger";
 import HeaderPage from "src/components/HeaderPage.vue"; 
-import { inputFieldRequired } from 'src/validation/validation'; 
-import { format } from 'date-fns'; 
 import ResponseDialog from "src/components/ResponseDialog.vue"; 
+import { format } from 'date-fns';
+ 
 
 export default {
    components: { 
@@ -101,8 +100,7 @@ export default {
     
     const { t } = useI18n()  
     const pageName = computed(()=> t('upserupload.pagename'))
-    const hint = computed(()=> t('upserupload.hint'))
-    const router = useRouter();
+    const hint = computed(()=> t('upserupload.hint')) 
     const headers = SessionStorage.getItem("headers");
     const profile = LocalStorage.getItem("turnelParams");
     const formData = ref({
@@ -242,8 +240,7 @@ export default {
                   this.preview = true;
                   this.rows = result.data
                   this.batchNo = result.data[0].batchNo;
-                  this.showSpinner=false;
-                  this.disabled = result.disabled;
+                  this.showSpinner=false; 
                 }
     
                 // You can access properties of the response data as needed

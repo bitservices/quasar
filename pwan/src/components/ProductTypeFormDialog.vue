@@ -148,6 +148,7 @@ export default {
         this.formData.client = this.profile.client;
         this.formData.organisation =  this.profile.organisation;
         this.formData.createdBy = this.profile.email; 
+        console.log(">>>>>this.formData>>>>>>>>>>>>",this.formData)
         this.$emit("formDataSubmitted", this.formData); 
         document.getElementById('closeBtn').click();
         this.showDialog = true; 

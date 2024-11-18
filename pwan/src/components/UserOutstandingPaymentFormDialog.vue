@@ -4,9 +4,19 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
-      <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
+      <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section> 
+         <q-toggle
+              v-model="toggleValue"
+              :label="toggleLabel"
+              @update:model-value="onToggleChange"
+            />
+
+      <div v-if='!toggleValue'>  
       <q-card-section>
         <div class="row">
           <div
@@ -90,17 +100,83 @@
           />
         </q-card-actions>
       </q-card-section>
+      </div>
+      <div v-else>
+        <q-card-section>
+        <q-form> 
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.paymentType"
+            :options="paymentTypes"
+            label="Select Payment Type"
+            :dense="dense"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.openingDebit"
+            label="Enter OPening Debit"
+            type="number"
+            step="0.01"
+          />
+
+          <q-input
+            filled
+            bottom-slots
+            v-model="formData.currentDebit"
+            label="Enter Current Debit"
+            type="number"
+            step="0.01"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.year"
+            :options="years"
+            label="Select Year"
+            :dense="dense"
+          />
+        </q-form>
+      </q-card-section>
+      <q-card-section>
+        <q-card-actions align="center">
+          <q-btn
+            rounded
+            size="md"
+            color="primary"
+            label="Cancel"
+            v-close-popup
+          />
+          <q-btn
+            :label="actionLabel"
+            color="secondary"
+            @click="saveMembersOutstanding"
+            size="md"
+            rounded
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card-section>
+      </div>
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
+import { isRequired ,inputFieldRequired} from 'src/validation/validation';
 
 export default {
+  components:{
+    HeaderPage
+  }, 
   name: "OrgAnnualPaymentFormDialog",
   props: {
     onClick: {
@@ -129,6 +205,9 @@ export default {
     },
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('useroutstandingform.pagename'))
+    const hint = computed(()=> t('useroutstandingform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -139,8 +218,7 @@ export default {
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
     const dialogHeight = controlHeight + "px";
-    const profile = LocalStorage.getItem("turnelParams");
-    console.log(">>>>>>>profile>>>>>>>>",profile)
+    const profile = LocalStorage.getItem("turnelParams"); 
     const headers = SessionStorage.getItem("headers");
 
     const formData = ref({
@@ -167,28 +245,73 @@ export default {
       imageFile: null,
       years: [],
       paymentTypes:[],
+      pageName,
+      hint,
+      toggleValue:false,
+      toggleLabel:"Individual"
+
     };
   },
   methods: {
-    saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData.paymentType.value);
+    onToggleChange(value){ 
+      if(value){
+       
+         this.toggleLabel = "All Members"
+      }else{ 
+         this.toggleLabel = "Individual"
+      } 
+    },
+
+    saveRecord() { 
       this.formData.paymentType = this.formData.paymentType.value;
       this.formData.client = this.profile.client;
       this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email;
       this.formData.year = this.formData.year.value;
       this.formData.userId = this.formData.userId.value; 
+      this.formData.members = false; 
 
       //this.onClick(formData.value); 
       this.$emit("formDataSubmitted", this.formData);
-      this.showDialog = true;
-      console.log(this.showDialog);
+      this.showDialog = true; 
     },
-    onChangeUser(value) {
-      console.log(value);
-      this.imageFile = "data:image/jpeg;base64," + value.imageSrc;
+
+    saveMembersOutstanding() { 
+      console.log("calling outstaning payment for all active members")
+      this.formData.paymentType = this.formData.paymentType.value;
+      this.formData.client = this.profile.client;
+      this.formData.organisation = this.profile.organisation;
+      this.formData.createdBy = this.profile.email;
+      this.formData.year = this.formData.year.value; 
+      this.formData.members = true; 
+
+      //this.onClick(formData.value); 
+      this.$emit("formDataSubmitted", this.formData);
+      this.showDialog = true; 
     },
-    
+    onChangeUser(userId) { 
+      this.loadUserImage(userId.value)
+    },
+     loadUserImage(userId){
+       const requestParam = {
+                  params: {
+              userId: userId, 
+            },
+          };  
+          const promise =  axios.get(
+              path.USER_IMAGE,
+              requestParam,
+              this.headers
+            );  
+            promise
+              .then((response) => {
+
+                this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+              })
+              .catch((error) => {
+                console.log(error);
+              }); 
+    },
   },
   beforeCreate() {
     console.log("beforeCreate");
@@ -209,8 +332,7 @@ export default {
     };
     axios
       .get(path.ORGUSER_SEARCH, requestParams, this.headers)
-      .then((response) => {
-        console.log("organisation Users>>>>>>>", response.data);
+      .then((response) => { 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.orgUsers = response.data.data.map((option) => (
           {
@@ -220,23 +342,19 @@ export default {
             option.userId.first_name +
             " " +
             option.userId.middle_name,
-          value: option.userId.id,
-          imageSrc: option.userId.imageByte,
-        }));
-        console.log("orgUsers>>>>>>>>>", orgUsers);
+          value: option.userId.id
+        })); 
       })
       .catch((error) => {}); 
      
     axios
       .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
-      .then((response) => {
-        console.log("Payment Type Response >>>>>>>>>>>>", response.data);
+      .then((response) => { 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.paymentTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.id,
-        }));
-        console.log("this.Payment Type >>>>>>>>>>>>", this.paymentTypes);
+        })); 
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -249,8 +367,7 @@ export default {
         const currentYear = new Date().getFullYear()  
         let hasCuurentYear = false
 
-        for (let i = 0; i < response.data.data.length; i++) {
-          console.log(response.data.data[i]);
+        for (let i = 0; i < response.data.data.length; i++) { 
           if(response.data.data[i]['year']==currentYear){
             hasCuurentYear = true
           }
@@ -284,13 +401,11 @@ export default {
             id: this.searchValue,
           },
         };
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log(">>>>>>>>result>xxxxxxxxxx>>>>>>", result.data);
+            const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
               this.formData.paymentType = {

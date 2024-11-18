@@ -124,7 +124,34 @@
 "upserupload":{
        "pagename": "User Upload",
        "hint":"This page is used to upload Users, Generate a CSV file int the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"   
+},
+"producttypedef":{
+    "pagename": "Product Type Definition",
+    "hint":"The Page is List all the Products and Services the Organisation Provides "   
+},
+"orgprofile":{
+  "pagename": "Organisational Profile",
+  "hint":"This Page is used to edit the Information of an Organisation by an Administrator"
+},
+"paymenttypeform":{
+  "pagename": "Payment Type",
+  "hint":"This Page is used to create, edit or view all types of Payment been paid in the Organisation"
+},
+"paymenttypedefform":{
+  "pagename": "Payment Type Definition",
+  "hint":"This Page is used to Define all the payments Types that is paid in organisation"
+},
+
+"orgpmtform":{
+  "pagename": "Organisation Annual Payment Setup",
+  "hint":"This Page is used to configue all the Annually Payments of an Orgnisation/Center"
+},
+"useroutstandingform":{
+  "pagename": "User Outstanding Debt",
+  "hint":"This Page is used to capture all the Members of the Organisation, their outstanding Debt"
 }
+
+
 
 
     

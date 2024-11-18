@@ -10,7 +10,7 @@
 
 const { configure } = require("quasar/wrappers");
 
-module.exports = configure(function (/* ctx */) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli-vite/prefetch-feature
     // preFetch: true,
@@ -48,6 +48,11 @@ module.exports = configure(function (/* ctx */) {
       //   version: '1.0.0',           // Set the app version
       //   description: 'An app for showcasing where an estate company has landed properties and other services operated by the estate company. This app is also used to record attendance for attending meetings and seminars',  // Set the app 
        },
+       /*
+       env: ctx.dev
+        ? { API: JSON.stringify('http://192.168.100.21:9500') }
+        : { API: JSON.stringify('https://propertyconnect.traisoft.com') },
+        */
 
       vueRouterMode: "hash", // available values: 'hash', 'history'
       // vueRouterBase,
@@ -58,11 +63,13 @@ module.exports = configure(function (/* ctx */) {
 
       // publicPath: '/',
       // analyze: true,
+      
       env: {
         GOOGLE_MAPS_API_KEY:
           process.env.GOOGLE_MAPS_API_KEY ||
           "AIzaSyC3dbJ1OHVb94cMyQKMQ-sgcnaf_JaujJQ",
       },
+      
       // rawDefine: {}
       // ignorePublicFolder: true,
       // minify: false,
@@ -87,9 +94,11 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      // https: true
+      // https: true 
       open: true, // opens browser window automatically
     },
+
+    
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {

@@ -8,9 +8,8 @@
         title="Organisation Annual Payments"
         :rows="rows"
         :columns="columns"
-        row-key="code"
-        selection="multiple"
-        @row-click="handleRowClick"
+        row-key="id"
+        selection="single" 
         v-model:selected="selected"
       >
         <template v-slot:body-cell-checkbox="props">

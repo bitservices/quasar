@@ -8,7 +8,7 @@
         title="User Outstanding Payments"
         :rows="rows"
         :columns="columns"
-        row-key="code"
+        row-key="id"
         selection="single"
         v-model:selected="selected"
       >
@@ -246,12 +246,65 @@ export default {
         console.error("Error submitting form:", error);
       }
     },
+    saveMembersRecord(record){
+      console.log(">>>>>>>recording all users outstanding payment saveMembersRecord>>>>>>>>>>")
+      try {
+        const promise = axios.post(
+          path.USRS_OUTSTANDING_PAYMENT_CREATE,
+          record,
+          this.headers
+        );
+        promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data;
+            if (result.success) {
+               this.childRef = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            }else{
+                this.childRef = {
+                message: result.message,
+                label: "Error",
+                cardClass: "bg-negative text-white error",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal",
+              };
+            } 
+             this.fetchData();
+            this.showMessageDialog = true;
+            // You can access properties of the response data as needed
+          })
+          .catch((error) => {
+            this.childRef = {
+              message: error.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            this.showMessageDialog = true;
+          });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    },
     saveRecord(record) {
-      console.log("action clicked>>>>>>>>>", this.action);
-      if (this.action == "add") {
-        this.createRecord(record);
-      } else if (this.action == "edit") {
-        this.updateRecord(record);
+      console.log("action clicked>>>>>>>>>", record);
+      console.log(">>>>>>>record.members>>>>>>>>>", record.members);
+      //saveMembersRecord
+      if(record.members){
+        this.saveMembersRecord(record)
+      }else{
+        if (this.action == "add") {
+          this.createRecord(record);
+        } else if (this.action == "edit") {
+          this.updateRecord(record);
+        }
       }
     },
     createRecord(record) {
@@ -266,16 +319,24 @@ export default {
             // Extract data from the response
             const result = response.data;
             if (result.success) {
-              this.fetchData();
-            }
-
-            this.childRef = {
+              this.childRef = {
               message: result.message,
               label: "Success",
               cardClass: "bg-positive text-white",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
             };
+            
+            }else{
+              this.childRef = {
+              message: result.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            }
+              this.fetchData();            
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
           })

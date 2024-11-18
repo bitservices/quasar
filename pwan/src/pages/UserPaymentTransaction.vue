@@ -227,7 +227,7 @@ export default {
                   client: this.userPayments[i]["client"].code,
                   organisation :  this.userPayments[i]["organisation"].id ,
                   payerId : this.userPayments[i]["userId"].id ,
-                  paymentMode : his.userPayments[i]["paymentMode"].value ,
+                  paymentMode : this.userPayments[i]["paymentMode"].value ,
                   paymentType : this.userPayments[i]["paymentType"].id ,
                   createdBy : this.profile.email,
                   amount : this.userPayments[i]["amount"],

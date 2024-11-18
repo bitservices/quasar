@@ -1,6 +1,6 @@
 # Pwan Group App (pwan)
 
-A Pwan Group App Activities for Real Estate Industry
+A Property connect App Activities for Real Estate Industry
 
 ## Install the dependencies
 ```bash

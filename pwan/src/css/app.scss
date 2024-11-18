@@ -10,7 +10,7 @@
 .pwan-button{
     background-color: #c60a0a;
     -webkit-text-fill-color: white;
-}
+}my-card
 
 .pwan-table-red  {
     background-color: #c60a0a;
@@ -39,5 +39,12 @@
         height: 100px; /* Fixed height */
         cursor: pointer;
       }
+
+      .my-card-d {
+        width: 400px; /* Fixed width */
+        height: auto; /* Fixed height */
+        cursor: pointer;
+      }
+
 
   

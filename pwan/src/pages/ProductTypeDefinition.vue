@@ -1,5 +1,18 @@
 <template>
   <q-page padding>
+      <div class="q-pa-md">
+       <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div>  
+      </div>
     <div class="q-pa-md">
       <q-table
         class="my-sticky-header-table"
@@ -88,7 +101,9 @@
 <script>
 import { SessionStorage, Loading, LocalStorage } from "quasar";
 import axios from "axios";
-import { ref } from "vue";
+import { ref,computed } from "vue"; 
+import { useI18n } from 'vue-i18n' 
+import HeaderPage from "src/components/HeaderPage.vue"; 
 import ProductTypeDefinitionFormDialog from "src/components/ProductTypeDefinitionFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
 import path from "src/router/urlpath";
@@ -96,6 +111,7 @@ import debug from "src/router/debugger";
 
 export default {
   components: {
+    HeaderPage,
     ProductTypeDefinitionFormDialog,
     ResponseDialog,
   },
@@ -123,6 +139,10 @@ export default {
       code: "",
       name: "",
     });
+    
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('producttypedef.pagename'))
+    const hint = computed(()=> t('producttypedef.hint'))
     const urlLink = ref(path.PRODUCTDEF_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -132,7 +152,8 @@ export default {
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
-    const showByte = ref(false);
+    const showByte = ref(false); 
+    const showSpinner = ref(false); 
  
 
     const childRef = ref({
@@ -154,6 +175,7 @@ export default {
 
     const fetchData = async () => {
       try {
+        showSpinner.value = true;
         const response = await axios.get(
           path.PRODUCTDEF_SEARCH,
           requestParams,
@@ -161,8 +183,9 @@ export default {
         );
         if (response.data) {
           rows.value = response.data.data;
-          selected.value = [];
+          selected.value = []; 
         }
+        showSpinner.value = false
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -345,6 +368,9 @@ export default {
       action,
       showFormDialog, 
       showByte,
+      pageName,
+      hint,
+      showSpinner,
     };
   },
   beforeCreate() {

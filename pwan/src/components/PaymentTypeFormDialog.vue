@@ -4,12 +4,17 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
+        <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="PaymentTypeForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-input
             filled
             bottom-slots
@@ -48,11 +53,19 @@
 </template>
 
 <script>
+
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios"; 
+import axios from "axios";
+import path from "src/router/urlpath";
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
 
 export default {
+   components: { 
+    HeaderPage,
+  },
   name: "PaymentTypeFormDialog",
   props: {
     onClick: {
@@ -81,6 +94,9 @@ export default {
     },
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('paymenttypeform.pagename'))
+    const hint = computed(()=> t('paymenttypeform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -114,6 +130,8 @@ export default {
       dialogWidth,
       dialogHeight,
       profile,
+      pageName,
+      hint,
     };
   },
   methods: {
@@ -122,8 +140,7 @@ export default {
       //this.onClick(formData.value);
       this.formData.client = this.profile.client;
       this.formData.organisation =  this.profile.organisation;
-      this.formData.createdBy = this.profile.email;
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
+      this.formData.createdBy = this.profile.email; 
       this.$emit("formDataSubmitted", this.formData);
       document.getElementById('closeBtn').click();
       this.showDialog = true; 

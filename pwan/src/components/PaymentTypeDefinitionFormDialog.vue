@@ -4,12 +4,17 @@
       class="card-flex-display"
       :style="{ width: form.width, height: form.height }"
     >
+       <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
-      </q-card-section>
-
-      <q-card-section>
-        <q-form>
+        <q-form @submit.prevent="saveRecord" ref="PaymentTypeDefinitionForm">
+          <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+            </div>  
           <q-select
             filled
             bottom-slots
@@ -41,40 +46,43 @@
             label="Allowed Parital Payment"
             color="primary"
           /> 
-           
-        </q-form>
-      </q-card-section>
-      <q-card-section>
+            
         <q-card-actions align="center">
           <q-btn
             rounded
-            size="md"
-            color="primary"
+            size="md" 
+            id="closeBtn"
             label="Cancel"
+             class="pwan-blue top-margin half-width"
             v-close-popup
           />
           <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
+            :label="actionLabel" 
+            type="submit"
             size="md"
             rounded
-            v-close-popup
+             class="pwan-button top-margin half-width"
           />
-        </q-card-actions>
-      </q-card-section>
+        </q-card-actions> 
+      
+        </q-form>
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
 
 <script>
+import { ref, computed } from "vue"; 
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
 import axios from "axios";
 import path from "src/router/urlpath";
-import debug from "src/router/debugger";
-
+import debug from "src/router/debugger"; 
+import HeaderPage from "src/components/HeaderPage.vue"; 
 export default {
+  components: { 
+    HeaderPage,
+  },
   name: "PaymentTypeFormDialog",
   props: {
     onClick: {
@@ -103,6 +111,9 @@ export default {
     },
   },
   data() {
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('paymenttypedefform.pagename'))
+    const hint = computed(()=> t('paymenttypedefform.hint'))
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -112,8 +123,7 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
-
+    const dialogHeight = controlHeight + "px"; 
     const profile = LocalStorage.getItem("turnelParams");
     const headers = SessionStorage.getItem("headers");
     const formData = ref({
@@ -140,19 +150,20 @@ export default {
       headers,
       time: "10:00",
       dense: true, 
+      pageName,
+      hint,
     };
   },
   methods: {
    
-    saveRecord() {
-      debug( ">>>>>>>>payment Type Value>>>>>>>>>>",this.formData.paymentType)
-      let PaymentType = this.formData.PaymentType;
+    saveRecord() {  
       this.formData.client = this.profile.client;
       this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email;
-      this.formData.paymentType = this.formData.paymentType.value;;  
-      
-      this.$emit("formDataSubmitted", this.formData);
+      this.formData.paymentType = this.formData.paymentType.value; 
+      console.log(">>>>this.formData>>>>>>",this.formData)
+      this.$emit("formDataSubmitted", this.formData); 
+      document.getElementById('closeBtn').click();
       this.showDialog = true; 
     },  
    
@@ -178,14 +189,12 @@ export default {
      
     axios
       .get(path.PAYMENTTYPE_SEARCH, requestParams, this.headers)
-      .then((response) => {
-        debug("Payment Type Response >>>>>>>>>>>>", response.data);
+      .then((response) => { 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.PaymentTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
-        }));
-        debug("this.Payment Type >>>>>>>>>>>>", this.PaymentTypes);
+        })); 
       })
       .catch((error) => {
         console.error("Error fetching options:", error);

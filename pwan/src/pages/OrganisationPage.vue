@@ -11,7 +11,19 @@
         </q-card>
         <div class="text-center"> 
                 <q-spinner v-if="showSpinner" color="primary" size="60px" />
-        </div>  
+        </div>
+         <q-form>
+          <q-select
+            filled
+            bottom-slots
+            v-model="formData.client"
+            :options="userclients"
+            label="Filter By Client" 
+            @update:model-value="filterOrganisation"
+            :dense="dense"
+          /> 
+        </q-form>  
+
       <q-table
         class="my-sticky-header-table"
         flat
@@ -180,8 +192,9 @@ export default {
     const activate = ref(false); 
      const dialog_header = ref(null);
      const dialog_message= ref(null);
-     const showSpinner = ref(false); 
-    
+     const showSpinner = ref(false);  
+    const formData = ref({});
+    const userclients = ref([]);
     const childRef = ref({
       label: "",
       message: "",
@@ -191,6 +204,62 @@ export default {
       data: {},
     });
 
+  const loadUserClients = async ()=>{
+    try {
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            createdBy: userEmail,
+          },
+        };
+        const response = await axios.get(
+          path.CLIENT_FIND_BY_CREATOR,
+          requestParam,
+          headers
+        ); 
+        if (response.data) { 
+          console.log(response.data) 
+          userclients.value = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+
+  };
+  const filterOrganisation = async ()=>{
+
+    try {
+      
+        showSpinner.value=true;
+        const userEmail = LocalStorage.getItem("userEmail");
+        const requestParam = {
+          params: {
+            createdBy: userEmail,
+            client : formData.value.client.value,
+          },
+        };
+        console.log(">>>>>>requestParam>>>>>>>>>>>>>>",requestParam)
+        const response = await axios.get(
+          path.ORGANISATION_SEARCH,
+          requestParam,
+          headers
+        ); 
+        console.log("response.data>>>>>>>",response.data)
+        if (response.data) {
+          rows.value = response.data.data;
+          selected.value = []; 
+        }
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+      
+      showSpinner.value=false;
+
+  };
     const loadUser = async () => {
       try {
         const userEmail = LocalStorage.getItem("userEmail");
@@ -214,6 +283,8 @@ export default {
     };
     const fetchData = async () => {
       try {
+        
+      showSpinner.value=true;
         const userEmail = LocalStorage.getItem("userEmail");
         const requestParam = {
           params: {
@@ -221,18 +292,20 @@ export default {
           },
         };
         const response = await axios.get(
-          path.ORGANISATION_FIND_BY_CREATOR,
+          path.ORGANISATION_SEARCH,
           requestParam,
           headers
         ); 
         console.log("response.data>>>>>>>",response.data)
         if (response.data) {
-          rows.value = response.data;
+          rows.value = response.data.data;
           selected.value = []; 
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
+      
+      showSpinner.value=false;
     };
     const saveRecord = (record) => {
       showSpinner.value=true;
@@ -417,6 +490,8 @@ export default {
 
 
     return {
+      loadUserClients,
+      filterOrganisation,
       fetchData, 
       loadUser,
       saveRecord,
@@ -429,6 +504,7 @@ export default {
       showDialog,
       activateUser,
       deactivateUser,
+      formData,
       urlLink,
       actionLabel,
       searchValue,
@@ -451,6 +527,7 @@ export default {
       pageName,
       hint, 
       showSpinner,
+      userclients,
     };
   },
   beforeCreate() {
@@ -465,6 +542,8 @@ export default {
   },
   mounted() {
     console.log("mounted");
+    //
+    this.loadUserClients();
     this.fetchData();
     this.loadUser();
   },
