@@ -61,15 +61,35 @@
             @update:model-value="onChangePayment"
             :dense="dense"
           />
-          
+          <div class="row">
+             <div class="col-4"></div>
+            <div class="col-4">
+              <q-checkbox 
+                v-model="waiver"             
+                color="secondary"
+                label = "Payment Waiver"
+              /> 
+            </div> 
+             <div  class="col-4" style="display: flex; justify-content: flex-end">
+               <q-badge rounded :label="`N `+sumAmountStr" class="pwan-btton text-h6" />
+              </div>
+            </div>
+            <q-separator color = "secondary" dark /> 
           <div v-for="(field, index) in userPayments" :key="index"> 
             <div class="row" v-if="field.amount >= 0  ">
                <q-input
                   v-model="field.id"
                   type="hidden"
                 />
-              <div class="col-3">{{field.paymentType.name}}</div>
-              <div class="col-3">{{field.currentDebit}}</div>
+              
+              <div class="col-4">
+                <q-checkbox 
+                v-model="field.checked"  
+                :ref="`checkbox-${field.id}`"                 
+                @click="choosePaymentItem"
+                color="primary"
+              />{{field.paymentType.name}}({{field.year}})</div>
+              <div class="col-2">{{field.currentDebit}}</div>
                <div class="col-3"> 
               <q-input 
                 filled
@@ -77,8 +97,12 @@
                 v-model="field.amount" 
                 placeholder="Payable Amount"
                 type="number"
-                :dense="dense"
+                :dense="dense"  
+                :readonly="!field.checked"
                 :rules="[amountRule]" 
+                @change="handleAmountChange(index,field)"
+                :ref="`input-`+field.id"
+                :id="`input-`+index"
               />
               </div>
                <div class="col-3"> 
@@ -88,8 +112,7 @@
                     v-model="field.paymentMode"
                     :options="paymentModes"
                     label="Select Payment Mode" 
-                    :dense="dense"
-                    :rules="[requiredRule]" 
+                    :dense="dense"  
                   />
               </div>
             </div>
@@ -105,7 +128,7 @@
               />
               <q-btn
                 class="pwan-button"
-                label="Save" 
+                label="Post Payment" 
                 type="submit"
                 size="md"
                 rounded
@@ -135,7 +158,8 @@ import path from "src/router/urlpath";
 import debug from "src/router/debugger";
 import ResponseDialog from "src/components/ResponseDialog.vue"; 
 import { isRequired,amountFieldRule } from 'src/validation/validation';  
-import QRCodeScanner from "src/components/QRCodeScanner.vue";
+import QRCodeScanner from "src/components/QRCodeScanner.vue"; 
+import $ from 'jquery';
  
 export default {
    components: { 
@@ -188,9 +212,42 @@ export default {
       pageName,
       hint, 
       showSpinner,
+      checked:true,
+      sumAmount:0,
+      sumAmountStr:"0.00", 
+      waiver : false,
     };
   },
   methods: {
+
+     choosePaymentItem(){
+      var amount = 0
+      for (let i = 0; i < this.userPayments.length; i++) {  
+              if(this.userPayments[i]["amount"]  > 0 && this.userPayments[i].checked ){ 
+                
+                amount += parseFloat(this.userPayments[i]["amount"])
+            }  
+      }
+      this.sumAmount = amount;
+      this.sumAmountStr = new Intl.NumberFormat("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(amount); 
+    },
+    handleAmountChange(index, obj){ 
+       var amount = 0
+      for (let i = 0; i < this.userPayments.length; i++) {  
+              if(this.userPayments[i]["amount"]  > 0 && this.userPayments[i].checked ){ 
+                
+                amount += parseFloat(this.userPayments[i]["amount"])
+            }  
+      }
+      this.sumAmount = amount; 
+      this.sumAmountStr = new Intl.NumberFormat("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              }).format(amount);
+    }, 
     onToggleChange(value){  
       if(value){
         this.toggleLabel = "Record Payment By Selecting Member"
@@ -216,12 +273,11 @@ export default {
     reloadPage(){
       window.location.reload()
     },
-    saveRecord() {   
-      if (this.$refs.userPaymentForm.validate()) {
+    saveRecord() {    
           this.showSpinner= true  
           let data = [];  
-          for (let i = 0; i < this.userPayments.length; i++) { 
-              if(this.userPayments[i]["amount"]  > 0){ 
+          for (let i = 0; i < this.userPayments.length; i++) {  
+              if(this.userPayments[i]["amount"]  > 0 && this.userPayments[i].checked ){ 
                 console.log("amount>>>",this.userPayments[i]["amount"])  
                 let item = {
                   client: this.userPayments[i]["client"].code,
@@ -231,6 +287,7 @@ export default {
                   paymentType : this.userPayments[i]["paymentType"].id ,
                   createdBy : this.profile.email,
                   amount : this.userPayments[i]["amount"],
+                  waiver : this.waiver,
                   id : this.userPayments[i]["id"],
                   status : "A"
                 }           
@@ -238,6 +295,20 @@ export default {
               }
             }
           try { 
+            console.log("data>>>>>>>",data) 
+
+            if(data.length == 0){ 
+               this.childRef = {
+                  message: "No Record(s) selected",
+                  label: "Error",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                 this.showSpinner = false;
+                this.showMessageDialog = true;
+              return 
+            }
             const promise = axios.post(path.USR_PAYMENT_TRANSACTION_CREATE, data, this.headers);
             promise
               .then((response) => {
@@ -292,8 +363,7 @@ export default {
                 }; 
                 this.showSpinner = false;
                 this.showMessageDialog = true;
-          }
-      }
+          } 
       
     },
    
@@ -308,8 +378,8 @@ export default {
 
               console.log("result payment >>>>>>>",response.data.data)
             for (let i = 0; i < response.data.data.length; i++) {
-              response.data.data[i]["amount"] = response.data.data[i]["currentDebit"]
-              response.data.data[i]["paymentMode"] = ""
+              response.data.data[i]["amount"] = response.data.data[i]["currentDebit"] == 0 ? -1 : response.data.data[i]["currentDebit"]
+              response.data.data[i]["paymentMode"] = this.paymentModes[0]
             }     
 
             this.userPayments = response.data.data
@@ -350,7 +420,7 @@ export default {
        const requestParam = {
       params: {
         userId: obj.value,
-        year : new Date().getFullYear(),
+        //year : new Date().getFullYear(),
         client: this.profile.client,
         organisation: this.profile.organisation,
       },

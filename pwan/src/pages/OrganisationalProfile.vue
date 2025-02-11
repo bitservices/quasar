@@ -50,6 +50,10 @@
             @update:model-value="handleCountryChange"
             :dense="dense"
             :rules="[selectedRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCountries"
           />
           <q-select
             filled
@@ -60,6 +64,10 @@
             @update:model-value="handleStateChange"
             :dense="dense"
             :rules="[selectedRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterStates"
           />
           <q-select
             filled
@@ -69,6 +77,10 @@
             label="Select County"
             :dense="dense"
             :rules="[selectedRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCounties"
           />
 
          <q-input
@@ -328,8 +340,11 @@ export default {
       headers, 
       dense:true,
       countries: [],
+      allCountries:[],
       stateList: [],
+      allStates :[],
       counties: [],
+      allCounties :[],
       router,
       showSpinner: false, 
       pageName,
@@ -340,6 +355,55 @@ export default {
     };
   },
   methods: {
+    filterCountries(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    filterStates(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.stateList = this.allStates;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.stateList = this.allStates.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+    filterCounties(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.counties = this.allCounties;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.counties = this.allCounties.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
     saveRecord() {     
        if (this.$refs.orgProfileForm.validate()) {
           this.showSpinner = true;
@@ -446,6 +510,7 @@ export default {
             label: option.name,
             value: option.code,
           }));
+          this.allStates = this.stateList;
           console.log("this.state List >>>>>>>>>>>>", this.stateList);
         })
         .catch((error) => {
@@ -467,6 +532,7 @@ export default {
             label: option.name,
             value: option.code,
           }));
+          this.allCounties = this.counties;
         })
         .catch((error) => {});
     },
@@ -595,6 +661,7 @@ export default {
           label: option.name,
           value: option.code,
         }));
+        this.allCountries = this.countries;
         console.log(">>>>>>>>>>countries>>>>>",this.countries) 
       this.loadOrganisation()     
       })  

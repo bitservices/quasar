@@ -36,6 +36,14 @@
               <q-btn rounded class="pwan-button top-margin full-width" icon="save" label="Submit" type="submit" />  
         </q-form>
         </div>
+         <ResponseDialog
+            v-model="showMessageDialog"
+            :cardClass="childRef.cardClass"
+            :textClass="childRef.textClass"
+            :label="childRef.label"
+            :message="childRef.message"
+            :buttonClass="childRef.buttonClass"
+          />  
       </q-card-section> 
       
     </q-card>
@@ -51,10 +59,12 @@ import path from "src/router/urlpath";
 import HeaderPage from "src/components/HeaderPage.vue";  
 import { useRouter } from "vue-router";  
 import { validateEmail } from 'src/validation/validation';
+import ResponseDialog from "src/components/ResponseDialog.vue";   
 
 export default {
    components: { 
     HeaderPage,
+    ResponseDialog,
   }, 
   data() {
     const { t } = useI18n()  
@@ -64,13 +74,24 @@ export default {
     const formData = ref({
       email: "",  
     }); 
+     const showMessageDialog = ref(false);
+    const childRef = ref({
+      label: "",
+      message: "",
+      textClass: "",
+      cardClass: "",
+      buttonClass: "",
+      data: {}, 
+    });
     return {
       isPwd: ref(true),
       formData, 
       dense:false,
+      childRef,
       pageName,
       hint,
       showSpinner: false,
+      showMessageDialog,
       router,  
       emailRule: value => validateEmail(value),
     };
@@ -88,10 +109,22 @@ export default {
             .then((response) => {
               // Extract data from the respons   
               const result = response.data;
+              console.log("result>>>>>>",result)
             if (result.success) {  
               this.showSpinner = false;   
               SessionStorage.set("sessionEmail",this.formData.email)
               this.router.push({ path: "/passwordchange"});
+            }else{
+               console.log(">>>>>error result>>>>>>>",result)
+              this.childRef = {
+              message: result.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            this.showSpinner = false;
+            this.showMessageDialog = true;
             }
             })
             .catch((error) => {

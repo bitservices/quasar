@@ -1,10 +1,10 @@
 
 
 
-// const BASEPATH = "http://localhost:8000";
-// const QUASR_PATH = "http://localhost:9000"; 
-const BASEPATH = "https://pwan.traisoft.com";
-const QUASR_PATH =  "https://propertyconnect.traisoft.com";
+const BASEPATH = "http://localhost:8000";
+const QUASR_PATH = "http://localhost:9000"; 
+// const BASEPATH = "https://pwan.traisoft.com";
+// const QUASR_PATH =  "https://propertyconnect.traisoft.com";
 const APP_PATH = BASEPATH + "/api/pwanproperties/"; 
 const path = {
   ESTATE_AGENCY_URL: "https://estateagency.traisoft.com/?ref=",
@@ -36,6 +36,7 @@ const path = {
   PROSPECT_CUSTOMER_CONVERT_TO_INVESTOR:
     APP_PATH + "prospect/converttoinvestor/",
   COUNTRY_ALL: APP_PATH + "country/",
+  STATUS_ALL: APP_PATH + "status/",
 
   STATE_ALL: APP_PATH + "state/",
   STATE_CREATE: APP_PATH + "state/create/",
@@ -179,6 +180,10 @@ const path = {
   USR_OUTSTANDING_PAYMENT_SEARCH: APP_PATH + "useroutstanding/search/",
   USR_OUTSTANDING_PAYMENT_REMOVE: APP_PATH + "useroutstanding/remove/",
   USRS_OUTSTANDING_PAYMENT_CREATE: APP_PATH + "useroutstanding/generateMembersOutStandingPayment/",
+  USR_OUTSTANDING_PAYMENT_SEARCH_GROUP_BY_ORGANISATION: APP_PATH + "useroutstanding/findbyuser/",
+  USR_OUTSTANDING_PAYMENTS_GENERATE: APP_PATH + "useroutstanding/generateOutstandingPaymentsForMembers/",
+  
+
 
   ORGUSER_SEARCH: APP_PATH + "orguser/search/", 
   ORGUSER_SAVE: APP_PATH + "orguser/save/",
@@ -346,7 +351,63 @@ const path = {
   TESTIMONIAL_REMOVE: APP_PATH + "testimonial/remove/",  
   TESTIMONIAL_UPDATE_IMAGE: APP_PATH + "testimonial/updatetestimonialimage/",
   USER_UPLOAD: APP_PATH + "userupload/upload/",
-  USER_UPLOAD_PROCESS: APP_PATH + "userupload/processupload/",
+  USER_UPLOAD_PROCESS: APP_PATH + "userupload/processupload/", 
+
+  ORGANISATION_UPLOAD: APP_PATH + "orgupload/upload/",
+  ORGANISATION_UPLOAD_PROCESS: APP_PATH + "orgupload/processupload/", 
+
+  PRODUCTDEF_UPLOAD: APP_PATH + "productupload/upload/",
+  PRODUCTDEF_UPLOAD_PROCESS: APP_PATH + "productupload/processupload/", 
+  
+  PAYMENTCHANNEL_CREATE: APP_PATH + "paymentchannel/create/", 
+  PAYMENTCHANNEL_SEARCH: APP_PATH + "paymentchannel/search/", 
+  PAYMENTCHANNEL_UPDATE: APP_PATH + "paymentchannel/update/", 
+  PAYMENTCHANNEL_DELETE: APP_PATH + "paymentchannel/delete/",  
+  PAYMENTCHANNEL_REMOVE: APP_PATH + "paymentchannel/remove/",
+
+  
+  PAYMENTINTEGRATION_CREATE: APP_PATH + "integration/create/", 
+  PAYMENTINTEGRATION_SEARCH: APP_PATH + "integration/search/", 
+  PAYMENTINTEGRATION_UPDATE: APP_PATH + "integration/update/", 
+  PAYMENTINTEGRATION_DELETE: APP_PATH + "integration/delete/",  
+  PAYMENTINTEGRATION_REMOVE: APP_PATH + "integration/remove/",
+
+  
+  PAYMENTINTEGRATIONLOG_CREATE: APP_PATH + "paymentlog/create/",
+  PAYMENTINTEGRATIONLOG_UPDATE: APP_PATH + "paymentlog/update/",
+
+ 
+
+  MESSAGINGCHANNEL_CREATE: APP_PATH + "messagingchannel/create/", 
+  MESSAGINGCHANNEL_SEARCH: APP_PATH + "messagingchannel/search/", 
+  MESSAGINGCHANNEL_UPDATE: APP_PATH + "messagingchannel/update/", 
+  MESSAGINGCHANNEL_DELETE: APP_PATH + "messagingchannel/delete/",  
+  MESSAGINGCHANNEL_REMOVE: APP_PATH + "messagingchannel/remove/",
+
+
+  
+  MESSAGINGINTEGRATION_CREATE: APP_PATH + "msgintegration/create/", 
+  MESSAGINGINTEGRATION_SEARCH: APP_PATH + "msgintegration/search/", 
+  MESSAGINGINTEGRATION_UPDATE: APP_PATH + "msgintegration/update/", 
+
+  MESSAGETYPE_CREATE: APP_PATH + "messagetype/create/", 
+  MESSAGETYPE_SEARCH: APP_PATH + "messagetype/search/", 
+  MESSAGETYPE_UPDATE: APP_PATH + "messagetype/update/", 
+  MESSAGETYPE_DELETE: APP_PATH + "messagetype/delete/",  
+  MESSAGETYPE_REMOVE: APP_PATH + "messagetype/remove/",
+ 
+
+  MESSAGINGSETUP_CREATE: APP_PATH + "msgingstup/create/", 
+  MESSAGINGSETUP_SEARCH: APP_PATH + "msgingstup/search/", 
+  MESSAGINGSETUP_UPDATE: APP_PATH + "msgingstup/update/", 
+  MESSAGINGSETUP_DELETE: APP_PATH + "msgingstup/delete/",  
+  MESSAGINGSETUP_REMOVE: APP_PATH + "msgingstup/remove/", 
+
+  SEND_MESSAGE : APP_PATH + "msgingstup/sendmessage/",
+  SEND_BIRTHDATY_MESSAGE : APP_PATH + "msgingstup/runBirthDayMessageToMembersByCordinators/",
+  
+
+  
 
   
 

@@ -196,7 +196,7 @@ export default {
       showMessageDialog:false, 
       requiredRule: value => isRequired(value), 
       toggleValue:ref(false), 
-      toggleLabel:"Record Attendance By Scanning Member QR Code",
+      toggleLabel:"Record Attendance By Scanning Center/Organisation QR Code",
       columns,
       rows,
       selected,
@@ -207,7 +207,7 @@ export default {
       if(value){
         this.toggleLabel = "Record Attendance By Filling Form"
       }else{ 
-         this.toggleLabel = "Record Attendance By Scanning Member QR Code"
+         this.toggleLabel = "Record Attendance By Scanning Center/Organisation QR Code"
       } 
       if(this.$refs.qrcodescanner != null)
           this.$refs.qrcodescanner.stopCamera();

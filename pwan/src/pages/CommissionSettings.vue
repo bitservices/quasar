@@ -130,8 +130,9 @@
             size="sm"
             @click="deleteItem"
           />
-        </template> 
-         <ResponseDialog
+        </template>  
+      </q-table>
+      <ResponseDialog
             v-model="showMessageDialog"
             :cardClass="childRef.cardClass"
             :textClass="childRef.textClass"
@@ -139,7 +140,6 @@
             :message="childRef.message"
             :buttonClass="childRef.buttonClass"
           />
-      </q-table>
     </div>
   </q-page>
 </template>
@@ -304,18 +304,34 @@ export default {
             .then((response) => {
               // Extract data from the response 
               const result = response.data
-              console.log(">>>>result>>>>>",result)
-              console.log(">>>>result message>>>>>",result.message)
-
-              this.childRef = {
-              message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
-            };  
-            this.showMessageDialog = true;
-            console.log("this.showMessageDia thenlog>>>>>",this.showMessageDialog)
+              if(result.success)  
+              { 
+                console.log(">>>>>result >>>>>",result)
+                this.childRef = {
+                message: result.message,
+                label: "Success",
+                cardClass: "bg-positive text-white",
+                textClass: "q-pt-none",
+                buttonClass: "bg-white text-teal",
+              };   
+              this.showSpinner= false;
+              this.showMessageDialog = true;
+              
+              console.log(">>>>>this.childRef 11111>>>>>",this.childRef, ">>>>>this.showMessageDialog>>>>>>",this.showMessageDialog)
+              
+              }else{
+                this.childRef = {
+                  message: result.message,
+                  label: "Error",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                };
+                this.showSpinner= false;
+                this.showMessageDialog = true;
+              }
+              
+            
             })
             .catch((error) => {
              this.childRef = {
@@ -324,15 +340,12 @@ export default {
               cardClass: "bg-negative text-white error",
               textClass: "q-pt-none",
               buttonClass: "bg-white text-teal",
-            }; 
-            this.showMessageDialog = true;
-            console.log("this.showMessageDia thenlog error >>>>>",this.showMessageDialog)
+            };  
+              this.showSpinner= false;
+              this.showMessageDialog = true;
             }); 
-            
-             this.showSpinner = false; 
-             console.log("this.showMessageDialog>>>>>",this.showMessageDialog)
-             //this.resetForm();
-             this.loadCommissionSettings();
+            this.loadCommissionSettings(); 
+              
         } catch (error) {
           console.error("Error submitting form:", error);
         }

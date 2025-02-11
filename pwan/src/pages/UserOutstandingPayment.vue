@@ -1,6 +1,17 @@
 <template>
   <q-page padding>
     <div class="q-pa-md">
+      <q-card>
+          <q-card-section class="pwan-blue text-white">
+            <HeaderPage  
+                :label="pageName"
+                :hint="hint"  
+              />
+          </q-card-section>
+        </q-card>
+        <div class="text-center"> 
+                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        </div>
       <q-table
         class="my-sticky-header-table"
         flat
@@ -83,21 +94,33 @@
           </q-btn>
         </template>
       </q-table>
+      <q-space/>
+         <q-btn
+          @click="generateOutstandingPayments"
+          flat
+          :label="generateLabel" 
+         class="pwan-button top-margin full-width"
+           
+        />
     </div>
+    
   </q-page>
 </template>
 
 <script>
+import { useI18n } from 'vue-i18n'
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import UserOutstandingPaymentFormDialog from "src/components/UserOutstandingPaymentFormDialog.vue";
 import ResponseDialog from "src/components/ResponseDialog.vue";
+import HeaderPage from "src/components/HeaderPage.vue"; 
 import path from "src/router/urlpath";
 export default {
   components: {
     UserOutstandingPaymentFormDialog,
     ResponseDialog,
+    HeaderPage
   },
   data() {
     const headers = SessionStorage.getItem("headers");
@@ -164,6 +187,10 @@ export default {
       code: "",
       name: "",
     });
+    const { t } = useI18n() 
+    const pageName = computed(()=> t('useroutstandingpayment.pagename'))
+    const hint = computed(()=> t('useroutstandingpayment.hint'))
+    const showSpinner = ref(false); 
     const urlLink = ref(path.USR_OUTSTANDING_PAYMENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -174,6 +201,8 @@ export default {
     const selected = ref([]);
     const actionLabel = ref("Submit");
     const medium_dialog = ref(false);
+    const currentYear = new Date().getFullYear()  
+    const profile = LocalStorage.getItem("turnelParams");
     const childRef = ref({
       label: "",
       message: "",
@@ -184,6 +213,7 @@ export default {
     });
 
     return {
+      profile,
       urlLink,
       actionLabel,
       searchValue,
@@ -198,9 +228,56 @@ export default {
       action,
       showFormDialog,
       actionBtn,
+      generateLabel: "Generate Outstanding Payments for "+currentYear,
+      pageName,
+      hint, 
+      showSpinner,
+
     };
   },
   methods: {
+    generateOutstandingPayments(){
+      console.log("Generate outstanding payments>>>>>>>>")
+    try {
+      this.showSpinner = true;
+      const promise = axios.post(
+          path.USR_OUTSTANDING_PAYMENTS_GENERATE,
+          {organisation:this.profile.organisation, client:this.profile.client},
+          this.headers
+        );
+        console.log("promise in the Fetch Data>>>>>>>>>>", promise);
+        promise
+          .then((response) => {
+            // Extract data from the response
+            console.log("response data>>>>>>>", response.data);
+            const result = response.data
+            console.log("result >>>>>>>", result);
+             this.childRef = {
+              message: result.message,
+              label: "Success",
+              cardClass: "bg-positive text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            this.showMessageDialog = true;
+            this.showSpinner = false
+          })
+          .catch((error) => {
+            this.childRef = {
+              message: error.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };
+            this.showMessageDialog = true;
+            this.showSpinner = false
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+      
+    },
     handleRowClicks(event, row) {
       // Handle row click event
       console.log("Row clicked:", row);

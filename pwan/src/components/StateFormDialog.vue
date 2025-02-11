@@ -207,15 +207,26 @@ export default {
             code: this.searchValue,
           },
         };
+        console.log(">>>>>>>>>>this,urlLink>>>>>>>>", this.urlLink);
         const promise = axios.get(this.urlLink, requestParams, headers);
         console.log(">>>>>>>>>>promise>>>>>>>>", promise);
         promise
           .then((response) => {
             // Extract data from the response
+            console.log(response)
+
             const result = response.data;
             console.log(">>>>>>>>result>>>>>>>", result.data);
             if (result.success) {
               this.formData = result.data[0];
+              this.formData.countryCode = {
+                value : result.data[0].countryCode.code,
+                label : result.data[0].countryCode.name
+              } 
+              this.formData.status = {
+                value : result.data[0].status.code,
+                label : result.data[0].status.name
+              } 
             }
           })
           .catch((error) => {

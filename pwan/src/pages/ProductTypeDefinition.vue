@@ -21,8 +21,8 @@
         title="Product Type Definition"
         :rows="rows"
         :columns="columns"
-        row-key="name"
-        selection="multiple"
+        row-key="id"
+        selection="single"
         v-model:selected="selected"
       >
         <template v-slot:top>

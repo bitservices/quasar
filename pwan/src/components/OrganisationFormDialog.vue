@@ -41,6 +41,10 @@
             label="Select client" 
             :dense="dense"
             :readonly="isReadonly"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterClients"
           />
            <q-select
             filled
@@ -51,6 +55,10 @@
             @update:model-value="handleCountryChange"
             :dense="dense"
             :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCountries"
           />
           <q-select
             filled
@@ -61,6 +69,10 @@
             @update:model-value="handleStateChange"
             :dense="dense"
             :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterStates"
           />
           <q-select
             filled
@@ -70,6 +82,10 @@
             label="Select County"
             :dense="dense"
             :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCounties"
           />
 
          <q-input
@@ -364,12 +380,16 @@ export default {
       form,
       dialogWidth,
       dialogHeight, 
-      clients: [],
+      clients: [], 
+      allClients:[],
       userEmail,
       headers,
       countries: [],
+      allCountries:[],
       stateList: [],
+      allStates:[],
       counties: [],
+      allCounties:[],
       dense:true,      
       isReadonly: false, 
       pageName,
@@ -387,6 +407,72 @@ export default {
     };
   },
   methods: {
+     
+     filterClients(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.clients = this.allClients;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.clients = this.allClients.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+    filterCountries(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    filterStates(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.stateList = this.allStates;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.stateList = this.allStates.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+    filterCounties(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.counties = this.allCounties;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.counties = this.allCounties.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    },
     getPosition(){
       try{
         if ('geolocation' in navigator) { 
@@ -435,10 +521,12 @@ export default {
         .get(path.STATE_SEARCH, requestParams, this.headers)
         .then((response) => {
           // Assuming the response data is an array of objects with 'value' and 'label' properties
-          this.stateList = response.data.map((option) => ({
+          console.log("stateList>>",response.data)
+          this.stateList = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
+          this.allStates = this.stateList;
           console.log("this.state List >>>>>>>>>>>>", this.stateList);
         })
         .catch((error) => {
@@ -460,12 +548,13 @@ export default {
             label: option.name,
             value: option.code,
           }));
+          this.allCounties = this.counties;
         })
         .catch((error) => {});
     },
     loadMeetingDays(){ 
       this.showMeetingDialog=true;  
-      if(this.formData.meetingDays == null || this.formData.meetingDays.trim() == "" || this.formData.meetingDays == "null"){
+      if(this.formData.meetingDays == null || this.formData.meetingDays.trim() == "" || this.formData.meetingDays == "null" || this.formData.meetingDays == "nan"){
            this.meetingDays = [{day:'', meetingName:'',startTime:'', endTime:''}];
       }else{
         try { 
@@ -565,6 +654,7 @@ export default {
           label: option.name,
           value: option.code,
         })); 
+        this.allClients = this.clients;
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -578,6 +668,7 @@ export default {
           label: option.name,
           value: option.code,
         }));
+        this.allCountries = this.countries;
       }) 
   },
   unmounted() {

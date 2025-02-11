@@ -156,11 +156,48 @@ let defaultList = [
         link: "/usercontact",
       },
       {
-        title: " Change PAssword",
+        title: " Change Password",
         caption: "Change Password",
         icon: "key",
         link: "/changepassword",
       },
+      {
+        title: "Messaging Channel",
+        caption: "Messaging Channel",
+        icon: "key",
+        link: "/messagingchannel",
+      },
+
+      {
+        title: "Message Integration",
+        caption: "Messaging Integration",
+        icon: "key",
+        link: "/msgintegration",
+      },
+      {
+        title: "Message Type",
+        caption: "Message Type",
+        icon: "key",
+        link: "/messagetype",
+      },{
+        title: "Messaging Setup",
+        caption: "Messaging Setup",
+        icon: "key",
+        link: "/msgingstup",
+      },
+      {
+        title: "Send Message", 
+        icon: "key",
+        link: "/sendmsg",
+      },
+      {
+        title: " Run Birthday Message",
+        caption: "Run Birthday Message",
+        icon: "key",
+        link: "/runbirthdatymessage",
+      },
+             
+      
     ],
   },
 ];

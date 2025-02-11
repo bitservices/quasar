@@ -145,6 +145,7 @@ export default {
                 requestParam
                 );  
                 userPromise.then((response) => {
+                  console.log(">>>>>>>>.response >>>>>>>>>>>>>>>",response)
                     if(response.data.success){ 
                         
                         LocalStorage.set("userEmail", this.formData.username); 
@@ -157,6 +158,16 @@ export default {
 
                             this.authenticateUser();
                         }
+                    }else{
+                       this.childRef = {
+                        message: response.data.message,
+                        label: "Error",
+                        cardClass: "bg-negative text-white error",
+                        textClass: "q-pt-none",
+                        buttonClass: "bg-white text-teal",
+                      };
+                      this.showSpinner = false;
+                      this.showMessageDialog = true;
                     }
                     
 

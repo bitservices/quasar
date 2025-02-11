@@ -163,6 +163,7 @@ export default {
     };
     const createRecord = (record) => {
       try {
+        console.log(">>>>>>>record>>>>>>>>",record)
         const promise = axios.post(path.PAYMENTMODE_CREATE,
           record,
           headers

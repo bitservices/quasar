@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { SessionStorage, Loading } from "quasar";
+import { SessionStorage } from "quasar";
 import axios from "axios";
 import { ref } from "vue";
 import StandingDataFormDialog from "src/components/StandingDataFormDialog.vue";
@@ -141,19 +141,31 @@ export default {
       data: {},
     });
 
-    const fetchData = async () => {
-      try {
-        Loading.show();
-        const response = await axios.get(path.MEMBERSHIP_TYPE_SEARCH,
+    const fetchData = () => {
+      try { 
+        console.log(">>>fetch data>>>>")
+        const promise = axios.get(path.MEMBERSHIP_TYPE_SEARCH,
           headers
-        );
-        if (response.data) {
-          rows.value = response.data;
-          selected.value = [];
-          Loading.hide();
-        }
-      } catch (error) {
-        console.error("Error submitting form:", error);
+        ); 
+         promise
+          .then((response) => {
+            // Extract data from the response
+            const result = response.data; 
+          console.log(">>>result>>",result)
+          rows.value = result.data;
+          })
+          .catch((error) => {
+            childRef.value = {
+              message: error.message,
+              label: "Error",
+              cardClass: "bg-negative text-white error",
+              textClass: "q-pt-none",
+              buttonClass: "bg-white text-teal",
+            };  
+      
+        });
+      }catch(error){
+        console.log(">>>error >>>>>", error)
       }
     };
     const saveRecord = (record) => {

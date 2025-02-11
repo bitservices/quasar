@@ -269,6 +269,59 @@ const routes = [
         path: "/orgprofile",
         component: () => import("src/pages/OrganisationalProfile.vue"),
       }, 
+      {
+        path: "/orgupload",
+        component: () => import("src/pages/OrganisationUpload.vue"),
+      }, 
+      {
+        path: "/productupload",
+        component: () => import("src/pages/ProductTypeDefinitionUpload.vue"),
+      }, 
+      {
+        path: "/viewpayments",
+        component: () => import("src/pages/PaymentDetails.vue"),
+      }, 
+      {
+        path: "/paystack",
+        component: () => import("src/pages/PaystackPayment.vue"),
+      }, 
+      {
+        path: "/paymentchannel",
+        component: () => import("src/pages/PaymentChannel.vue"),
+      },
+      {
+        path: "/integration",
+        component: () => import("src/pages/PaymentIntegration.vue"),
+      },
+      {
+        path: "/selfpayment/:orgCode/:clientCode",
+        component: () => import("src/pages/SelfUserPayments.vue"),
+      }, 
+      {
+        path: "/messagingchannel",
+        component: () => import("src/pages/MessagingChannel.vue"),
+      },
+      {
+        path: "/msgintegration",
+        component: () => import("src/pages/MessagIntegration.vue"),
+      },{
+        path: "/sendmsg",
+        component: () => import("src/pages/SendMessage.vue"),
+      },
+      {
+        path: "/messagetype",
+        component: () => import("src/pages/MessageType.vue"),
+      },
+      {
+        path: "/msgingstup",
+        component: () => import("src/pages/MessagingSetup.vue"),
+      },
+      {
+        path: "/runbirthdatymessage",
+        component: () => import("src/pages/RunBirthdayMessage.vue"),
+      },
+      
+       
  
       
     ],

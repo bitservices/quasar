@@ -137,6 +137,7 @@ export default {
              id:result.data.id,
              name:userName}
              this.value = JSON.stringify(obj) 
+             console.log("QrCode string >>>>>",this.value)
 
             }
           })

@@ -21,6 +21,10 @@
             label="Filter By Client" 
             @update:model-value="filterOrganisation"
             :dense="dense"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterClients"
           /> 
         </q-form>  
 
@@ -195,6 +199,7 @@ export default {
      const showSpinner = ref(false);  
     const formData = ref({});
     const userclients = ref([]);
+     const allClients = ref([]);    
     const childRef = ref({
       label: "",
       message: "",
@@ -223,13 +228,29 @@ export default {
           label: option.name,
           value: option.code,
         }));
-
+        allClients.value = userclients.value
         }
       } catch (error) {
         console.error("Error submitting form:", error);
       }
 
   };
+   const filterClients =(val, update)=> {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          userclients.value = allClients.value;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        userclients.value = allClients.value.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    };
   const filterOrganisation = async ()=>{
 
     try {
@@ -492,6 +513,7 @@ export default {
     return {
       loadUserClients,
       filterOrganisation,
+      filterClients,
       fetchData, 
       loadUser,
       saveRecord,
@@ -528,6 +550,7 @@ export default {
       hint, 
       showSpinner,
       userclients,
+      allClients,
     };
   },
   beforeCreate() {

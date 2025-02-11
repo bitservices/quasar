@@ -32,6 +32,10 @@
             label="Select Country"
             @update:model-value="handleCountryChange"
             :dense="dense"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCountries"
           /> 
           
           <q-select
@@ -41,6 +45,10 @@
             :options="stateList"
             label="State"
             :dense="dense"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterStates"
           />
            
         </q-form>
@@ -133,12 +141,48 @@ export default {
       dialogWidth,
       dialogHeight, 
       countries: [],
+      allCountries:[],
       stateList : [],
+      allStates :[],
       dense:true,
       headers,
     };
   },
   methods: {
+    
+    filterCountries(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    filterStates(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.stateList = this.allStates;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.stateList = this.allStates.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    },  
     saveRecord() {
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       this.formData
@@ -162,11 +206,12 @@ export default {
       .then((response) => {
         console.log("State Response >>>>>>>>>>>>", response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.stateList = response.data.map((option) => ({
+        this.stateList = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.stateList);
+        this.allStates = this.stateList;
+        console.log("this.stateList >>>>>>>>>>>>", this.stateList);
       })
       .catch((error) => {
         console.error("Error fetching options:", error);
@@ -193,6 +238,7 @@ export default {
           label: option.name,
           value: option.code,
         }));
+        this.allCountries = this.countries
         console.log("this.countries >>>>>>>>>>>>", this.countries);
       })
       .catch((error) => {

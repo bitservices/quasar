@@ -157,7 +157,7 @@ export default {
         );
         if (response.data) {
           console.log("response data >>>>>>", response.data);
-          rows.value = response.data;
+          rows.value = response.data.data;
           selected.value = []; 
         }
       } catch (error) {

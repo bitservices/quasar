@@ -53,7 +53,7 @@
       },
       "organisation":{
         "pagename": "Organisation Page",
-        "hint":"This Page sisplays the List of all the Organisation/Center registered by the user through which he or she can create a new Organisation/Center, edit or view an existing one."
+        "hint":"This Page displays the List of all the Organisation/Center registered by the user through which he or she can create a new Organisation/Center, edit or view an existing one."
       },
       "attendance":{
         "pagename": "Attendance Page",
@@ -149,7 +149,48 @@
 "useroutstandingform":{
   "pagename": "User Outstanding Debt",
   "hint":"This Page is used to capture all the Members of the Organisation, their outstanding Debt"
+},
+"orgupload":{
+       "pagename": "Organisation Upload",
+       "hint":"This page is used to upload Organisation/Centers, Generate a CSV file int the following format: ['organisationCode','name', 'website', 'address', 'radius', 'meetingDays', 'slogan', 'allowSeatAllocation','validateMeetingStartTime', 'reservedSeats', 'seatPrefix', 'seatSufix', 'countryCode','stateCode', 'countyCode', 'client']"   
+}, 
+"productdefupload":{
+  "pagename": "Product/Services Upload",
+  "hint":"This page is used to upload Products/Services provided by a particular client and organisation, Generate a CSV file int the following format: ['productType','name',  'productCategory','description', 'address', 'landmark', 'imageUrl', 'videoUrl','subscriptionFormUrl', 'amount', 'measurement', 'dimension', 'countryCode','stateCode', 'countyCode']"   
+},
+"integration":{
+  "pagename": "Payment Integration",
+  "hint":"This page is used to setup Organisation Integration accounts. Fill in the form as required and click on save to setup integration accounts with respect of payment channels"   
+},
+"paymentdetails":{
+  "pagename": "Payment Details",
+  "hint":"This page is used to view all the paymennt across the Organisation where the user belong and from there the user can proceed to making online payment."   
+},
+"selfpayment":{
+  "pagename": "Outstanding Payment",
+  "hint":"This page is used by a user to make his/her outstanding payment Transaction through the app. Select the Payment Items you want and you can equally change the payment amount. Then click on the Payment Channel you want to complete you payment"   
+},
+"msgintegration":{
+  "pagename": "Message Integration",
+  "hint":"This page is used to setup all the message channel the organisaion supports and also to buy the required units need to be used in sending message."   
+},
+"sendmsg":{
+  "pagename": "Send Message",
+  "hint":"This page is used by an Organisation/Center to send Message to all her Members and those that attended any of her previous meetings/Seminars."   
+},
+"msgingsetup":{
+  "pagename": "Message Setup",
+  "hint":"This page is used by an Organisation/Center to configure the messages needed to be sending to people Periodically. eg. Birthday Message, Wedding Anniversary Message etc"   
+},
+"useroutstandingpayment":{
+  "pagename": "User Outstanding Paymentss",
+  "hint":"This page is used by an Organisation/Center to create the outstanding payment for all their members."   
 }
+
+
+
+
+
 
 
 

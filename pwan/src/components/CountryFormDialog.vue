@@ -28,6 +28,7 @@
             filled
             bottom-slots
             v-model="formData.status"
+            :options="statusList"
             label="Status"
             :dense="dense"
           />
@@ -60,6 +61,7 @@
 import { SessionStorage } from "quasar";
 import { onUnmounted, ref } from "vue";
 import axios from "axios";
+import path from "src/router/urlpath"; 
 
 export default {
   name: "CountryFormDialog",
@@ -118,12 +120,14 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
+      statusList: [],
     };
   },
   methods: {
     saveRecord() {
       console.log(">>>>>>>thisis inside handle Save,", this.formData);
       //this.onClick(formData.value);
+      this.formData.status = this.formData.status.value;
       this.$emit("formDataSubmitted", this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
@@ -140,6 +144,20 @@ export default {
   },
   mounted() {
     console.log("mounted");
+     axios
+      .get(path.STATUS_ALL)
+      .then((response) => {
+        console.log("country Response >>>>>>>>>>>>", response.data);
+        // Assuming the response data is an array of objects with 'value' and 'label' properties
+        this.statusList = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        console.log("this.statusList >>>>>>>>>>>>", this.statusList);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
   },
   unmounted() {
     console.log("Calling unmounted>>>>>>>>>>");

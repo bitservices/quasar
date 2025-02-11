@@ -160,6 +160,7 @@ export default {
                 requestParam
                 ); 
                 userPromise.then((response) => {
+                  console.log(">>>>>>response>>>>>>>>>>>>>>>",response)
                     if(response.data.success){ 
                         
                         const userData = response.data.data; 

@@ -20,29 +20,42 @@
               @update:model-value="onToggleChange"
             />
 
-         <div class="card-container" v-if="toggleValue"> 
+         <div class="card-container" v-if="!toggleValue"> 
           <q-card
             v-if="isSupperUser"
-            key="websitesetup"
-            style="background:linear-gradient(to right, #3357FF, #C300FF)"
-             class="my-card text-white"
+            key="websitesetup" 
+             class="my-card-d text-white"
           > 
-              <router-link to="/userwebsitesetup" class="q-card-link" style="text-decoration: none; color: white;">
+              <router-link to="/userwebsitesetup" class="q-card-link" style="text-decoration: none;">
                 <q-card-section>
-                  <div class="text-h6">Website Setup</div>
+                  <div class="text-h6"><q-icon name="fa fa-wifi" size="40px" />Website Setup</div>
                   <div>Website Setup</div>
                 </q-card-section>
               </router-link>
            </q-card>
            <q-card
+            v-if="isSupperUser"
+            key="organisations-upload" 
+             class="my-card-d"
+          > 
+              <router-link to="/orgupload" class="q-card-link" style="text-decoration: none;">
+               
+                <q-card-section> 
+                  <div class="text-h6"><q-icon name="upload" size="40px" />Upload Organistions</div>
+                  <div>Upload Organisations</div> 
+                </q-card-section>
+                
+              </router-link>
+           </q-card>
+           
+           <q-card
             v-for="item in items"
-            :key="item.id"
-            :style="{ background: item.gradient }"
-             class="my-card text-white"
+            :key="item.id" 
+             class="my-card-d text-white"
           >
-              <router-link :to="`${item.link}`" class="q-card-link" style="text-decoration: none; color: white;">
+              <router-link :to="`${item.link}`" class="q-card-link" style="text-decoration: none;">
                 <q-card-section>
-                  <div class="text-h6">{{ item.title }}</div>
+                  <div class="text-h6"><q-icon :name="item.icon" size="40px" />{{ item.title }}</div>
                   <div>{{ item.description }}</div>
                 </q-card-section>
               </router-link>
@@ -139,13 +152,15 @@ export default {
       toggleLabel:"Dashboard Transaction Details",
        items: [
         
-        { id: 1, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',}, 
-        { id: 2, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', },
-        { id: 3, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
-        { id: 4, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)' },
-        { id: 5, title: 'Client', description: 'Client/Affilate',link:'/client' ,gradient: 'linear-gradient(to right, #33FF57, #33FFC3)',},
-        { id: 6, title: 'Organisation', description: 'Organisation/Center Page',link:'/organisation',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', },
-        { id: 7, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)'},
+
+        { id: 1, title: 'Payment', description: 'Make Online Payment',link:'/viewpayments',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'payment'}, 
+        { id: 2, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'home'}, 
+        { id: 3, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon : 'loop', },
+        { id: 4, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'wallet'},
+        { id: 5, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'check',},
+        { id: 6, title: 'Client/Center', description: 'Client/Affilate/Center',link:'/client' ,gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon:'company'},
+        { id: 7, title: 'Organisation/Branches', description: 'Organisation/Branches',link:'/organisation',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'fa fa-sitemap'},
+        { id: 8, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'fa fa-qrcode'},
        
       ],
     };

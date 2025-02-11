@@ -327,6 +327,7 @@ export default {
      this.recordAttendance(attendanceData);
    },
     recordFormAttendance(){
+      console.log("get here>>>>>>>")
       if (this.$refs.attendanceForm.validate()) {
           const data = {
           client : this.profile.client,
@@ -335,6 +336,8 @@ export default {
           longitude:   this.position.longitude ,  
           latitude: this.position.latitude,
         }
+        console.log("data:>>>>>>",data)
+        this.recordAttendance(data);
       }
     },
     recordAttendance(data) {      

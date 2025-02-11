@@ -302,7 +302,7 @@ export default {
           .then((response) => {
             // Extract data from the response 
             console.log(">>>>>>>>response.data>>>>>>>>",response.data)
-            const blob = new Blob([response.data], { type: 'application/pdf' });
+            const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="user_payment_report.pdf"'  });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);

@@ -336,6 +336,7 @@ export default {
     async deleteItem() {
       try {
         const data = this.selected;
+        console.log(">>>>>>data>>>>>>>",data)
         const response = await axios.post(
           path.ORG_ANNUAL_PAYMENT_REMOVE,
           data,

@@ -183,8 +183,13 @@ export default {
     loadCommissionClients() {
       try { 
          
+         const requestParam = {
+          params: {
+            isAnAffilate: true, 
+          },
+        };
         axios
-          .get(path.CLIENT_SEARCH, this.headers)
+          .get(path.CLIENT_SEARCH, requestParam,this.headers)
           .then((response) => {
             console.log("client Response >>>>>>>>>>>>", response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties

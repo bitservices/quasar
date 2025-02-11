@@ -21,6 +21,10 @@
             :options="clients"
             label="Affilate/Client"  
             :dense="dense"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterAffilates"
           />
           <q-select
             filled
@@ -30,6 +34,10 @@
             label="Select Country"
             :dense="dense" 
             @update:model-value="handleCountryChange"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCountries"
           />
            <q-select
             filled
@@ -39,6 +47,10 @@
             label="Select State"
             :dense="dense" 
             @update:model-value="handleStateChange"
+             use-input
+            input-debounce="200"
+            clearable
+            @filter="filterStates"
           />
            <q-select
             filled
@@ -47,6 +59,10 @@
             :options="counties"
             label="Select County"
             :dense="dense"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCounties"
           />
 
            <q-input
@@ -235,8 +251,7 @@ import { useI18n } from 'vue-i18n'
 import HeaderPage from "src/components/HeaderPage.vue"; 
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios"; 
-import path from "src/router/urlpath";
-import ResponseDialog from "src/components/ResponseDialog.vue";
+import path from "src/router/urlpath"; 
 import { format } from 'date-fns';
 export default {
    components: { 
@@ -326,8 +341,13 @@ export default {
       formData, 
       dense:true,  
       clients:[], 
+      allClients:[],
+      countries:[],
+      allCountries:[],
       states: [],
+      allStates:[],
       counties:[], 
+      allCounties:[],
       productImages:[],
       pageName,
       hint,
@@ -342,11 +362,81 @@ export default {
     };
   },
   methods: { 
+
+      filterAffilates(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.clients = this.allClients;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.clients = this.allClients.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    filterCountries(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    filterStates(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.states = this.allStates;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.states = this.allStates.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+    filterCounties(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.counties = this.allCounties;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.counties = this.allCounties.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
       downloadImage(imageUrl){
         console.log(">>>>>>>>>image url >>>>>>>>>>>",imageUrl) 
           const link = document.createElement('a');
-          link.href = imageUrl;
-          link.download = 'product-fliyer.jpg'; // Set the download filename
+          link.href = imageUrl;          
+          const parts = imageUrl.split("/");
+          const imageName = parts[parts.length - 1]          
+          console.log(">>>>>>imageName>>>>",imageName)
+          link.download = imageName;  // Set the download filename
           link.target = "_blank"
           link.click();
       },
@@ -354,7 +444,10 @@ export default {
         console.log(">>>>>>>>>videoUrl url >>>>>>>>>>>",videoUrl) 
           const link = document.createElement('a');
           link.href = videoUrl;
-          link.download = 'product-video.mp4'; // Set the download filename
+          const parts = videoUrl.split("/");
+          const videoName = parts[parts.length - 1]          
+          console.log(">>>>>>videoName>>>>",videoName)
+          link.download = videoName; // Set the download filename
           link.target = "_blank"
           link.click();
       },
@@ -363,7 +456,10 @@ export default {
         console.log(">>>>>>>>>videoUrl url >>>>>>>>>>>",subscriptionFormUrl) 
           const link = document.createElement('a');
           link.href = subscriptionFormUrl;
-          link.download = 'product-subscription-form.pdf'; // Set the download filename
+          const parts = subscriptionFormUrl.split("/");
+          const formName = parts[parts.length - 1]
+          console.log(">>>>>>formName>>>>",formName)
+          link.download = formName; 
           link.target = "_blank"
           link.click();
       },
@@ -385,6 +481,7 @@ export default {
               label: option.name,
               value: option.code,
             }));
+            this.allClients = this.clients;
             console.log("this.clients >>>>>>>>>>>>", this.clients);
           })
           .catch((error) => {
@@ -445,12 +542,12 @@ export default {
       axios
         .get(path.STATE_SEARCH, requestParams, this.headers)
         .then((response) => {
-          // Assuming the response data is an array of objects with 'value' and 'label' properties
-          this.states = response.data.map((option) => ({
+          // Assuming the response data is an array of objects with 'value' and 'label' properties 
+          this.states = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
-          }));
-          console.log("this.state List >>>>>>>>>>>>", this.stateList);
+          })); 
+          this.allStates = this.states
         })
         .catch((error) => {
           console.error("Error fetching options:", error);
@@ -471,6 +568,7 @@ export default {
             label: option.name,
             value: option.code,
           }));
+          this.allCounties = this.counties;
         })
         .catch((error) => {});
     },  
@@ -522,6 +620,7 @@ export default {
           label: option.name,
           value: option.code,
         }));
+        this.allCountries = this.countries;
       })
       .catch((error) => {});
      

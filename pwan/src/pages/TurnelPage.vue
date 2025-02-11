@@ -23,7 +23,12 @@
             :options="clients"
             label="Select Client"
             :rules="[requiredRule]" 
+            use-input
+            clearable
+            input-debounce="200"
+            @filter="filterClients"
           />
+          <!--<ClientSelect clearable  @update:model-value="handleClientChange" ref="clientRef"/>-->
           <q-select
             filled
             bottom-slots
@@ -62,6 +67,7 @@ import { ref, computed } from "vue";
 import { useI18n } from 'vue-i18n'
 import HeaderPage from "src/components/HeaderPage.vue"; 
 import ResponseDialog from "src/components/ResponseDialog.vue";  
+import ClientSelect from "src/components/ClientSelect.vue";  
 import { isRequired } from 'src/validation/validation';
 import { LocalStorage, SessionStorage } from "quasar";
 import axios from "axios"; 
@@ -71,7 +77,7 @@ const router = useRouter();
 export default {
   components: { 
     HeaderPage,
-    ResponseDialog,
+    ResponseDialog, 
   },
   data() {
     
@@ -99,6 +105,7 @@ export default {
     return {
       formData,
       clients,
+      allClients:[],
       organisations,
       menus,
       headers,
@@ -112,6 +119,23 @@ export default {
     };
   },
   methods: {
+     filterClients(val, update) {
+        console.log(">>>>val>>>>>>",val)
+      if (val === "") {
+        update(() => {
+          this.clients = this.allClients;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.clients = this.allClients.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
     loadUserClients() {
       try {
         console.log(">>>>>calling LoadUserClients>>>>>>>>>", this.userEmail);
@@ -129,6 +153,7 @@ export default {
               label: option.name,
               value: option.code,
             }));
+            this.allClients = this.clients
             console.log("this.clients >>>>>>>>>>>>", this.clients);
           })
           .catch((error) => {

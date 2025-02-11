@@ -147,8 +147,9 @@ export default {
         const response = await axios.get(path.COUNTRY_SEARCH,
           headers
         );
-        if (response.data) {
-          rows.value = response.data;
+        console.log(response)
+        if (response) {
+          rows.value = response.data.data;
           selected.value = [];
           Loading.hide();
         }
