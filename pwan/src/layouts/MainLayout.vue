@@ -151,7 +151,7 @@ let defaultList = [
        
       {
         title: " Contact Info",
-        caption: "Community Quasar projects",
+        caption: "Contact Info",
         icon: "favorite",
         link: "/usercontact",
       },
@@ -161,6 +161,7 @@ let defaultList = [
         icon: "key",
         link: "/changepassword",
       },
+      /*
       {
         title: "Messaging Channel",
         caption: "Messaging Channel",
@@ -196,7 +197,16 @@ let defaultList = [
         icon: "key",
         link: "/runbirthdatymessage",
       },
-             
+      {
+        title: " Create User",
+        caption: "Create User",
+        icon: "key",
+        link: "/UserCreation",
+      },
+      */
+          
+          
+          
       
     ],
   },

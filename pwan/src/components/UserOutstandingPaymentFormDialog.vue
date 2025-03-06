@@ -361,10 +361,19 @@ export default {
       });
 
 
+
     axios
-      .get(path.ORG_ANNUAL_PAYMENT_YEARS, requestParams, this.headers)
+      .get(path.ORG_ANNUAL_PAYMENT_YEARS, {
+        params: {
+          client: this.profile.client,
+          organisation: this.profile.organisation,
+          order_by : "year" 
+        },
+      }, 
+      this.headers)
       .then((response) => {  
-        const currentYear = new Date().getFullYear()  
+        console.log(">>>>>>ORG_ANNUAL_PAYMENT_YEARS response>>>>>>>>",response)
+        var currentYear = new Date().getFullYear()  
         let hasCuurentYear = false
 
         for (let i = 0; i < response.data.data.length; i++) { 
@@ -372,11 +381,18 @@ export default {
             hasCuurentYear = true
           }
         }   
-
         if(!hasCuurentYear){ 
           
-          response.data.data.push({"year":currentYear})  
+          response.data.data.push({"year":currentYear})   
+
         } 
+        const responseLen = response.data.data.length;
+        console.log("response length >>>",responseLen)
+        const lastYear = response.data.data[responseLen - 1]["year"]
+        console.log(">>>>>lastYear>>>>>",lastYear)
+        for (let i = 1; i < 5; i++) { 
+          response.data.data.push({"year":lastYear + i}) 
+        }   
         this.years = response.data.data.map((option) => ({
           label: option.year,
           value: option.year,

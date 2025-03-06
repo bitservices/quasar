@@ -211,6 +211,7 @@ export default {
             const result = response.data;   
             if (result.success) {   
               this.isSupperUser =  result.data.is_superuser
+              SessionStorage.set("isSupperUser", result.data.is_superuser);
  
             }  
   

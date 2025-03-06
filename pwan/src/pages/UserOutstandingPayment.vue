@@ -12,6 +12,29 @@
         <div class="text-center"> 
                 <q-spinner v-if="showSpinner" color="primary" size="60px" />
         </div>
+        <q-card>
+        <q-card-section>
+        <div class="row">
+          <div class="col-8 text-h6"></div>
+          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
+                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
+          </div>
+        </div>
+      </q-card-section>
+      <q-card-section>
+        <q-form>
+          <q-select
+            filled
+            bottom-slots
+            v-model="userId"
+            :options="orgUsers"
+            label="Select Member" 
+            @update:model-value="loadUserOutstanding"
+            :dense="dense"
+          />
+        </q-form>
+      </q-card-section>
+        </q-card>
       <q-table
         class="my-sticky-header-table"
         flat
@@ -232,14 +255,47 @@ export default {
       pageName,
       hint, 
       showSpinner,
+      orgUsers :[],
+      userId : null,
 
     };
   },
   methods: {
+
+    loadUserOutstanding(obj) {
+      console.log("obj>>>>>>",obj)
+          this.loadUserImage(obj)
+          this.fetchData(obj.value)
+
+       
+    },
+    loadUserImage(userObj){
+      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
+       const requestParam = {
+        params: {
+          userId: userObj.value, 
+        },
+      };  
+      const promise =  axios.get(
+          path.USER_IMAGE,
+          requestParam,
+          this.headers
+        );  
+         promise
+          .then((response) => {
+ 
+            this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+          })
+          .catch((error) => {
+            console.log(error);
+          }); 
+    },
+
     generateOutstandingPayments(){
-      console.log("Generate outstanding payments>>>>>>>>")
+      console.log("Generate outstanding userId>>>>>>>>",userId)
     try {
-      this.showSpinner = true;
+      this.showSpinner = true;  
+      console.log(">>>>data>>>>>",data)
       const promise = axios.post(
           path.USR_OUTSTANDING_PAYMENTS_GENERATE,
           {organisation:this.profile.organisation, client:this.profile.client},
@@ -294,10 +350,27 @@ export default {
         // Perform actions when checkbox is unchecked
       }
     },
-    fetchData() {
-      try {
+    fetchData(userId) {
+      try { 
+        var requestParams = {
+          params: { 
+             client : this.profile.client,
+             organisation : this.profile.organisation, 
+          },
+        };
+        if(userId != null && userId != ""){
+         requestParams = {
+          params: {
+             client : this.profile.client,
+             organisation : this.profile.organisation, 
+             userId : userId
+          },
+        };
+        }
+        console.log("requestParams>>>>",requestParams)
         const promise = axios.get(
           path.USR_OUTSTANDING_PAYMENT_SEARCH,
+          requestParams,
           this.headers
         );
         console.log("promise in the Fetch Data>>>>>>>>>>", promise);
@@ -543,6 +616,39 @@ export default {
   mounted() {
     console.log("mounted");
     this.fetchData();
+     try {
+      console.log(">>>>>>this.profile>>>>>",this.profile)
+      const requestParams = {
+        params: {
+          client: this.profile.client,
+          organisation: this.profile.organisation,
+        },
+      };
+      const promise = axios.get(
+        path.ORGUSER_SEARCH,
+        requestParams,
+        this.headers
+      );
+      console.log(">>>>>>>>promise>>>>>>>", promise);
+      promise
+        .then((response) => {
+          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
+          this.orgUsers = response.data.data.map((option) => ({
+            label: option.userId.last_name +
+          " " +
+          option.userId.first_name +
+          " " +
+          option.userId.middle_name,
+            value: option.userId.id,
+          }));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+        } catch (error) {
+      console.error("Error:", error);
+    }
+
   },
   updated() {},
 };

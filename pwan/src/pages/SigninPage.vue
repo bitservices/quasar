@@ -149,6 +149,7 @@ export default {
                     if(response.data.success){ 
                         
                         LocalStorage.set("userEmail", this.formData.username); 
+                         LocalStorage.set("issupperUser", response.data.issupperuser); 
                         const userData = response.data.data;  
                         if((userData.last_name == null || userData.last_name.trim()=="") && 
                         (userData.first_name == null || userData.first_name.trim()=="")){

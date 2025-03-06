@@ -11,34 +11,6 @@
           />
       </q-card-section>
       <q-card-section>
-        <div v-if="isSupperUser">
-           <q-input
-                filled
-                bottom-slots
-                v-model="formData.userName"
-                @keyup="handleInput"
-                @keydown.enter="handleEnter"
-                placeholder="Search for Member"
-                :dense="dense" 
-              />
-              <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
-                <q-item
-                  clickable
-                  v-for="item in filteredSuggestions"
-                  :key="item.email"
-                  @click="selectRecord(item)"
-                >
-                  <q-item-section>{{ item.name }}</q-item-section>
-                  <q-item-section side>
-                    <!-- Side content -->
-                    <q-item-label caption lines="1">
-                      <img :src="item.image" />
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list> 
-
-        </div>
         <div class="row">
           <div class="col-8 text-h6"></div>
           <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
@@ -47,7 +19,7 @@
         </div>
       </q-card-section>
       <q-card-section>
-        <q-form  @submit.prevent="saveRecord" ref="userProfileForm">
+        <q-form  @submit.prevent="saveRecord" ref="userCreationForm">
           <div class="text-center"> 
                 <q-spinner v-if="showSpinner" color="primary" size="60px" />
             </div>  
@@ -74,14 +46,6 @@
             label="Middle Name" 
             :dense="dense"
           />
-           <q-select
-            filled
-            bottom-slots
-            v-model="formData.gender"
-            :options="genderList"
-            label="Select Gender"  
-            :dense="dense"  
-          /> 
           <q-input
             filled
             bottom-slots
@@ -90,30 +54,30 @@
             :dense="dense"
             :rules="[requiredRule]" 
           />
+           <q-input
+            filled
+            bottom-slots
+            v-model="formData.email"
+            label="Email" 
+            :dense="dense"
+            :rules="[requiredRule]" 
+          />
+          
+           <q-select
+            filled
+            bottom-slots
+            v-model="formData.gender"
+            :options="genderList"
+            label="Select Gender"  
+            :dense="dense"  
+          /> 
+          
           <div class="q-pa-md">
            
           <DatePicker v-model="formData.dateOfBirth" label="Date of Birth" @setDate="setDateOfBirth"  
            ref="birthDate" />
           </div>
-           <q-input
-            filled
-            bottom-slots
-            v-model="formData.email"
-            label="Email"
-            :readonly="isReadonly"
-            :dense="dense"
-            :rules="[requiredRule]" 
-          />
-           <q-input
-            filled
-            bottom-slots
-            v-model="formData.username"
-            label="User Name"
-            :readonly="isReadonly"
-            :dense="dense"
             
-          />
-           
           <div class="row">
             <div class="col-8">
                 <q-file
@@ -131,10 +95,10 @@
               <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">               
                   <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
 
-          </div>
+          </div> 
             </div>
             <q-row class="q-mt-md" justify="center">
-            <q-col cols="6" sm="4" class="q-mb-md">
+            <q-col cols="6" sm="4" class="q-mb-md"> 
               <q-btn
                       rounded  
                       label="Cancel"
@@ -153,7 +117,14 @@
                         />
             </q-col>
           </q-row>
- 
+            <ResponseDialog
+              v-model="showMessageDialog"
+              :cardClass="childRef.cardClass"
+              :textClass="childRef.textClass"
+              :label="childRef.label"
+              :message="childRef.message"
+              :buttonClass="childRef.buttonClass"
+            />
         </q-form>
       </q-card-section> 
     </q-card>
@@ -171,7 +142,8 @@ import path from "src/router/urlpath";
 import debug from "src/router/debugger"; 
 import { useRouter } from "vue-router"; 
 import HeaderPage from "src/components/HeaderPage.vue"; 
-import { inputFieldRequired } from 'src/validation/validation';
+import { inputFieldRequired } from 'src/validation/validation'; 
+import ResponseDialog from "src/components/ResponseDialog.vue"; 
 import DatePicker from "src/components/DatePicker.vue";  
 import { format } from 'date-fns';
 
@@ -179,6 +151,7 @@ export default {
    components: { 
     HeaderPage,  
     DatePicker,
+    ResponseDialog,
   }, 
    
   data() {
@@ -188,15 +161,26 @@ export default {
     const hint = computed(()=> t('userprofile.hint'))
     const router = useRouter();
     const headers = SessionStorage.getItem("headers");
+    const profile = LocalStorage.getItem("turnelParams"); 
+    
     const formData = ref({
       last_name: "",
       middle_name: "",
       first_name: "", 
     });
+     const childRef = ref({
+      label: "",
+      message: "",
+      textClass: "",
+      cardClass: "",
+      buttonClass: "",
+      data: {},
+    });
     
 
     return {
       formData, 
+      childRef,
       headers, 
       dense:true,
       isReadonly:true,
@@ -206,45 +190,55 @@ export default {
       showSpinner: false, 
       pageName,
       hint,
+      profile,
       requiredRule: value => inputFieldRequired(value), 
-      dateOfBirth:null,
-      isSupperUser : SessionStorage.getItem("isSupperUser"), 
-      suggestions: [],
-      filteredSuggestions: [],
-      showSuggestions: false,
+      dateOfBirth:null, 
+      showMessageDialog:false,
     };
   },
   methods: {
     saveRecord() {     
-       if (this.$refs.userProfileForm.validate()) {
-          this.showSpinner = true; 
-          console.log(">>>>>>>>Saving formdata>>>>>>>>>>>>",this.formData)
-          this.formData.gender = this.formData.gender.value
-          this.formData.status = this.formData.status.code 
+       if (this.$refs.userCreationForm.validate()) {
+          this.showSpinner = true;
+          this.formData.gender = this.formData.gender.value;
+          this.formData.username = this.formData.email;
+          this.formData.client = this.profile.client;
+          this.formData.organisation = this.profile.organisation;
+          this.formData.createdBy = LocalStorage.getItem("userEmail");
+          console.log(this.formData)
           const requestData = new FormData();
-          for (let key in this.formData) { 
-            console.log(key, ":::",this.formData[key])
+          for (let key in this.formData) {  
             requestData.append(key, this.formData[key]);
           }
           
           try { 
             console.log(">>>>reqeust data>>>>>>>",requestData)
-            const promise = axios.put(path.USER_UPDATE, requestData, this.headers);
+            const promise = axios.post(path.USER_CREATE, requestData, this.headers);
             promise
               .then((response) => {
                 // Extract data from the response
                 const result = response.data;  
                 if (result.success) {  
-                  this.formData = result.data; 
-                  this.formData.gender = {
-                    value : result.data.gender == null? "" : result.data.gender.code,
-                    label : result.data.gender == null? "" : result.data.gender.name,
-                  }
-                  this.showSpinner = false;
-                  this.router.push({ path: "/dashboard" });
                   
+                   this.childRef = {
+                  message: response.data.message,
+                  label: "Success",
+                  cardClass: "bg-positive text-white",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal",
+                }; 
+                }else{ 
 
+                  this.childRef = {
+                  message: result.message,
+                  label: "Error",
+                  cardClass: "bg-negative text-white error",
+                  textClass: "q-pt-none",
+                  buttonClass: "bg-white text-teal"
+                }; 
                 }
+                this.showMessageDialog = true; 
+                this.showSpinner=false;
     
                 // You can access properties of the response data as needed
               })
@@ -268,94 +262,6 @@ export default {
       } else {
         this.imageFile = null;
       }
-    },
-     handleInput() {
-      if (this.formData.userName === "" || this.formData.userName.length < 3) {
-        this.filteredSuggestions = [];
-        this.showSuggestions = false;
-      } else {
-        const filter = {
-          params: {
-            term: this.formData.userName,
-          },
-        };
-        axios
-          .get(path.USER_SEARCH_AUTOCOMPLETER, filter, this.headers)
-          .then((response) => {
-            // Assuming the response data is an array of objects with 'value' and 'label' properties
-            debug(response.data.data);
-            this.filteredSuggestions = response.data.data.map((option) => ({
-              name:
-                option.last_name +
-                " " +
-                option.first_name +
-                " " +
-                option.middle_name,
-              email: option.email,
-              id: option.id,
-
-            }));
-          })
-          .catch((error) => {
-            console.error("Error fetching options:", error);
-          }); 
-        this.showSuggestions = true;
-      }
-    },
-    handleEnter() {
-      if (this.filteredSuggestions.length > 0) { 
-        this.selectRecord(this.filteredSuggestions[0]);
-      }
-    },
-    selectRecord(userObj) {
-      console.log(">>>>>>>>>>>>value>>>>>>>>",userObj, ">>>>>>>email >>>>>>>>", userObj.username)
-      this.formData.userName = userObj.name;
-      this.formData.email = userObj.email;
-      this.formData.userId = userObj.id;
-      this.showSuggestions = false; 
-      this.loadUserByEmail(userObj.email)
-      //this.loadOrganisationAttendance(userObj.id)
-      // Optionally, emit an event or perform other actions when a suggestion is selected
-    },
-    loadUserByEmail(userEmail){
-       try {
-        const requestParam = {
-          params: {
-            email: userEmail,
-          },
-        };
-        const promise =  axios.get(
-          path.FIND_USER_BY_EMAIL,
-          requestParam,
-          this.headers
-        ); 
-
-         promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;    
-            if (result.success) { 
-              this.formData = result.data; 
-              console.log(">>>>>result.data>>>>>>",result.data);
-              this.formData.gender = {
-                value : result.data.gender == null? "" : result.data.gender.code,
-                label : result.data.gender == null? "" : result.data.gender.name,
-              }
-              this.dateOfBirth = format(this.formData.dateOfBirth, 'yyyy-MM-dd'); 
-             // this.imageFile = "data:image/jpeg;base64," + this.formData.imageByte   
-             this.$refs.birthDate.onChangeDate(this.dateOfBirth)
-
-             this.loadUserImage(result.data.id)
-
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } catch (error) {
-        console.error("Error:", error);
-      }
-
     },
     loadUserImage(userId){
        const requestParam = {
@@ -391,13 +297,8 @@ export default {
     console.log("before Mount");
   },
   mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
-    if(this.isSupperUser){
-      this.isReadonly = false
-    }
-    
-     const userEmail = LocalStorage.getItem("userEmail");
-      this.loadUserByEmail(userEmail);
+    console.log(">>>>>>>>>mounted>>>>>>>>>>"); 
+
       axios
       .get(path.GENDER_SEARCH_ALL)
       .then((response) => { 
@@ -405,6 +306,7 @@ export default {
           label: option.name,
           value: option.code,
         })); 
+        console.log(">>>>>>this.genderList>>>>>>>>",this.genderList)
       })
       .catch((error) => {
         console.error("Error fetching options:", error);

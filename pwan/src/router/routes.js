@@ -317,8 +317,20 @@ const routes = [
         component: () => import("src/pages/MessagingSetup.vue"),
       },
       {
-        path: "/runbirthdatymessage",
+        path: "/runbirthdaymessage",
         component: () => import("src/pages/RunBirthdayMessage.vue"),
+      },
+      {
+        path: "/usercreation",
+        component: () => import("src/pages/UserCreation.vue"),
+      },
+      {
+        path: "/clientprofile",
+        component: () => import("src/pages/ClientProfile.vue"),
+      },
+      {
+        path: "/generalledgerrpt",
+        component: () => import("src/pages/GeneralLedgerReport.vue"),
       },
       
        

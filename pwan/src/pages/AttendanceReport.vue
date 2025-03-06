@@ -111,20 +111,13 @@ export default {
         field: (row) => row.userId.email,
         sortable: true,
       },
-       {
-        name: "seatNumber",
+      {
+        name: "phoneNumber",
         align: "left",
-        label: "Seat Number",
-        field: (row) => row.seatNumber,
+        label: "Phone Number",
+        field: (row) => row.userId.phoneNumber,
         sortable: true,
-      },
-       {
-        name: "membershipType",
-        align: "left",
-        label: "MembeShip Type",
-        field: (row) => row.membership.name,
-        sortable: true,
-      },
+      }, 
        {
         name: "attendanceDate",
         align: "left",

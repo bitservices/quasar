@@ -364,7 +364,10 @@ export default {
     showDialog(){
        if (this.selected.length > 0) {
         this.medium_dialog = true;
-         const name =this.selected[0].userId.last_name + " "+this.selected[0].userId.first_name + " "+this.selected[0].userId.middle_name
+         console.log("status >>>>>>>>",this.selected[0])
+         const name =this.selected[0].user.last_name + " "+this.selected[0].user.first_name + " "+this.selected[0].user.middle_name
+         
+        
          if(this.selected[0].status.code == "A"){
           this.deactivate = true
           this.activate = false
@@ -392,7 +395,7 @@ export default {
       try {
         console.log(">>>>>data>>>>>>>>",data)
         const promise = axios.post(
-          path.ORGUSER_DEACTIVATE,
+          path.USER_WEBSITE_DEACTIVATE,
           data,
           this.headers
         ); 
@@ -426,7 +429,7 @@ export default {
       try {
         console.log(">>>>>requestParams>>>>>>>>",data)
         const promise = axios.post(
-          path.ORGUSER_ACTIVATE,
+          path.USER_WEBSITE_ACTIVATE,
           data,
           this.headers
         ); 

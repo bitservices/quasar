@@ -246,7 +246,7 @@ export default {
           this.$refs.qrcodescanner.stopCamera();
     },
     handleInput() {
-      if (this.formData.userName === "" || this.formData.userName.length < 4) {
+      if (this.formData.userName === "" || this.formData.userName.length < 3) {
         this.filteredSuggestions = [];
         this.showSuggestions = false;
       } else {

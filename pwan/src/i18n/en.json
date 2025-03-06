@@ -123,7 +123,7 @@
 },
 "upserupload":{
        "pagename": "User Upload",
-       "hint":"This page is used to upload Users, Generate a CSV file int the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"   
+       "hint":"This page is used to upload Users, Generate a CSV file in the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"   
 },
 "producttypedef":{
     "pagename": "Product Type Definition",
@@ -152,11 +152,11 @@
 },
 "orgupload":{
        "pagename": "Organisation Upload",
-       "hint":"This page is used to upload Organisation/Centers, Generate a CSV file int the following format: ['organisationCode','name', 'website', 'address', 'radius', 'meetingDays', 'slogan', 'allowSeatAllocation','validateMeetingStartTime', 'reservedSeats', 'seatPrefix', 'seatSufix', 'countryCode','stateCode', 'countyCode', 'client']"   
+       "hint":"This page is used to upload Organisation/Centers, Generate a CSV file in the following format: ['organisationCode','name', 'website', 'address', 'radius', 'meetingDays', 'slogan', 'allowSeatAllocation','validateMeetingStartTime', 'reservedSeats', 'seatPrefix', 'seatSufix', 'countryCode','stateCode', 'countyCode', 'client']"   
 }, 
 "productdefupload":{
   "pagename": "Product/Services Upload",
-  "hint":"This page is used to upload Products/Services provided by a particular client and organisation, Generate a CSV file int the following format: ['productType','name',  'productCategory','description', 'address', 'landmark', 'imageUrl', 'videoUrl','subscriptionFormUrl', 'amount', 'measurement', 'dimension', 'countryCode','stateCode', 'countyCode']"   
+  "hint":"This page is used to upload Products/Services provided by a particular client and organisation, Generate a CSV file in the following format: ['productType','name',  'productCategory','description', 'address', 'landmark', 'imageUrl', 'videoUrl','subscriptionFormUrl', 'amount', 'measurement', 'dimension', 'countryCode','stateCode', 'countyCode']"   
 },
 "integration":{
   "pagename": "Payment Integration",

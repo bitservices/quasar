@@ -1,10 +1,10 @@
 
 
 
-const BASEPATH = "http://localhost:8000";
-const QUASR_PATH = "http://localhost:9000"; 
-// const BASEPATH = "https://pwan.traisoft.com";
-// const QUASR_PATH =  "https://propertyconnect.traisoft.com";
+// const BASEPATH = "http://localhost:8000";
+// const QUASR_PATH = "http://localhost:9000"; 
+const BASEPATH = "https://pwan.traisoft.com";
+const QUASR_PATH =  "https://propertyconnect.traisoft.com";
 const APP_PATH = BASEPATH + "/api/pwanproperties/"; 
 const path = {
   ESTATE_AGENCY_URL: "https://estateagency.traisoft.com/?ref=",
@@ -63,6 +63,7 @@ const path = {
 
   FIND_USER_BY_EMAIL: APP_PATH + "user/findbyemail/",
   USER_UPDATE: APP_PATH + "user/update/",
+  USER_CREATE: APP_PATH + "user/create/",
 
   ACTIVE_USER_CLIENT_SEARCH: APP_PATH + "userclient/findactiveuseclient/",
 
@@ -82,6 +83,9 @@ const path = {
   PRODUCTTYPE_UPDATE: APP_PATH + "producttype/update/",
   PRODUCTTYPE_SEARCH: APP_PATH + "producttype/search/",
   PRODUCTTYPE_REMOVE: APP_PATH + "producttype/remove/",
+
+  
+  TRANSACTIONTYPE_SEARCH: APP_PATH + "transtype/search/",
 
   PAYMENTTYPE_CREATE: APP_PATH + "paymenttype/create/",
   PAYMENTTYPE_UPDATE: APP_PATH + "paymenttype/update/",
@@ -405,6 +409,10 @@ const path = {
 
   SEND_MESSAGE : APP_PATH + "msgingstup/sendmessage/",
   SEND_BIRTHDATY_MESSAGE : APP_PATH + "msgingstup/runBirthDayMessageToMembersByCordinators/",
+
+  
+  GENERAL_LEDGER_TRANSACTION_SEARCH: APP_PATH + "generalledger/search/", 
+ GENERAL_LEDGER_TRANSACTION_REPORT: APP_PATH + "report/generalledgerreport/",
   
 
   
