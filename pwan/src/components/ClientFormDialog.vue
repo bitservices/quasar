@@ -1,81 +1,81 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
    
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     > 
-    <q-card-section class="pwan-blue text-white">
+    <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
       <q-card-section>
-        <q-form @submit.prevent="saveRecord" ref="clientForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <q-form @submit.prevent='saveRecord' ref='clientForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :readonly="isReadonly"
-            :dense="dense"
-            :rules="[inputFieldRule]" 
+            v-model='formData.code'
+            label='Code'
+            :readonly='isReadonly'
+            :dense='dense'
+            :rules='[inputFieldRule]' 
           />
           <div>
-            <q-checkbox v-model="isChecked" label="Is an Affilate" />
+            <q-checkbox v-model='isChecked' label='Is an Affilate' />
           </div>
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
-            :rules="[inputFieldRule]" 
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
+            :rules='[inputFieldRule]' 
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.website"
-            label="Web Site"
-            :dense="dense"
+            v-model='formData.website'
+            label='Web Site'
+            :dense='dense'
           /> 
-          <div class="row">
-            <div class="cols-8">
+          <div class='row'>
+            <div class='cols-8'>
                 <q-file
                   bottom-slots
                   filled
-                  v-model="formData.logo"
-                  @update:model-value="onFileChange"
-                  label="Client Logo"
+                  v-model='formData.logo'
+                  @update:model-value='onFileChange'
+                  label='Client Logo'
                 >
                   <template v-slot:append>
-                    <q-icon name="attachment" />
+                    <q-icon name='attachment' />
                   </template>
                 </q-file>
               </div>
-              <div v-if="logoFile" class="cols-4 q-mt-md">
-                <img :src="logoFile" alt="Preview" style="max-width: 100%;" />
+              <div v-if='logoFile' class='cols-4 q-mt-md'>
+                <img :src='logoFile' alt='Preview' style='max-width: 100%;' />
             </div>
             </div>
 
-              <div class="row">
-                  <q-btn id="closeBtn"
+              <div class='row'>
+                  <q-btn id='closeBtn'
                         rounded  
-                        label="Close"
-                        icon="close"
+                        label='Close'
+                        icon='close'
                         v-close-popup
-                        class="pwan-blue top-margin full-width"
+                        class='pwan-blue top-margin full-width'
                       />  
                   <q-btn
-                        :label="actionLabel"
+                        :label='actionLabel'
                         rounded
-                        type="submit"
-                        icon="save" 
-                        class="pwan-button top-margin full-width"
+                        type='submit'
+                        icon='save' 
+                        class='pwan-button top-margin full-width'
                       />
                 </div>
              
@@ -87,20 +87,19 @@
 
 <script>
 
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import path from 'src/router/urlpath'; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { isRequired ,inputFieldRequired} from 'src/validation/validation';
 
 export default {
   components: { 
     HeaderPage,
   },
-  name: "StandingDataFormDialog",
+  name: 'StandingDataFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -137,21 +136,21 @@ export default {
       window.innerHeight || document.documentElement.clientHeight; 
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
     const logoFile = ref(null)
-    const profile = LocalStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem('turnelParams');
     const formData = ref({
-      code: "",
-      name: "",
-      website: "",
+      code: '',
+      name: '',
+      website: '',
       isAnAffilate: false, 
-      logo : "",
+      logo : '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -177,7 +176,7 @@ export default {
     saveRecord() {   
        if (this.$refs.clientForm.validate()) {
          this.showSpinner = true; 
-          this.formData.email = this.profile == null? LocalStorage.getItem("userEmail"):this.profile.email;  
+          this.formData.email = this.profile == null? LocalStorage.getItem('userEmail'):this.profile.email;  
           if (this.isChecked) {
             this.formData.isAnAffilate = true;
           } else {
@@ -188,7 +187,7 @@ export default {
             requestData.append(key, this.formData[key]);
           }  
 
-          this.$emit("formDataSubmitted", requestData);
+          this.$emit('formDataSubmitted', requestData);
           document.getElementById('closeBtn').click();
           this.showDialog = true;
            this.showSpinner = false;
@@ -208,7 +207,7 @@ export default {
          promise
           .then((response) => {
  
-            this.logoFile = "data:image/jpeg;base64," + response.data.data.logo;
+            this.logoFile = 'data:image/jpeg;base64,' + response.data.data.logo;
           })
           .catch((error) => {
             console.log(error);
@@ -217,10 +216,10 @@ export default {
     onFileChange(file) { 
       if (file) {
         const reader = new FileReader();
-        console.log("reader>>>>>>>",reader)
+        console.log('reader>>>>>>>',reader)
        reader.onload  = function(e) {
           const logoByte = e.target.result;  
-          this.logoFile = "data:image/jpeg;base64,"+logoByte 
+          this.logoFile = 'data:image/jpeg;base64,'+logoByte 
         }; 
       } else {
         this.logoFile = null;
@@ -228,33 +227,33 @@ export default {
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    console.log('Calling unmounted>>>>>>>>>>');
     this.formData = {
-      code: "",
-      name: "",
-      website: "",
+      code: '',
+      name: '',
+      website: '',
       isAnAffilate: false,
-      email: "",
+      email: '',
     };
   },
   updated() {
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem('headers');
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       this.isReadonly = true
       try {
         const requestParams = {
@@ -272,24 +271,24 @@ export default {
               this.formData.status = result.data[0].status.code
               this.isChecked = this.formData.isAnAffilate;
               this.loadUClientLogo(result.data[0].code)
-              //this.logoFile = "data:image/jpeg;base64," + result.data[0].logo 
+              //this.logoFile = 'data:image/jpeg;base64,' + result.data[0].logo 
             }
           })
           .catch((error) => {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
       this.isReadonly = false
       this.logoFile = null
       this.formData = {
-        code: "",
-        name: "",
-        website: "",
+        code: '',
+        name: '',
+        website: '',
         isAnAffilate: false,
-        email: "",
+        email: '',
       };
     }
   },

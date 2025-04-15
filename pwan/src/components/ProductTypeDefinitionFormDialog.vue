@@ -1,192 +1,192 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
-       <q-card-section class="pwan-blue text-white">
+       <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
 
       <q-card-section>
-         <q-form @submit.prevent="saveRecord" ref="productTypeDefinitionForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+         <q-form @submit.prevent='saveRecord' ref='productTypeDefinitionForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div> 
           <div> 
           <q-select
             filled
             bottom-slots
-            v-model="formData.productType"
-            :options="productTypes"
-            label="Select Product Type"
-            :readonly="isReadonly" 
-            :dense="dense"
-            :rules="[requiredRule]"
+            v-model='formData.productType'
+            :options='productTypes'
+            label='Select Product Type'
+            :readonly='isReadonly' 
+            :dense='dense'
+            :rules='[requiredRule]'
           />
 
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
-            :rules="[inputFieldRule]"
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
+            :rules='[inputFieldRule]'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.address"
-            label="Address"
-            :dense="dense"
+            v-model='formData.address'
+            label='Address'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.amount"
-            label="Enter Amount"
-            type="number"
-            step="0.01"
-            :rules="[inputFieldRule]"
+            v-model='formData.amount'
+            label='Enter Amount'
+            type='number'
+            step='0.01'
+            :rules='[inputFieldRule]'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.description"
-            label="Description"
-            type="textarea"
-            rows="2"
-            maxlength="200"
+            v-model='formData.description'
+            label='Description'
+            type='textarea'
+            rows='2'
+            maxlength='200'
             counter
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.landmark"
-            label="Landmark"
-            type="textarea"
-            rows="3"
-            maxlength="300"
+            v-model='formData.landmark'
+            label='Landmark'
+            type='textarea'
+            rows='3'
+            maxlength='300'
             counter
           />
           <q-checkbox
-            v-model="formData.allowedPartialPayment"
-            label="Allowed Parital Payment"
-            color="primary"
+            v-model='formData.allowedPartialPayment'
+            label='Allowed Parital Payment'
+            color='primary'
           />
           <q-checkbox
-            v-model="formData.allowedInspection"
-            label="Allowed Inspection"
-            color="secondary"
+            v-model='formData.allowedInspection'
+            label='Allowed Inspection'
+            color='secondary'
           /> 
            <q-input
               filled
               bottom-slots
-              v-model="formData.inspectionTime"
-              type="time"
-              label="Inspection Time"
-              :dense="dense"  
+              v-model='formData.inspectionTime'
+              type='time'
+              label='Inspection Time'
+              :dense='dense'  
             /> 
           <q-select
             filled
             bottom-slots
-            v-model="formData.productStatus"
-            :options="productStatusList"
-            label="Select Product Status"
-            :dense="dense" 
-            :rules="[requiredRule]"
+            v-model='formData.productStatus'
+            :options='productStatusList'
+            label='Select Product Status'
+            :dense='dense' 
+            :rules='[requiredRule]'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.totalMeasurement"
-            label="Enter Total Size"
-            type="number"
+            v-model='formData.totalMeasurement'
+            label='Enter Total Size'
+            type='number'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.dimension"
-            :options="dimensions"
-            label="Select Dimension"
-            :dense="dense" 
-            :rules="[requiredRule]"
+            v-model='formData.dimension'
+            :options='dimensions'
+            label='Select Dimension'
+            :dense='dense' 
+            :rules='[requiredRule]'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.country"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense" 
-            :rules="[requiredRule]"
+            v-model='formData.country'
+            :options='countries'
+            label='Select Country'
+            @update:model-value='handleCountryChange'
+            :dense='dense' 
+            :rules='[requiredRule]'
              use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterCountries"
+            @filter='filterCountries'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.state"
-            :options="stateList"
-            label="Select State"
-            @update:model-value="handleStateChange"
-            :dense="dense"
-            :rules="[requiredRule]"
+            v-model='formData.state'
+            :options='stateList'
+            label='Select State'
+            @update:model-value='handleStateChange'
+            :dense='dense'
+            :rules='[requiredRule]'
              use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterStates"
+            @filter='filterStates'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.county"
-            :options="counties"
-            label="Select County"
-            :dense="dense"
-            :rules="[requiredRule]"
+            v-model='formData.county'
+            :options='counties'
+            label='Select County'
+            :dense='dense'
+            :rules='[requiredRule]'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterCounties"
+            @filter='filterCounties'
           />  
-          <div v-if="showBytes">
+          <div v-if='showBytes'>
             <q-card>
               <q-card-section>
               <q-uploader 
-                  label="Drag and drop Image file or click to select one"
+                  label='Drag and drop Image file or click to select one'
                   single 
-                  @added="handleImageFilesAdded"
+                  @added='handleImageFilesAdded'
                 /> 
               </q-card-section>
             </q-card>
             <q-card>
               <q-card-section>
               <q-uploader 
-                  label="Drag and drop Subscription file or click to select one"
+                  label='Drag and drop Subscription file or click to select one'
                   single 
-                  @added="handleSubscriptionFilesAdded"
+                  @added='handleSubscriptionFilesAdded'
                 /> 
             </q-card-section>
             </q-card>
             <q-card>
             <q-card-section>
             <q-uploader 
-                label="Drag and drop Video file or click to select one"
+                label='Drag and drop Video file or click to select one'
                 single 
-                @added="handleVideoFilesAdded"
+                @added='handleVideoFilesAdded'
               /> 
             </q-card-section>
             <q-card-section>
             <q-video
-              :src="formData.videoUrl"
-              autoplay="false"
+              :src='formData.videoUrl'
+              autoplay='false'
               controls 
             />  
             </q-card-section>
@@ -194,21 +194,21 @@
            </div>
           </div>
 
-          <q-card-actions align="center">
-          <div class="row">
-            <q-btn id="closeBtn"
+          <q-card-actions align='center'>
+          <div class='row'>
+            <q-btn id='closeBtn'
                   rounded  
-                  label="Close"
-                  icon="close"
+                  label='Close'
+                  icon='close'
                   v-close-popup
-                  class="pwan-blue top-margin full-width"
+                  class='pwan-blue top-margin full-width'
                 />  
             <q-btn
-                  :label="actionLabel"
+                  :label='actionLabel'
                   rounded
-                  type="submit"
-                  icon="save" 
-                  class="pwan-button top-margin full-width"
+                  type='submit'
+                  icon='save' 
+                  class='pwan-button top-margin full-width'
                 />
           </div>
           </q-card-actions>
@@ -219,20 +219,20 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger'; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { isRequired ,inputFieldRequired} from 'src/validation/validation';
 
 export default {
   components:{
     HeaderPage
   }, 
-  name: "ProductTypeFormDialog",
+  name: 'ProductTypeFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -276,20 +276,20 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
 
-    const profile = LocalStorage.getItem("turnelParams");
-    const headers = SessionStorage.getItem("headers");
+    const profile = LocalStorage.getItem('turnelParams');
+    const headers = SessionStorage.getItem('headers');
     const formData = ref({ 
-      client: "",
-      organisation: "",
-      createdBy: "",
+      client: '',
+      organisation: '',
+      createdBy: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -301,7 +301,7 @@ export default {
       dialogHeight,
       profile,
       headers,
-      time: "10:00",
+      time: '10:00',
       dense: true,
       countries: [],
       allCountries:[],
@@ -326,8 +326,8 @@ export default {
   },
   methods: {
     filterCountries(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.countries = this.allCountries;
         });
@@ -343,8 +343,8 @@ export default {
     }, 
 
     filterStates(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.stateList = this.allStates;
         });
@@ -359,8 +359,8 @@ export default {
       });
     }, 
     filterCounties(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.counties = this.allCounties;
         });
@@ -402,7 +402,7 @@ export default {
         for (let key in data) {  
           requestData.append(key, data[key]);
         } 
-        this.$emit("formDataSubmitted", requestData); 
+        this.$emit('formDataSubmitted', requestData); 
         document.getElementById('closeBtn').click();
         this.showDialog = true; 
          this.showSpinner = false;  
@@ -423,10 +423,10 @@ export default {
             value: option.code,
           }));
            this.allStates = this.stateList;
-          console.log("this.state List >>>>>>>>>>>>", this.stateList);
+          console.log('this.state List >>>>>>>>>>>>', this.stateList);
         })
         .catch((error) => {
-          console.error("Error fetching options:", error);
+          console.error('Error fetching options:', error);
         });
     },
     handleStateChange(selectedItem) {
@@ -439,26 +439,28 @@ export default {
       axios
         .get(path.COUNTY_SEARCH, requestParams, this.headers)
         .then((response) => { 
-          console.log(">>>response.data>>>",response.data)
+          console.log('>>>response.data>>>',response.data)
           this.counties = response.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
           this.allCounties = this.counties;
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error)
+        });
     },
     
    
      handleImageFilesAdded(files) { 
         files.forEach(file => { 
-          console.log(">>>this.formdata", this.formData)
+          console.log('>>>this.formdata', this.formData)
                 const formData = new FormData();
                 formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append("id",this.formData.id)
-                formData.append("destination",path.UPLOAD_DESINATION)
-                formData.append("client",this.profile.client)
-                formData.append("organisation",this.profile.organisation)
+                formData.append('id',this.formData.id)
+                formData.append('destination',path.UPLOAD_DESINATION)
+                formData.append('client',this.profile.client)
+                formData.append('organisation',this.profile.organisation)
                 // Use Axios to send the file
                 axios.post(path.PRODUCTDEF_UPDATE_IMAGE, formData)
                   .then(response => {
@@ -472,13 +474,13 @@ export default {
      handleSubscriptionFilesAdded(files){
        files.forEach(file => { 
         
-      console.log(">>>this.formdata", this.formData)
+      console.log('>>>this.formdata', this.formData)
              const formData = new FormData();
                 formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append("id",this.formData.id)
-                formData.append("destination",path.UPLOAD_DESINATION)
-                formData.append("client",this.profile.client)
-                formData.append("organisation",this.profile.organisation)
+                formData.append('id',this.formData.id)
+                formData.append('destination',path.UPLOAD_DESINATION)
+                formData.append('client',this.profile.client)
+                formData.append('organisation',this.profile.organisation)
                 // Use Axios to send the file
                 axios.post(path.PRODUCTDEF_UPDATE_SUBSCRIPTION, formData)
                   .then(response => {
@@ -493,13 +495,13 @@ export default {
      handleVideoFilesAdded(files){
        files.forEach(file => { 
         
-      console.log(">>>this.formdata", this.formData)
+      console.log('>>>this.formdata', this.formData)
              const formData = new FormData();
                 formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append("id",this.formData.id)
-                formData.append("destination",path.UPLOAD_DESINATION)
-                formData.append("client",this.profile.client)
-                formData.append("organisation",this.profile.organisation)
+                formData.append('id',this.formData.id)
+                formData.append('destination',path.UPLOAD_DESINATION)
+                formData.append('client',this.profile.client)
+                formData.append('organisation',this.profile.organisation)
                 // Use Axios to send the file
                 axios.post(path.PRODUCTDEF_UPDATE_VIDEO, formData)
                   .then(response => {
@@ -514,13 +516,13 @@ export default {
   },
 
   beforeCreate() {
-    debug("beforeCreate");
+    debug('beforeCreate');
   },
   created() {
-    debug("created");
+    debug('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() { 
      const requestParams = {
@@ -540,18 +542,22 @@ export default {
         }));
         this.allCountries = this.countries;
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log(error)
+      });
     axios
       .get(path.PRODUCTTYPE_SEARCH, requestParams, this.headers)
       .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
-        console.log(">>>>>>>product type response>>>>>>>>>",response.data.data)
+        console.log('>>>>>>>product type response>>>>>>>>>',response.data.data)
         this.productTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log(error)
+      });
 
     axios
       .get(path.PRODUCTSTATUS_SEARCH_ALL, this.headers)
@@ -563,7 +569,7 @@ export default {
         }));
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
     axios
@@ -575,10 +581,12 @@ export default {
           value: option.code,
         }));
       })
-      .catch((error) => {});
+      .catch((error) => {
+        console.log(error)
+      });
   },
   unmounted() {
-    debug("Calling unmounted>>>>>>>>>>"); 
+    debug('Calling unmounted>>>>>>>>>>'); 
 
   },
   updated() {
@@ -592,7 +600,7 @@ export default {
             organisation: this.profile.organisation,
           },
         };  
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       this.isReadonly = true;
       try { 
         const promise = axios.get(this.urlLink, requestParams, this.headers);
@@ -602,7 +610,7 @@ export default {
             const result = response.data;
 
             if (result.success) {
-              debug("fetched product Type Definition>>>>>>", result.data[0]);
+              debug('fetched product Type Definition>>>>>>', result.data[0]);
               this.formData = result.data[0];
               this.formData.country = {
                 value: result.data[0].country.code,
@@ -642,7 +650,7 @@ export default {
             debug(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     
     }

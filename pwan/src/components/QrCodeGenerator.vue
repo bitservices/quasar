@@ -2,14 +2,14 @@
   <q-card>
     <q-card-section>
       <q-input
-        v-model="inputValue"
-        label="Enter text or URL"
+        v-model='inputValue'
+        label='Enter text or URL'
         filled
       />
-      <q-btn @click="generateQRCode" label="Generate QR Code" color="primary" />
+      <q-btn @click='generateQRCode' label='Generate QR Code' color='primary' />
       <q-separator />
-      <div v-if="qrCode">
-        <qrcode-vue :value="qrCode" :size="200" :margin="0" />
+      <div v-if='qrCode'>
+        <qrcode-vue :value='qrCode' :size='200' :margin='0' />
       </div>
     </q-card-section>
   </q-card>

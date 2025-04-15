@@ -1,15 +1,15 @@
 <template>
   <div>
-    <q-item style="max-width: 420px" v-for="msg in messages" :key="msg.id" clickable v-ripple>
+    <q-item style='max-width: 420px' v-for='msg in messages' :key='msg.id' clickable v-ripple>
       <q-item-section avatar>
         <q-avatar>
-          <img :src="msg.avatar">
+          <img :src='msg.avatar'>
         </q-avatar>
       </q-item-section>
 
       <q-item-section>
         <q-item-label>{{ msg.name }}</q-item-label>
-        <q-item-label caption lines="1">{{ msg.msg }}</q-item-label>
+        <q-item-label caption lines='1'>{{ msg.msg }}</q-item-label>
       </q-item-section>
 
       <q-item-section side>
@@ -19,11 +19,10 @@
   </div>
 </template>
 
-<script>
-import {defineComponent} from 'vue'
+<script> 
 
 export default{
-  name: "UserMessages",
+  name: 'UserMessages',
   data() {
     return {
       messages: [

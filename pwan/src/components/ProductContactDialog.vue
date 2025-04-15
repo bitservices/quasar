@@ -1,11 +1,11 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
+        <div class='text-h6'>{{ form.label }}</div>
       </q-card-section>
 
       <q-card-section>
@@ -14,24 +14,24 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.contactUser"
-            @keyup="handleInput"
-            @keydown.enter="handleEnter"
-            placeholder="Search for PBO"
-            :dense="dense"
+            v-model='formData.contactUser'
+            @keyup='handleInput'
+            @keydown.enter='handleEnter'
+            placeholder='Search for PBO'
+            :dense='dense'
           />
-          <q-list v-if="showSuggestions && filteredSuggestions.length > 0">
+          <q-list v-if='showSuggestions && filteredSuggestions.length > 0'>
             <q-item
               clickable
-              v-for="item in filteredSuggestions"
-              :key="item.email"
-              @click="selectRecord(item.email)"
+              v-for='item in filteredSuggestions'
+              :key='item.email'
+              @click='selectRecord(item.email)'
             >
               <q-item-section>{{ item.name }}</q-item-section>
               <q-item-section side>
                 <!-- Side content -->
-                <q-item-label caption lines="1">
-                  <img :src="item.image" />
+                <q-item-label caption lines='1'>
+                  <img :src='item.image' />
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -39,24 +39,24 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.productType"
-            @keyup="handleProductType"
-            @keydown.enter="handleProductTypeEnter"
-            placeholder="Search Product Types"
-            :dense="dense"
+            v-model='formData.productType'
+            @keyup='handleProductType'
+            @keydown.enter='handleProductTypeEnter'
+            placeholder='Search Product Types'
+            :dense='dense'
           />
-          <q-list v-if="showProductTypes && filteredProductTypes.length > 0">
+          <q-list v-if='showProductTypes && filteredProductTypes.length > 0'>
             <q-item
               clickable
-              v-for="item in filteredProductTypes"
-              :key="item.email"
-              @click="selectPRoductTypeRecord(item.email)"
+              v-for='item in filteredProductTypes'
+              :key='item.email'
+              @click='selectPRoductTypeRecord(item.email)'
             >
               <q-item-section>{{ item.name }}</q-item-section>
               <q-item-section side>
                 <!-- Side content -->
-                <q-item-label caption lines="1">
-                  <img :src="item.image" />
+                <q-item-label caption lines='1'>
+                  <img :src='item.image' />
                 </q-item-label>
               </q-item-section>
             </q-item>
@@ -64,19 +64,19 @@
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Cancel"
+            size='md'
+            color='primary'
+            label='Cancel'
             v-close-popup
           />
           <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
+            :label='actionLabel'
+            color='secondary'
+            @click='saveRecord'
+            size='md'
             rounded
             v-close-popup
           />
@@ -87,14 +87,14 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger";
+import { LocalStorage, SessionStorage } from 'quasar';
+import {  ref } from 'vue';
+import axios from 'axios';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger';
 
 export default {
-  name: "SalesTransactionFormDialog",
+  name: 'SalesTransactionFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -130,21 +130,21 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
 
-    const profile = LocalStorage.getItem("turnelParams");
-    const headers = SessionStorage.getItem("headers");
+    const profile = LocalStorage.getItem('turnelParams');
+    const headers = SessionStorage.getItem('headers');
     const formData = ref({
-      client: "",
-      organisation: "",
-      createdBy: "",
-      productType: "",
+      client: '',
+      organisation: '',
+      createdBy: '',
+      productType: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -168,7 +168,7 @@ export default {
   methods: {
     
      handleProductType() {
-      if (this.formData.productType === "" || this.formData.productType.length < 4) {
+      if (this.formData.productType === '' || this.formData.productType.length < 4) {
         this.filteredProductTypes = [];
         this.showProductTypes = false;
       } else {
@@ -185,16 +185,16 @@ export default {
             this.filteredProductTypes = response.data.data.map((option) => ({
               name:
                 option.last_name +
-                " " +
+                ' ' +
                 option.first_name +
-                " " +
+                ' ' +
                 option.middle_name,
               email: option.email,
               image: option.imageUrl,
             }));
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
         // this.filteredSuggestions = this.suggestions.filter((item) =>
         //   item.toLowerCase().includes(this.inputValue.toLowerCase())
@@ -203,7 +203,7 @@ export default {
       }
     },
     handleInput() {
-      if (this.formData.contactUser === "" || this.formData.contactUser.length < 4) {
+      if (this.formData.contactUser === '' || this.formData.contactUser.length < 4) {
         this.filteredSuggestions = [];
         this.showSuggestions = false;
       } else {
@@ -220,16 +220,16 @@ export default {
             this.filteredSuggestions = response.data.data.map((option) => ({
               name:
                 option.last_name +
-                " " +
+                ' ' +
                 option.first_name +
-                " " +
+                ' ' +
                 option.middle_name,
               email: option.email,
               image: option.imageUrl,
             }));
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
         // this.filteredSuggestions = this.suggestions.filter((item) =>
         //   item.toLowerCase().includes(this.inputValue.toLowerCase())
@@ -259,34 +259,34 @@ export default {
     },
     saveRecord() {
       //this.onClick(formData.value);
-    debug(">>>>>>>>inside sav       e method>>>>>>>>", this.formData) 
+    debug('>>>>>>>>inside sav       e method>>>>>>>>', this.formData) 
       //this.formData.client = this.profile.client;
       //this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email; 
-      this.$emit("formDataSubmitted", this.formData); 
+      this.$emit('formDataSubmitted', this.formData); 
     },
   },
   beforeCreate() {
-    debug("beforeCreate");
+    debug('beforeCreate');
   },
   created() {
-    debug("created");
+    debug('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    debug("Calling mounted>>>>>>>>>>");
+    debug('Calling mounted>>>>>>>>>>');
   },
   unmounted() {
-    debug("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    debug('Calling unmounted>>>>>>>>>>');
+    this.formData = { code: '', name: '' };
   },
   updated() {
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
         const requestParams = {
           params: {
@@ -302,23 +302,23 @@ export default {
             const result = response.data;
             if (result.success) {
               this.formData = result.data[0];
-              debug("formData>>>>>>>", this.formData);
+              debug('formData>>>>>>>', this.formData);
             }
           })
           .catch((error) => {
             debug(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
       this.formData = {
-        code: "",
-        name: "",
-        client: "",
-        organisation: "",
-        createdBy: "",
-        productType : "",
+        code: '',
+        name: '',
+        client: '',
+        organisation: '',
+        createdBy: '',
+        productType : '',
       };
     }
   },

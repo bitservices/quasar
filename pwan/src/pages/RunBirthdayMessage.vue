@@ -1,37 +1,37 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     >  
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section> 
       <q-card-section>
-         <q-form @submit.prevent="sendMessage" ref="sendMsgForm">
-            <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+         <q-form @submit.prevent='sendMessage' ref='sendMsgForm'>
+            <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
            
  
 
-            <q-card-actions align="center">              
+            <q-card-actions align='center'>              
               <q-btn
-                class="pwan-button top-margin full-width"
-                label="Run BirthDay Message"  
-                type="submit" 
+                class='pwan-button top-margin full-width'
+                label='Run BirthDay Message'  
+                type='submit' 
               />
             </q-card-actions>
         </q-form>
         <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
       </q-card-section>
      
@@ -40,14 +40,14 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref,computed } from "vue";  
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref,computed } from 'vue';  
+import path from 'src/router/urlpath';
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue"; 
-import ResponseDialog from "src/components/ResponseDialog.vue";
-import { isRequired,inputFieldRequired } from 'src/validation/validation';  
+import HeaderPage from 'src/components/HeaderPage.vue'; 
+import ResponseDialog from 'src/components/ResponseDialog.vue';
+import { inputFieldRequired } from 'src/validation/validation';  
 export default {
     components: {  
     HeaderPage, 
@@ -58,18 +58,17 @@ export default {
      const { t } = useI18n() 
     const pageName = computed(()=> t('sendmsg.pagename'))
     const hint = computed(()=> t('sendmsg.hint'))
-    const headers = SessionStorage.getItem("headers");  
-    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem('headers');  
+    const userEmail = LocalStorage.getItem('userEmail');
      
    
-    const selected = ref([]);
-     
+      
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
 
@@ -79,7 +78,7 @@ export default {
       headers, 
       dense:true, 
       messageChannels:[],
-      messageChannel: ref(""),
+      messageChannel: ref(''),
       pageName,
       hint,   
       requiredUnit:1,  
@@ -101,22 +100,22 @@ export default {
                   .then((response) => {
                     // Extract data from the response
                     const result = response.data;   
-                    console.log(">>>>>>result>>>>>>>",result)
+                    console.log('>>>>>>result>>>>>>>',result)
                     if(result.success){
                        this.childRef = {
                         message: result.message,
-                          label: "Success",
-                          cardClass: "bg-positive text-white",
-                          textClass: "q-pt-none",
-                          buttonClass: "bg-white text-teal",
+                          label: 'Success',
+                          cardClass: 'bg-positive text-white',
+                          textClass: 'q-pt-none',
+                          buttonClass: 'bg-white text-teal',
                         };
                     }else{
                        this.childRef = {
                         message: error.message,
-                        label: "Error",
-                        cardClass: "bg-negative text-white error",
-                        textClass: "q-pt-none",
-                        buttonClass: "bg-white text-teal",
+                        label: 'Error',
+                        cardClass: 'bg-negative text-white error',
+                        textClass: 'q-pt-none',
+                        buttonClass: 'bg-white text-teal',
                       }
                     }
                     
@@ -126,10 +125,10 @@ export default {
                   .catch((error) => { 
                       this.childRef = {
                       message: error.message,
-                      label: "Success",
-                      cardClass: "bg-negative text-white error",
-                      textClass: "q-pt-none",
-                      buttonClass: "bg-white text-teal",
+                      label: 'Success',
+                      cardClass: 'bg-negative text-white error',
+                      textClass: 'q-pt-none',
+                      buttonClass: 'bg-white text-teal',
                     }; 
                   }); 
     },
@@ -138,23 +137,23 @@ export default {
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

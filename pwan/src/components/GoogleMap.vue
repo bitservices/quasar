@@ -1,11 +1,10 @@
 <template>
-  <GmapMap :center="center" :zoom="zoom" style="width: 100%; height: 400px">
+  <GmapMap :center='center' :zoom='zoom' style='width: 100%; height: 400px'>
     <!-- Add other map components or markers here if needed -->
   </GmapMap>
 </template>
 
-<script>
-import { gmapApi } from "@fawmi/vue-google-maps";
+<script> 
 
 export default {
   data() {

@@ -1,23 +1,23 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
-        <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
         </div>
         <q-card>
         <q-card-section>
-        <div class="row">
-          <div class="col-8 text-h6"></div>
-          <div v-if="imageFile" class="col-4" style="display: flex; justify-content: flex-end">
-                  <img :src="imageFile" alt="Preview" style="max-width: 100px" width="150px"  height="100px" />
+        <div class='row'>
+          <div class='col-8 text-h6'></div>
+          <div v-if='imageFile' class='col-4' style='display: flex; justify-content: flex-end'>
+                  <img :src='imageFile' alt='Preview' style='max-width: 100px' width='150px'  height='100px' />
           </div>
         </div>
       </q-card-section>
@@ -26,88 +26,88 @@
           <q-select
             filled
             bottom-slots
-            v-model="userId"
-            :options="orgUsers"
-            label="Select Member" 
-            @update:model-value="loadUserOutstanding"
-            :dense="dense"
+            v-model='userId'
+            :options='orgUsers'
+            label='Select Member' 
+            @update:model-value='loadUserOutstanding'
+            :dense='dense'
           />
         </q-form>
       </q-card-section>
         </q-card>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="User Outstanding Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        selection="single"
-        v-model:selected="selected"
+        title='User Outstanding Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        selection='single'
+        v-model:selected='selected'
       >
-        <template v-slot:body-cell-checkbox="props">
-          <q-checkbox v-model="props.selected" />
+        <template v-slot:body-cell-checkbox='props'>
+          <q-checkbox v-model='props.selected' />
         </template>
         <template v-slot:top>
           <q-label>User Outstanding Payment</q-label>
           <q-space />
-          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <UserOutstandingPaymentFormDialog
-            v-model="showFormDialog"
-            :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="User Outstanding Payments"
-            :searchValue="searchValue"
-            :action="action"
-            :actionLabel="actionLabel"
-            :urlLink="urlLink"
+            v-model='showFormDialog'
+            :onClick='saveRecord'
+            @formDataSubmitted='saveRecord'
+            label='User Outstanding Payments'
+            :searchValue='searchValue'
+            :action='action'
+            :actionLabel='actionLabel'
+            :urlLink='urlLink'
           />
           <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="showDialog"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='showDialog'
           >
-            <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
+            <q-dialog v-model='medium_dialog'>
+              <q-card style='width: 700px' class='bg-info text-white'>
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class='text-h6'>Delete Item(s)</div>
                 </q-card-section>
 
-                <q-card-section class="q-pt-none">
+                <q-card-section class='q-pt-none'>
                   Are you sure you want to delete selected item(s)
                 </q-card-section>
-                <q-card-actions align="center" class="bg-white text-teal">
+                <q-card-actions align='center' class='bg-white text-teal'>
                   <q-btn
-                    @click="deleteItem"
+                    @click='deleteItem'
                     flat
-                    label="Yes"
+                    label='Yes'
                     v-close-popup
-                    class="bg-negative text-white"
+                    class='bg-negative text-white'
                     rounded
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label='No'
+                    class='bg-secondary text-white'
                     v-close-popup
                     rounded
                   />
@@ -119,10 +119,10 @@
       </q-table>
       <q-space/>
          <q-btn
-          @click="generateOutstandingPayments"
+          @click='generateOutstandingPayments'
           flat
-          :label="generateLabel" 
-         class="pwan-button top-margin full-width"
+          :label='generateLabel' 
+         class='pwan-button top-margin full-width'
            
         />
     </div>
@@ -132,13 +132,13 @@
 
 <script>
 import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref, computed } from "vue";
-import UserOutstandingPaymentFormDialog from "src/components/UserOutstandingPaymentFormDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue";
-import HeaderPage from "src/components/HeaderPage.vue"; 
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref, computed } from 'vue';
+import UserOutstandingPaymentFormDialog from 'src/components/UserOutstandingPaymentFormDialog.vue';
+import ResponseDialog from 'src/components/ResponseDialog.vue';
+import HeaderPage from 'src/components/HeaderPage.vue'; 
+import path from 'src/router/urlpath';
 export default {
   components: {
     UserOutstandingPaymentFormDialog,
@@ -146,70 +146,67 @@ export default {
     HeaderPage
   },
   data() {
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = "";
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = '';
     const columns = [
       {
-        name: "userName",
+        name: 'userName',
         required: false,
-        label: "User",
-        align: "left",
+        label: 'User',
+        align: 'left',
         field: (row) =>
           row.userId.last_name +
-          " " +
+          ' ' +
           row.userId.first_name +
-          " " +
+          ' ' +
           row.userId.middle_name,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "paymentType",
-        align: "center",
-        label: "Payment Type",
+        name: 'paymentType',
+        align: 'center',
+        label: 'Payment Type',
         field: (row) => row.paymentType.name,
         sortable: true,
       },
       {
-        name: "openingDebit",
-        align: "center",
-        label: "Opening Debit",
+        name: 'openingDebit',
+        align: 'center',
+        label: 'Opening Debit',
         field: (row) => row.openingDebit,
         sortable: true,
       },
       {
-        name: "currentDebit",
-        align: "center",
-        label: "Current Debit",
+        name: 'currentDebit',
+        align: 'center',
+        label: 'Current Debit',
         field: (row) => row.currentDebit,
         sortable: true,
       },
       {
-        name: "totalAmountPaid",
-        align: "center",
-        label: "Total Amount Paid",
+        name: 'totalAmountPaid',
+        align: 'center',
+        label: 'Total Amount Paid',
         field: (row) => row.totalAmountPaid,
         sortable: true,
       },
       {
-        name: "balanceAmount",
-        align: "center",
-        label: "Balance",
+        name: 'balanceAmount',
+        align: 'center',
+        label: 'Balance',
         field: (row) => row.balanceAmount,
         sortable: true,
       },
       {
-        name: "year",
-        align: "center",
-        label: "Year",
+        name: 'year',
+        align: 'center',
+        label: 'Year',
         field: (row) => row.year,
         sortable: true,
       },
     ];
-    const parentData = ref({
-      code: "",
-      name: "",
-    });
+ 
     const { t } = useI18n() 
     const pageName = computed(()=> t('useroutstandingpayment.pagename'))
     const hint = computed(()=> t('useroutstandingpayment.hint'))
@@ -217,21 +214,21 @@ export default {
     const urlLink = ref(path.USR_OUTSTANDING_PAYMENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
-    const action = ref("");
-    const searchValue = ref("");
-    const actionBtn = ref("done");
+    const action = ref('');
+    const searchValue = ref('');
+    const actionBtn = ref('done');
     const rows = ref([]);
     const selected = ref([]);
-    const actionLabel = ref("Submit");
+    const actionLabel = ref('Submit');
     const medium_dialog = ref(false);
     const currentYear = new Date().getFullYear()  
-    const profile = LocalStorage.getItem("turnelParams");
+    const profile = LocalStorage.getItem('turnelParams');
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
 
@@ -251,7 +248,7 @@ export default {
       action,
       showFormDialog,
       actionBtn,
-      generateLabel: "Generate Outstanding Payments for "+currentYear,
+      generateLabel: 'Generate Outstanding Payments for '+currentYear,
       pageName,
       hint, 
       showSpinner,
@@ -263,14 +260,14 @@ export default {
   methods: {
 
     loadUserOutstanding(obj) {
-      console.log("obj>>>>>>",obj)
+      console.log('obj>>>>>>',obj)
           this.loadUserImage(obj)
           this.fetchData(obj.value)
 
        
     },
     loadUserImage(userObj){
-      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
+      console.log('>>>>>>>inside loadUserImage>>>>>>>>>')
        const requestParam = {
         params: {
           userId: userObj.value, 
@@ -284,36 +281,34 @@ export default {
          promise
           .then((response) => {
  
-            this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+            this.imageFile = 'data:image/jpeg;base64,' + response.data.data.imageByte;
           })
           .catch((error) => {
             console.log(error);
           }); 
     },
 
-    generateOutstandingPayments(){
-      console.log("Generate outstanding userId>>>>>>>>",userId)
+    generateOutstandingPayments(){ 
     try {
-      this.showSpinner = true;  
-      console.log(">>>>data>>>>>",data)
+      this.showSpinner = true;   
       const promise = axios.post(
           path.USR_OUTSTANDING_PAYMENTS_GENERATE,
           {organisation:this.profile.organisation, client:this.profile.client},
           this.headers
         );
-        console.log("promise in the Fetch Data>>>>>>>>>>", promise);
+        console.log('promise in the Fetch Data>>>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             const result = response.data
-            console.log("result >>>>>>>", result);
+            console.log('result >>>>>>>', result);
              this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             this.showSpinner = false
@@ -321,32 +316,33 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             this.showSpinner = false
           });
+          this.fetchData()
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
       
     },
     handleRowClicks(event, row) {
       // Handle row click event
-      console.log("Row clicked:", row);
+      console.log('Row clicked:', row);
 
       // Access checkbox status from row data
-      console.log("Checkbox status:", this.row.selected);
+      console.log('Checkbox status:', this.row.selected);
 
       // You can perform actions based on the checkbox status and row data
       if (row.selected) {
-        console.log("Checkbox is checked");
+        console.log('Checkbox is checked');
         // Perform actions when checkbox is checked
       } else {
-        console.log("Checkbox is unchecked");
+        console.log('Checkbox is unchecked');
         // Perform actions when checkbox is unchecked
       }
     },
@@ -358,7 +354,7 @@ export default {
              organisation : this.profile.organisation, 
           },
         };
-        if(userId != null && userId != ""){
+        if(userId != null && userId != ''){
          requestParams = {
           params: {
              client : this.profile.client,
@@ -367,17 +363,17 @@ export default {
           },
         };
         }
-        console.log("requestParams>>>>",requestParams)
+        console.log('requestParams>>>>',requestParams)
         const promise = axios.get(
           path.USR_OUTSTANDING_PAYMENT_SEARCH,
           requestParams,
           this.headers
         );
-        console.log("promise in the Fetch Data>>>>>>>>>>", promise);
+        console.log('promise in the Fetch Data>>>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;
             this.selected = [];
             // You can access properties of the response data as needed
@@ -385,19 +381,19 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     saveMembersRecord(record){
-      console.log(">>>>>>>recording all users outstanding payment saveMembersRecord>>>>>>>>>>")
+      console.log('>>>>>>>recording all users outstanding payment saveMembersRecord>>>>>>>>>>')
       try {
         const promise = axios.post(
           path.USRS_OUTSTANDING_PAYMENT_CREATE,
@@ -411,18 +407,18 @@ export default {
             if (result.success) {
                this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             }else{
                 this.childRef = {
                 message: result.message,
-                label: "Error",
-                cardClass: "bg-negative text-white error",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal",
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
               };
             } 
              this.fetchData();
@@ -432,27 +428,27 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     saveRecord(record) {
-      console.log("action clicked>>>>>>>>>", record);
-      console.log(">>>>>>>record.members>>>>>>>>>", record.members);
+      console.log('action clicked>>>>>>>>>', record);
+      console.log('>>>>>>>record.members>>>>>>>>>', record.members);
       //saveMembersRecord
       if(record.members){
         this.saveMembersRecord(record)
       }else{
-        if (this.action == "add") {
+        if (this.action == 'add') {
           this.createRecord(record);
-        } else if (this.action == "edit") {
+        } else if (this.action == 'edit') {
           this.updateRecord(record);
         }
       }
@@ -471,19 +467,19 @@ export default {
             if (result.success) {
               this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             
             }else{
               this.childRef = {
               message: result.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             }
               this.fetchData();            
@@ -493,20 +489,20 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     updateRecord(record) {
       try {
-        console.log("calling Update Record from Child Component", record);
+        console.log('calling Update Record from Child Component', record);
         const promise = axios.put(
           path.USR_OUTSTANDING_PAYMENT_UPDATE,
           record,
@@ -516,17 +512,17 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log("result after savings >>>>>", result);
+            console.log('result after savings >>>>>', result);
             if (result.success) {
               this.fetchData();
             }
 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
@@ -534,15 +530,15 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     showDialog() {
@@ -554,70 +550,98 @@ export default {
     },
     addItem() {
       this.showFormDialog = true;
-      this.action = "add";
-      this.actionLabel = "Submit";
+      this.action = 'add';
+      this.actionLabel = 'Submit';
     },
     editItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected[0]["id"];
-        this.action = "edit";
-        this.actionLabel = "Update";
+        this.searchValue = this.selected[0]['id'];
+        this.action = 'edit';
+        this.actionLabel = 'Update';
       }
     },
     viewItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
-        this.action = "view";
-        this.actionLabel = "Done";
+        this.searchValue = this.selected[0]['code'];
+        this.action = 'view';
+        this.actionLabel = 'Done';
       }
     },
     handleRowClick(event, row) {
-      console.log("Row clicked:", row, "  >>>selected>>>>>", this.selected);
-      if (this.row.status.code == "A") {
-        this.actionBtn = "clear";
+      console.log('Row clicked:', row, '  >>>selected>>>>>', this.selected);
+      if (this.row.status.code == 'A') {
+        this.actionBtn = 'clear';
       } else {
-        this.actionBtn = "done";
+        this.actionBtn = 'done';
       }
-      console.log(">>>>>>>>>selected.value.target>>>>>", this.selected.target);
+      console.log('>>>>>>>>>selected.value.target>>>>>', this.selected.target);
       this.selected = row;
     },
     getSelectedString(row) {
       // Example function to return label for selected row (if needed)
-      return row ? row.name : "No client selected";
+      return row ? row.name : 'No client selected';
     },
-    async deleteItem() {
+     deleteItem() {
       try {
         const data = this.selected;
-        const response = await axios.post(
-          path.ORG_ANNUAL_PAYMENT_REMOVE,
+        console.log(">>>>data>>>>",data)
+        const promise = axios.post(
+          path.USR_OUTSTANDING_PAYMENT_REMOVE,
           data,
           this.headers
         );
-        if (response.data.success) {
-          this.fetchData();
-        }
+         
+         
+        console.log(">>>>>>>promise >>>>>>>>>>>>>",promise)
+         promise.then((response) => {
+            // Extract data from the response
+            console.log(">>>>>>>response >>>>>>>>>>>>>",response)
+            const result = response.data; 
+            console.log('result after savings >>>>>', result);  
+            this.childRef = {
+              message: result.message,
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
+            };
+            this.showMessageDialog = true;
+            // You can access properties of the response data as needed
+          })
+          .catch((error) => {
+            this.childRef = {
+              message: error.message,
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
+            };
+            this.showMessageDialog = true;
+          });
+          this.fetchData()
+
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData();
      try {
-      console.log(">>>>>>this.profile>>>>>",this.profile)
+      console.log('>>>>>>this.profile>>>>>',this.profile)
       const requestParams = {
         params: {
           client: this.profile.client,
@@ -629,15 +653,15 @@ export default {
         requestParams,
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
-          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
+          console.log('>>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>',response.data.data)
           this.orgUsers = response.data.data.map((option) => ({
             label: option.userId.last_name +
-          " " +
+          ' ' +
           option.userId.first_name +
-          " " +
+          ' ' +
           option.userId.middle_name,
             value: option.userId.id,
           }));
@@ -646,7 +670,7 @@ export default {
           console.log(error);
         });
         } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
 
   },
@@ -654,7 +678,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

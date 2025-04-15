@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <q-btn label="Pay Now" color="primary" @click="payWithPaystack" />
+    <q-btn label='Pay Now' color='primary' @click='payWithPaystack' />
   </q-page>
 </template>
 
@@ -16,7 +16,7 @@ export default {
         amount: 5000,
         ref: '13019245344400391',
         callback: function(response) { 
-          console.log(">>>>>>response>>>>",response)
+          console.log('>>>>>>response>>>>',response)
         },
         onCancel: function() {
           alert('Payment was canceled.');

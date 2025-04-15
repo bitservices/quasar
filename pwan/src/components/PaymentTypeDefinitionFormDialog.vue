@@ -1,67 +1,67 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
-       <q-card-section class="pwan-blue text-white">
+       <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
       <q-card-section>
-        <q-form @submit.prevent="saveRecord" ref="PaymentTypeDefinitionForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <q-form @submit.prevent='saveRecord' ref='PaymentTypeDefinitionForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
           <q-select
             filled
             bottom-slots
-            v-model="formData.paymentType"
-            :options="PaymentTypes"
-            label="Select Payment Type"
-            :dense="dense"
+            v-model='formData.paymentType'
+            :options='PaymentTypes'
+            label='Select Payment Type'
+            :dense='dense'
           />
 
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.amount"
-            label="Enter Amount"
-            type="number"
-            step="0.01"
+            v-model='formData.amount'
+            label='Enter Amount'
+            type='number'
+            step='0.01'
           />
          
            
           <q-checkbox
-            v-model="formData.allowPartialPayment"
-            label="Allowed Parital Payment"
-            color="primary"
+            v-model='formData.allowPartialPayment'
+            label='Allowed Parital Payment'
+            color='primary'
           /> 
             
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md" 
-            id="closeBtn"
-            label="Cancel"
-             class="pwan-blue top-margin half-width"
+            size='md' 
+            id='closeBtn'
+            label='Cancel'
+             class='pwan-blue top-margin half-width'
             v-close-popup
           />
           <q-btn
-            :label="actionLabel" 
-            type="submit"
-            size="md"
+            :label='actionLabel' 
+            type='submit'
+            size='md'
             rounded
-             class="pwan-button top-margin half-width"
+             class='pwan-button top-margin half-width'
           />
         </q-card-actions> 
       
@@ -72,18 +72,18 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger'; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 export default {
   components: { 
     HeaderPage,
   },
-  name: "PaymentTypeFormDialog",
+  name: 'PaymentTypeFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -122,21 +122,21 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px"; 
-    const profile = LocalStorage.getItem("turnelParams");
-    const headers = SessionStorage.getItem("headers");
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px'; 
+    const profile = LocalStorage.getItem('turnelParams');
+    const headers = SessionStorage.getItem('headers');
     const formData = ref({
-      code: "",
-      name: "",
-      client: "",
-      organisation: "",
-      createdBy: "",
+      code: '',
+      name: '',
+      client: '',
+      organisation: '',
+      createdBy: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -148,7 +148,7 @@ export default {
       dialogHeight,
       profile,
       headers,
-      time: "10:00",
+      time: '10:00',
       dense: true, 
       pageName,
       hint,
@@ -161,8 +161,8 @@ export default {
       this.formData.organisation = this.profile.organisation;
       this.formData.createdBy = this.profile.email;
       this.formData.paymentType = this.formData.paymentType.value; 
-      console.log(">>>>this.formData>>>>>>",this.formData)
-      this.$emit("formDataSubmitted", this.formData); 
+      console.log('>>>>this.formData>>>>>>',this.formData)
+      this.$emit('formDataSubmitted', this.formData); 
       document.getElementById('closeBtn').click();
       this.showDialog = true; 
     },  
@@ -170,16 +170,16 @@ export default {
   },
   
   beforeCreate() {
-    debug("beforeCreate");
+    debug('beforeCreate');
   },
   created() {
-    debug("created");
+    debug('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    const turnelParams = LocalStorage.getItem("turnelParams");
+    const turnelParams = LocalStorage.getItem('turnelParams');
     const requestParams = {
       params: {
         client: turnelParams.client,
@@ -197,21 +197,21 @@ export default {
         })); 
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
     
   },
   unmounted() {
-    debug("Calling unmounted>>>>>>>>>>",this.action);
-    this.formData = { code: "", name: "" };
+    debug('Calling unmounted>>>>>>>>>>',this.action);
+    this.formData = { code: '', name: '' };
   },
   updated() {
-     debug("Calling updated>>>>>>>>>>",this.action);
+     debug('Calling updated>>>>>>>>>>',this.action);
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
         const requestParams = {
           params: {
@@ -237,15 +237,15 @@ export default {
             debug(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
       this.formData = {
-        code: "",
-        name: "",
-        client: "",
-        organisation: "",
-        createdBy: "",
+        code: '',
+        name: '',
+        client: '',
+        organisation: '',
+        createdBy: '',
       };
     }
   },

@@ -1,7 +1,7 @@
 {
   "name": "pwan",
   "version": "0.0.1",
-  "description": "A Pwan Group App Activities for Real Estate Industry",
+  "description": "A Property connect App Activities for Real Estate Industry",
   "author": "Ekwedigwe Ikechukwu Hillary <ekwedigwe.ikechukwe@gmail.com>",
   "private": true,
   "dependencies": {
@@ -9,5 +9,10 @@
     "@capacitor/app": "^6.0.0",
     "@capacitor/cli": "^6.0.0",
     "@capacitor/core": "^6.0.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "eslint": "^9.22.0"
   }
 }

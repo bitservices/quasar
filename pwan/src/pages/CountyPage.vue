@@ -1,77 +1,77 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md"> 
+    <div class='q-pa-md'> 
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="County"
-        :rows="rows"
-        :columns="columns"
-        row-key="name"
-        :selected-rows="getSelectedString"
-        selection="multiple"
-        v-model:selected="selected"
+        title='County'
+        :rows='rows'
+        :columns='columns'
+        row-key='name'
+        :selected-rows='getSelectedString'
+        selection='multiple'
+        v-model:selected='selected'
       >
         <template v-slot:top>
           <q-label>County</q-label>
           <q-space />
-          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <CountyFormDialog
-            v-model="showFormDialog"
-            :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="County"
-            :searchValue="searchValue"
-            :action="action"
-            :actionLabel="actionLabel"
-            :urlLink="urlLink"
+            v-model='showFormDialog'
+            :onClick='saveRecord'
+            @formDataSubmitted='saveRecord'
+            label='County'
+            :searchValue='searchValue'
+            :action='action'
+            :actionLabel='actionLabel'
+            :urlLink='urlLink'
           />
           <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="showDialog"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='showDialog'
           >
-            <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
+            <q-dialog v-model='medium_dialog'>
+              <q-card style='width: 700px' class='bg-info text-white'>
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class='text-h6'>Delete Item(s)</div>
                 </q-card-section>
 
-                <q-card-section class="q-pt-none">
+                <q-card-section class='q-pt-none'>
                   Are you sure you want to delete selected item(s)
                 </q-card-section>
-                <q-card-actions align="center" class="bg-white text-teal">
+                <q-card-actions align='center' class='bg-white text-teal'>
                   <q-btn
-                    @click="deleteItem"
+                    @click='deleteItem'
                     flat
-                    label="Yes"
+                    label='Yes'
                     v-close-popup
-                    class="bg-negative text-white"
+                    class='bg-negative text-white'
                     rounded
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label='No'
+                    class='bg-secondary text-white'
                     v-close-popup
                     rounded
                   />
@@ -81,100 +81,89 @@
           </q-btn>
         </template>
       </q-table>
+      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue";  
-import CountyFormDialog from "src/components/CountyFormDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue"; 
-import path from "src/router/urlpath"; 
-import debug from "src/router/debugger"; 
+import { SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue';  
+import CountyFormDialog from 'src/components/CountyFormDialog.vue';
+import ResponseDialog from 'src/components/ResponseDialog.vue';  
+import Done from 'src/components/Done.vue'; 
+import path from 'src/router/urlpath'; 
+import debug from 'src/router/debugger'; 
 
 export default {
    name: 'CountyPage', 
    components: {
     CountyFormDialog,
     ResponseDialog,
+    Done,
   },
   
   data() {
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem('headers');
     const columns = [
       {
-        name: "code",
+        name: 'code',
         required: false,
-        label: "Code",
-        align: "left",
+        label: 'Code',
+        align: 'left',
         field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "name",
-        align: "center",
-        label: "Name",
+        name: 'name',
+        align: 'center',
+        label: 'Name',
         field: (row) => row.name,
         sortable: true,
       },
       {
-        name: "state",
-        align: "center",
-        label: "State",
+        name: 'state',
+        align: 'center',
+        label: 'State',
         field: (row) => row.stateCode.name,
         sortable: true,
       },
       {
-        name: "country",
-        align: "center",
-        label: "Country",
+        name: 'country',
+        align: 'center',
+        label: 'Country',
         field: (row) => row.countryCode.name,
         sortable: true,
       },
       {
-        name: "status",
-        align: "center",
-        label: "Status",
+        name: 'status',
+        align: 'center',
+        label: 'Status',
         field: (row) => row.status.name,
         sortable: true,
       },
     ];
-    const parentData = ref({
-      code: "",
-      name: "",
-    });
     const urlLink = ref(path.COUNTY_SEARCH,
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
-    const action = ref("");
-    const searchValue = ref("");
+    const action = ref('');
+    const searchValue = ref('');
     const rows = ref([]);
     const selected = ref([]);
-    const actionLabel = ref("Submit");
+    const actionLabel = ref('Submit');
     const medium_dialog = ref(false);
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
-
-    const formData = ref({
-      code: "",
-      name: "",
-    });
-    const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
-    });
-    const countries = ref([])
+ 
    
     return { 
       urlLink,
@@ -195,7 +184,7 @@ export default {
 
       fetchData() {
       try { 
-        const response = axios.get(path.COUNTY_ALL,
+        axios.get(path.COUNTY_ALL,
           this.headers
         )
         .then((response) => { 
@@ -207,19 +196,19 @@ export default {
       })
        
       } catch (error) {
-        console.error("Error submitting form:", error)
+        console.error('Error submitting form:', error)
       }
     },
     saveRecord(record) {
-      if (this.action == "add") {
+      if (this.action == 'add') {
         this.createRecord(record);
-      } else if (action.value == "edit") {
+      } else if (action.value == 'edit') {
         this.updateRecord(record);
       }
     },
     createRecord(record) {
       try {
-        debug("this .headers>>>>", this.headers)
+        debug('this .headers>>>>', this.headers)
         const promise = axios.post(path.COUNTY_CREATE,
           record,
           this.headers
@@ -228,16 +217,16 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            debug(">>>>>>result >>>>>>>>",result)
+            debug('>>>>>>result >>>>>>>>',result)
             if (result.success) {
               this.fetchData();
             } 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
@@ -245,20 +234,20 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     updateRecord(record) {
       try {
-        console.log("calling Update Record from Child Component", record);
+        console.log('calling Update Record from Child Component', record);
         const promise = axios.put(path.COUNTY_UPDATE,
           record,
           headers
@@ -274,10 +263,10 @@ export default {
 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
@@ -285,15 +274,15 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
       showDialog() {
@@ -306,23 +295,23 @@ export default {
     },
       addItem() {
       this.showFormDialog = true;
-      this.action = "add";
-      this.actionLabel = "Submit";
+      this.action = 'add';
+      this.actionLabel = 'Submit';
     },
       editItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected.value[0]["code"];
-        this.action = "edit";
-        this.actionLabel = "Update";
+        this.searchValue = this.selected.value[0]['code'];
+        this.action = 'edit';
+        this.actionLabel = 'Update';
       }
     },
       viewItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected.value[0]["code"];
-        this.action = "view";
-        this.actionLabel = "Done";
+        this.searchValue = this.selected.value[0]['code'];
+        this.action = 'view';
+        this.actionLabel = 'Done';
       }
     },
      deleteItem () {
@@ -343,42 +332,42 @@ export default {
 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
           })
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
        handleCountryChange() {
       try {
-         console.log(">>>>>>>calling handle Country Change>>>>>>>>>>>>>")
+         console.log('>>>>>>>calling handle Country Change>>>>>>>>>>>>>')
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
      getSelectedString() {
       try {
          return null
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() { 
     axios
@@ -391,7 +380,7 @@ export default {
         })); 
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       }); 
 
         
@@ -402,7 +391,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

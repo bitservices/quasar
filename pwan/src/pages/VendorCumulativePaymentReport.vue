@@ -1,52 +1,52 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
         <q-form>
           <q-select
             filled
             bottom-slots
-            v-model="formData.userId"
-            :options="vendors"
-            label="Select Vendor" 
-            :dense="dense"
+            v-model='formData.userId'
+            :options='vendors'
+            label='Select Vendor' 
+            :dense='dense'
           />  
           
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchVendorPaymentData"
+            size='md'
+            color='primary'
+            label='Search'
+            @click='searchVendorPaymentData'
             v-close-popup
           />
           <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
+            label='Download'
+            color='secondary'
+            @click='downloadReport'
+            size='md'
             rounded
             v-close-popup
           />
         </q-card-actions>
       </q-card-section>
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Vendor Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Vendor Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Vendor Summary Report</q-label>
@@ -58,22 +58,22 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath';
 export default {
    
   data() {
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = ""; 
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
+    const userEmail = ''; 
     const columns = [
       {
-        name: "vendor",
+        name: 'vendor',
         required: false,
-        label: "Vendor",
-        align: "left",
+        label: 'Vendor',
+        align: 'left',
         field: (row) =>
           row.vendorCode.name,
         format: (val) => `${val}`,
@@ -81,17 +81,17 @@ export default {
       },
      
       {
-        name: "amount",
-        align: "left",
-        label: "Amount",
+        name: 'amount',
+        align: 'left',
+        label: 'Amount',
         field: (row) => row.sumAmount,
         sortable: true,
       },
        
       {
-        name: "organisation",
-        align: "left",
-        label: "Organisation",
+        name: 'organisation',
+        align: 'left',
+        label: 'Organisation',
         field: (row) => row.organisation.name,
         sortable: true,
       }, 
@@ -124,7 +124,7 @@ export default {
           },
         };
       try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log('>>>>>requestParams>>>>>>>>',requestParams)
         const promise = axios.get(
           path.VENDOR_LEDGER_PAYMENT_TRANSACTION_SEARCH,
           requestParams,
@@ -133,15 +133,16 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
+            console.log(error)
              
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
@@ -160,8 +161,8 @@ export default {
         ); 
         promise
           .then((response) => {
-            // Extract data from the response 
-            const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="vendor_summary_payment_report.pdf"' });
+            // Extract data from the response  
+             const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="vendor_summary_payment_report.pdf"'  });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);
@@ -176,27 +177,28 @@ export default {
             
           })
           .catch((error) => {
+             console.log(error)
              
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
  mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
     try {
       const requestParams = {
         params: {
@@ -209,7 +211,7 @@ export default {
         requestParams,
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
           this.vendors = response.data.data.map((option) => ({
@@ -225,27 +227,27 @@ export default {
         path.PAYMENTMODE_SEARCH,
         this.headers
       );
-      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
+      console.log('>>>>>>>>paymentModePromise>>>>>>>', paymentModePromise);
       paymentModePromise
         .then((response) => {
           this.paymentModes = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
-          console.log("paymentModes>>>>>>>>>", this.paymentModes);
+          console.log('paymentModes>>>>>>>>>', this.paymentModes);
         })
         .catch((error) => {
           console.log(error);
         });
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

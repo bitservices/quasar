@@ -1,18 +1,18 @@
 <template>
-  <div class="q-pa-md" style="max-width: 50px">
-    <q-menu auto-close class="pwan-blue text-white">
-      <q-list style="min-width: 100px" separator> 
+  <div class='q-pa-md' style='max-width: 50px'>
+    <q-menu auto-close class='pwan-blue text-white'>
+      <q-list style='min-width: 100px' separator> 
           <q-item
-            v-for="link in props.menuitems"
-            :key="link.title"
-            :items="link.menuitems"
+            v-for='link in props.menuitems'
+            :key='link.title'
+            :items='link.menuitems'
             clickable
-            tag="a"
-            target="_blank"
-            @click="handleClick(link.link)"
+            tag='a'
+            target='_blank'
+            @click='handleClick(link.link)'
           >
-            <q-item-section v-if="link.icon" avatar>
-              <q-icon :name="link.icon" />
+            <q-item-section v-if='link.icon' avatar>
+              <q-icon :name='link.icon' />
             </q-item-section>
 
             <q-item-section>
@@ -25,10 +25,11 @@
   </div> 
 </template>
 <script setup>
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router'; 
+import { LocalStorage, SessionStorage } from 'quasar';
 const router = useRouter();
 defineOptions({
-  name: "EssentialLink",
+  name: 'EssentialLink',
 });
 
 const props = defineProps({
@@ -43,17 +44,17 @@ const props = defineProps({
       {
         caption: {
           type: String,
-          default: "",
+          default: '',
         },
 
         link: {
           type: String,
-          default: "#",
+          default: '#',
         },
 
         icon: {
           type: String,
-          default: "",
+          default: '',
         },
       },
     ],
@@ -61,7 +62,11 @@ const props = defineProps({
 });
 
 const handleClick = (prop) => {
-  console.log(">>>>>>prop>>>>>>",prop.trim());
+  console.log('>>>>>>prop>>>>>>',prop.trim());
+  var pageStacking =   LocalStorage.getItem('pagestack')
+  console.log(">>>>pageStack>>>",pageStacking)
+  pageStacking.push(prop.trim())
+   LocalStorage.set('pagestack',pageStacking)
   console.log(router);
   router.push(prop.trim());
 };

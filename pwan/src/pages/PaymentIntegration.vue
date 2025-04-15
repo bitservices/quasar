@@ -1,64 +1,64 @@
 <template>
   <q-page padding>
     <q-card>
-        <q-card-section class="pwan-blue text-white">
+        <q-card-section class='pwan-blue text-white'>
           <HeaderPage  
-              :label="pageName"
-              :hint="hint"  
+              :label='pageName'
+              :hint='hint'  
             />
         </q-card-section>
       </q-card>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
-        <q-form  @submit.prevent="saveRecord" ref="integrationForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <q-form  @submit.prevent='saveRecord' ref='integrationForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
            <q-select
                 filled
                 bottom-slots
-                v-model="formData.paymentChannel"
-                :options="paymentChannels"
-                label="Select Payment Channel" 
-                :dense="dense"
+                v-model='formData.paymentChannel'
+                :options='paymentChannels'
+                label='Select Payment Channel' 
+                :dense='dense'
                 :rule=[requiredRule]
               />
               
               <q-input
-              v-model="formData.publicKey"
+              v-model='formData.publicKey'
               filled
-              label="Enter Public Key"
-              :type="isPwd ? 'password' : 'text'"                 
+              label='Enter Public Key'
+              :type='isPwd ? "password" : "text"'                 
               :rule=[requiredRule]
             >
               <template v-slot:prepend>
-                <q-icon name="lock" />
+                <q-icon name='lock' />
               </template>
               <template v-slot:append>
                 <q-icon
-                  :name="isPwd ? 'visibility_off' : 'visibility'"
-                  class="cursor-pointer"
-                  @click="isPwd = !isPwd"
+                  :name='isPwd ? "visibility_off" : "visibility"'
+                  class='cursor-pointer'
+                  @click='isPwd = !isPwd'
                 />
               </template>
             </q-input>  
 
-          <q-card-actions align="center">
+          <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Reset" 
-            @click="resetForm" 
+            size='md'
+            color='primary'
+            label='Reset' 
+            @click='resetForm' 
           />
           <q-btn
-            id="actionBtn"
-            :label="actionLabel"
-            class="pwan-button"
-            type="submit"
-             size="md"
+            id='actionBtn'
+            :label='actionLabel'
+            class='pwan-button'
+            type='submit'
+             size='md'
             rounded
             v-close-popup
           />
@@ -66,60 +66,59 @@
         </q-form>
       </q-card-section> 
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Payment Integration List"
-        :rows="rows"
-        :columns="columns"
-        row-key="id" 
-        selection="single" 
-        v-model:selected="selected"
+        title='Payment Integration List'
+        :rows='rows'
+        :columns='columns'
+        row-key='id' 
+        selection='single' 
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Payment Integration List</q-label>
           <q-space />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="deleteItem"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='deleteItem'
           />
         </template>  
       </q-table>
       <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
     </div>
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref, computed } from "vue"; 
-import path from "src/router/urlpath";
-import { format } from 'date-fns';
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref, computed } from 'vue'; 
+import path from 'src/router/urlpath'; 
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { inputFieldRequired } from 'src/validation/validation'; 
-import ResponseDialog from "src/components/ResponseDialog.vue";
+import ResponseDialog from 'src/components/ResponseDialog.vue';
 
 export default {
   components: { 
@@ -130,23 +129,23 @@ export default {
     const { t } = useI18n();
     const pageName = computed(()=> t('integration.pagename'))
     const hint = computed(()=> t('integration.hint'))
-    const headers = SessionStorage.getItem("headers");  
-    const profile = LocalStorage.getItem("turnelParams");
+    const headers = SessionStorage.getItem('headers');  
+    const profile = LocalStorage.getItem('turnelParams');
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
    
       const columns = [
       {
-        name: "paymentChannel",
+        name: 'paymentChannel',
         required: false,
-        label: "Payment Channel",
-        align: "left",
+        label: 'Payment Channel',
+        align: 'left',
         field: (row) =>
           row.paymentChannel.name,
         format: (val) => `${val}`,
@@ -154,9 +153,9 @@ export default {
       },
      
       {
-        name: "publicKey",
-        align: "left",
-        label: "Public Key",
+        name: 'publicKey',
+        align: 'left',
+        label: 'Public Key',
         field: (row) => row.publicKey,
         sortable: true,
       },
@@ -167,8 +166,8 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const formData = ref({
-      paymentChannel : "",
-      publicKey:"",
+      paymentChannel : '',
+      publicKey:'',
       client:profile.client,
       organisation:profile.organisation,
       createdBy : profile.email
@@ -189,8 +188,8 @@ export default {
       requiredRule: value => inputFieldRequired(value),
       showSpinner,
       showMessageDialog, 
-      action: "add",
-      actionLabel:"Create",
+      action: 'add',
+      actionLabel:'Create',
       paymentChannels:[],
       childRef,
       isPwd: ref(true),
@@ -218,10 +217,10 @@ export default {
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleSubmit() {  
@@ -236,14 +235,14 @@ export default {
                 userPromise.then((response) => { 
                     if(response.data.success){ 
                         
-                     console.log(">>>>>>>>>>>")
+                     console.log('>>>>>>>>>>>')
                     }else{
                        this.childRef = {
                         message: response.data.message,
-                        label: "Error",
-                        cardClass: "bg-negative text-white error",
-                        textClass: "q-pt-none",
-                        buttonClass: "bg-white text-teal",
+                        label: 'Error',
+                        cardClass: 'bg-negative text-white error',
+                        textClass: 'q-pt-none',
+                        buttonClass: 'bg-white text-teal',
                       };
                       this.showSpinner = false;
                       this.showMessageDialog = true;
@@ -253,34 +252,34 @@ export default {
                 })
 
         } catch (error) {
-          console.error("Error submitting form:", error);
+          console.error('Error submitting form:', error);
         }
      }
     },
     saveRecord() { 
       if (this.$refs.integrationForm.validate()) {  
         try {
-          console.log("this.action>>>>>>",this.action)
-           let promise = ""
+          console.log('this.action>>>>>>',this.action)
+           let promise = ''
            this.showSpinner = true; 
           this.formData.client= this.profile.client;
           this.formData.organisation= this.profile.organisation;
           this.formData.createdBy = this.profile.email;
           this.formData.paymentChannel = this.formData.paymentChannel.value 
-          if(this.action == "add"){
+          if(this.action == 'add'){
                 promise = axios.post(
             path.PAYMENTINTEGRATION_CREATE,
             this.formData,
             this.headers
           ); 
-          }else if(this.action == "edit"){
+          }else if(this.action == 'edit'){
                 promise = axios.put(
             path.PAYMENTINTEGRATION_UPDATE,
             this.formData,
             this.headers
               );
           } 
-          else if(this.action == "delete"){
+          else if(this.action == 'delete'){
              promise = axios.post(
             path.PAYMENTINTEGRATION_REMOVE,
             this.formData,
@@ -290,17 +289,15 @@ export default {
           promise
             .then((response) => {
               // Extract data from the response 
-              const result = response.data
-              console.log(">>>>responsexxx>>>>>>",response)
-              console.log(">>>>resultxxxxxxxxx>>>>>>",result)
+              const result = response.data 
               if(result.success)  
               {  
                 this.childRef = {
                 message: result.message,
-                label: "Success",
-                cardClass: "bg-positive text-white",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal",
+                label: 'Success',
+                cardClass: 'bg-positive text-white',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
               };   
               this.showSpinner= false;
               this.showMessageDialog = true;
@@ -309,10 +306,10 @@ export default {
               }else{
                 this.childRef = {
                   message: result.message,
-                  label: "Error",
-                  cardClass: "bg-negative text-white error",
-                  textClass: "q-pt-none",
-                  buttonClass: "bg-white text-teal",
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
                 };
                 this.showSpinner= false;
                 this.showMessageDialog = true;
@@ -323,10 +320,10 @@ export default {
             .catch((error) => {
              this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };  
               this.showSpinner= false;
               this.showMessageDialog = true;
@@ -335,37 +332,37 @@ export default {
             this.resetForm();
               
         } catch (error) {
-          console.error("Error submitting form:", error);
+          console.error('Error submitting form:', error);
         }
       }
     }, 
     resetForm(){ 
       this.formData = {paymentChannel:'',publicKey:'', createdBy : this.profile.email, organisation:this.profile.organisation, client:this.profile.client}; 
-      this.action = "add";
-      this.actionLabel="Create";
+      this.action = 'add';
+      this.actionLabel='Create';
     },
     editItem() {
       if (this.selected.length > 0) { 
         this.setformData()
-         console.log(">>>>this.formData>>>>",this.formData)
-        this.action = "edit";
-        this.actionLabel=" Edit "; 
+         console.log('>>>>this.formData>>>>',this.formData)
+        this.action = 'edit';
+        this.actionLabel=' Edit '; 
       }
     },
    viewItem () {
-    console.log(">>>>>this.formData>>>>>>>",this.selected[0])
+    console.log('>>>>>this.formData>>>>>>>',this.selected[0])
       if (this.selected.length > 0) { 
         this.setformData()
-       this.action = "view";
-       this.actionLabel=" View ";  
+       this.action = 'view';
+       this.actionLabel=' View ';  
       }
     },
     deleteItem() {
-      console.log(">>>>>this.formData>>>>>>>",this.selected[0])
+      console.log('>>>>>this.formData>>>>>>>',this.selected[0])
        if (this.selected.length > 0) { 
          this.setformData()
-        this.action = "delete";
-        this.actionLabel="Delete"; 
+        this.action = 'delete';
+        this.actionLabel='Delete'; 
         document.getElementById('actionBtn').click();
       }
     },
@@ -382,31 +379,31 @@ export default {
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.profile);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.profile);
   },
   mounted() {  
-    console.log(">>>>>>>>>>>profile>>>>>>>>>>",this.profile);
+    console.log('>>>>>>>>>>>profile>>>>>>>>>>',this.profile);
     this.loadPaymentIntegrations()
      axios
       .get(path.PAYMENTCHANNEL_SEARCH)
       .then((response) => {
-        console.log("payment channel Response >>>>>>>>>>>>", response.data); 
+        console.log('payment channel Response >>>>>>>>>>>>', response.data); 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.paymentChannels = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.paymentchannels >>>>>>>>>>>>", this.paymentChannels);
+        console.log('this.paymentchannels >>>>>>>>>>>>', this.paymentChannels);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
   },
@@ -414,7 +411,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

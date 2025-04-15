@@ -1,8 +1,8 @@
 {
   "name": "pwan",
   "version": "0.0.1",
-  "description": "A Pwan Group App Activities for Real Estate Industry",
-  "productName": "Pwan Group App",
+  "description": "A Property connect App Activities for Real Estate Industry",
+  "productName": "PROPERTY CONNECT App",
   "author": "Ekwedigwe Ikechukwu Hillary <ekwedigwe.ikechukwe@gmail.com>",
   "private": true,
   "scripts": {
@@ -13,22 +13,35 @@
     "build": "quasar build"
   },
   "dependencies": {
+    "@capacitor/android": "^7.1.0",
+    "@capacitor/browser": "^7.0.1",
+    "@capacitor/camera": "^7.0.0",
+    "@capacitor/cli": "^7.1.0",
+    "@capacitor/core": "^7.1.0",
+    "@capacitor/filesystem": "^7.0.1",
+    "@capacitor/geolocation": "^7.1.1",
+    "@capacitor/network": "^7.0.0",
     "@fawmi/vue-google-maps": "^0.9.79",
     "@quasar/cli": "^2.4.1",
     "@quasar/extras": "^1.16.4",
-    "@vitejs/plugin-vue": "^5.0.5",
     "axios": "^1.7.2",
+    "chart.js": "^4.4.8",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^3.0.1",
     "quasar": "^2.16.6",
     "vue": "^3.4.31",
     "vue-router": "^4.3.2",
     "vue2-google-maps": "^0.10.7"
   },
   "devDependencies": {
-    "@quasar/app-vite": "^1.9.0",
+    "@quasar/app-vite": "^2.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.26.1",
+    "@typescript-eslint/parser": "^8.26.1",
+    "@vitejs/plugin-vue": "^5.2.3",
     "autoprefixer": "^10.4.2",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-vue": "^9.0.0",
+    "eslint-plugin-vue": "^9.33.0",
     "postcss": "^8.4.14",
     "prettier": "^2.5.1",
     "vite-plugin-checker": "^0.6.4"
@@ -37,5 +50,6 @@
     "node": "^20 || ^18 || ^16",
     "npm": ">= 6.13.4",
     "yarn": ">= 1.21.1"
-  }
+  },
+  "type": "module"
 }

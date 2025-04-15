@@ -1,52 +1,52 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
-        <q-card-section class="pwan-blue text-white">
+        <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
 
       <q-card-section>
-         <q-form @submit.prevent="saveRecord" ref="productTypeForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+         <q-form @submit.prevent='saveRecord' ref='productTypeForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :dense="dense"
-            :rules="[inputFieldRule]" 
+            v-model='formData.code'
+            label='Code'
+            :dense='dense'
+            :rules='[inputFieldRule]' 
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
-            :rules="[inputFieldRule]" 
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
+            :rules='[inputFieldRule]' 
           />
-          <q-card-actions align="center">
-          <div class="row">
-            <q-btn id="closeBtn"
+          <q-card-actions align='center'>
+          <div class='row'>
+            <q-btn id='closeBtn'
                   rounded  
-                  label="Close"
-                  icon="close"
+                  label='Close'
+                  icon='close'
                   v-close-popup
-                  class="pwan-blue top-margin full-width"
+                  class='pwan-blue top-margin full-width'
                 />  
             <q-btn
-                  :label="actionLabel"
+                  :label='actionLabel'
                   rounded
-                  type="submit"
-                  icon="save" 
-                  class="pwan-button top-margin full-width"
+                  type='submit'
+                  icon='save' 
+                  class='pwan-button top-margin full-width'
                 />
           </div>
           </q-card-actions>
@@ -57,20 +57,18 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios'; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { inputFieldRequired} from 'src/validation/validation';
 
 export default {
    components: { 
     HeaderPage,
   },
-  name: "ProductTypeFormDialog",
+  name: 'ProductTypeFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -109,21 +107,21 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
 
-   const profile = LocalStorage.getItem("turnelParams"); 
+   const profile = LocalStorage.getItem('turnelParams'); 
     const formData = ref({
-      code: "",
-      name: "", 
-      client : "",
-      organisation : "" ,
-      createdBy : "",
+      code: '',
+      name: '', 
+      client : '',
+      organisation : '' ,
+      createdBy : '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -148,8 +146,8 @@ export default {
         this.formData.client = this.profile.client;
         this.formData.organisation =  this.profile.organisation;
         this.formData.createdBy = this.profile.email; 
-        console.log(">>>>>this.formData>>>>>>>>>>>>",this.formData)
-        this.$emit("formDataSubmitted", this.formData); 
+        console.log('>>>>>this.formData>>>>>>>>>>>>',this.formData)
+        this.$emit('formDataSubmitted', this.formData); 
         document.getElementById('closeBtn').click();
         this.showDialog = true; 
          this.showSpinner = false; 
@@ -157,27 +155,27 @@ export default {
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    console.log('Calling unmounted>>>>>>>>>>');
+    this.formData = { code: '', name: '' };
   },
   updated() {
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem('headers');
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
       
         const requestParams = {
@@ -194,20 +192,20 @@ export default {
             const result = response.data; 
             if (result.success) {
               this.formData = result.data[0];
-              console.log("formData>>>>>>>",this.formData)
+              console.log('formData>>>>>>>',this.formData)
             }
           })
           .catch((error) => {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
-      this.formData = { code: "", name: "" , 
-      client : "",
-      organisation : "" ,
-      createdBy : "",};
+      this.formData = { code: '', name: '' , 
+      client : '',
+      organisation : '' ,
+      createdBy : '',};
     }
   },
 };

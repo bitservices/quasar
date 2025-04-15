@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <widget id="com.bitingerated.propconnect.app" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Property Connect App</name>
-    <description>A Pwan Group App Activities for Real Estate Industry</description>
+    <description>A Property connect App Activities for Real Estate Industry</description>
     <author email="dev@cordova.apache.org" href="https://cordova.apache.org">
         Apache Cordova Team
     </author>

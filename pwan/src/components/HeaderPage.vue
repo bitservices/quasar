@@ -1,24 +1,23 @@
 <template> 
-      <div class="row card text-center" >
-          <div class="col-3"></div>
-          <div class="card-header text-white col-6 pwan-red">{{ label }}</div>
-          <div class="col-3"></div>
+      <div class='row card text-center' >
+          <div class='col-3'></div>
+          <div class='card-header text-white col-6 pwan-red'>{{ label }}</div>
+          <div class='col-3'></div>
         </div>
-      <div class="card text-center" style="margin-top:10px">
-          <div class="card-body">  
-            <span class="card-title"></span>   
-            <div class="col-3"></div>
-            <div class="card-header text-white  pwan-blue col-6">{{ hint }}</div>
-          <div class="col-3"></div> 
+      <div class='card text-center' style='margin-top:10px'>
+          <div class='card-body'>  
+            <span class='card-title'></span>   
+            <div class='col-3'></div>
+            <div class='card-header text-white  pwan-blue col-6'>{{ hint }}</div>
+          <div class='col-3'></div> 
           </div> 
       </div>
         
 </template>
 
-<script>  
-import { ref } from "vue"; 
+<script>   
 export default {
-  name: "HeaderPage", 
+  name: 'HeaderPage', 
   props: { 
     label: {
       type: String,
@@ -38,24 +37,24 @@ export default {
      
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
+    console.log('mounted>>>>>>>>>>>>');
      
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    console.log('Calling unmounted>>>>>>>>>>');
     
   },
   updated() {
-     console.log("Calling Updated LifeCycle>>>>>>>>>>");
+     console.log('Calling Updated LifeCycle>>>>>>>>>>');
   },
 };
 </script>

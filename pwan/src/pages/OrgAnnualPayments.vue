@@ -1,79 +1,79 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Organisation Annual Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        selection="single" 
-        v-model:selected="selected"
+        title='Organisation Annual Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        selection='single' 
+        v-model:selected='selected'
       >
-        <template v-slot:body-cell-checkbox="props">
-          <q-checkbox v-model="props.selected" />
+        <template v-slot:body-cell-checkbox='props'>
+          <q-checkbox v-model='props.selected' />
         </template>
         <template v-slot:top>
           <q-label>Organisational Annual Payment</q-label>
           <q-space />
-          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <OrgAnnualPaymentFormDialog
-            v-model="showFormDialog"
-            :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="Organisation Annual Payments"
-            :searchValue="searchValue"
-            :action="action"
-            :actionLabel="actionLabel"
-            :urlLink="urlLink"
+            v-model='showFormDialog'
+            :onClick='saveRecord'
+            @formDataSubmitted='saveRecord'
+            label='Organisation Annual Payments'
+            :searchValue='searchValue'
+            :action='action'
+            :actionLabel='actionLabel'
+            :urlLink='urlLink'
           />
           <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="showDialog"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='showDialog'
           >
-            <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
+            <q-dialog v-model='medium_dialog'>
+              <q-card style='width: 700px' class='bg-info text-white'>
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class='text-h6'>Delete Item(s)</div>
                 </q-card-section>
 
-                <q-card-section class="q-pt-none">
+                <q-card-section class='q-pt-none'>
                   Are you sure you want to delete selected item(s)
                 </q-card-section>
-                <q-card-actions align="center" class="bg-white text-teal">
+                <q-card-actions align='center' class='bg-white text-teal'>
                   <q-btn
-                    @click="deleteItem"
+                    @click='deleteItem'
                     flat
-                    label="Yes"
+                    label='Yes'
                     v-close-popup
-                    class="bg-negative text-white"
+                    class='bg-negative text-white'
                     rounded
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label='No'
+                    class='bg-secondary text-white'
                     v-close-popup
                     rounded
                   />
@@ -83,63 +83,62 @@
           </q-btn>
         </template>
       </q-table>
+      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue";
-import OrgAnnualPaymentFormDialog from "src/components/OrgAnnualPaymentFormDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue";
-import path from "src/router/urlpath";
+import { SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue';
+import OrgAnnualPaymentFormDialog from 'src/components/OrgAnnualPaymentFormDialog.vue';
+import ResponseDialog from 'src/components/ResponseDialog.vue';
+import Done from 'src/components/Done.vue';
+import path from 'src/router/urlpath';
 export default {
   components: {
     OrgAnnualPaymentFormDialog,
     ResponseDialog,
+    Done,
   },
   data() {
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = "";
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = '';
     const columns = [
       {
-        name: "paymentType",
+        name: 'paymentType',
         required: false,
-        label: "Payment Type",
-        align: "left",
+        label: 'Payment Type',
+        align: 'left',
         field: (row) => row.paymentType.name,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "amount",
-        align: "center",
-        label: "Amount",
+        name: 'amount',
+        align: 'center',
+        label: 'Amount',
         field: (row) => row.amount,
         sortable: true,
       },
     ];
-    const parentData = ref({
-      code: "",
-      name: "",
-    });
     const urlLink = ref(path.ORG_ANNUAL_PAYMENT_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
-    const action = ref("");
-    const searchValue = ref("");
-    const actionBtn = ref("done");
+    const action = ref('');
+    const searchValue = ref('');
+    const actionBtn = ref('done');
     const rows = ref([]);
     const selected = ref([]);
-    const actionLabel = ref("Submit");
+    const actionLabel = ref('Submit');
     const medium_dialog = ref(false);
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
 
@@ -163,28 +162,28 @@ export default {
   methods: {
     handleRowClicks(event, row) {
       // Handle row click event
-      console.log("Row clicked:", row);
+      console.log('Row clicked:', row);
 
       // Access checkbox status from row data
-      console.log("Checkbox status:", this.row.selected);
+      console.log('Checkbox status:', this.row.selected);
 
       // You can perform actions based on the checkbox status and row data
       if (row.selected) {
-        console.log("Checkbox is checked");
+        console.log('Checkbox is checked');
         // Perform actions when checkbox is checked
       } else {
-        console.log("Checkbox is unchecked");
+        console.log('Checkbox is unchecked');
         // Perform actions when checkbox is unchecked
       }
     },
     fetchData() {
       try {
         const promise = axios.get(path.ORG_ANNUAL_PAYMENT_SEARCH, this.headers);
-        console.log("promise in the Fetch Data>>>>>>>>>>", promise);
+        console.log('promise in the Fetch Data>>>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;
             this.selected = [];
             // You can access properties of the response data as needed
@@ -192,22 +191,22 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog.value = true;
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     saveRecord(record) {
-      console.log("action clicked>>>>>>>>>", this.action);
-      if (this.action == "add") {
+      console.log('action clicked>>>>>>>>>', this.action);
+      if (this.action == 'add') {
         this.createRecord(record);
-      } else if (this.action == "edit") {
+      } else if (this.action == 'edit') {
         this.updateRecord(record);
       }
     },
@@ -228,10 +227,10 @@ export default {
 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog = true;
             // You can access properties of the response data as needed
@@ -239,20 +238,20 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog.value = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     updateRecord(record) {
       try {
-        console.log("calling Update Record from Child Component", record);
+        console.log('calling Update Record from Child Component', record);
         const promise = axios.put(
           path.ORG_ANNUAL_PAYMENT_UPDATE,
           record,
@@ -262,17 +261,17 @@ export default {
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log("result after savings >>>>>", result);
+            console.log('result after savings >>>>>', result);
             if (result.success) {
               this.fetchData();
             }
 
             this.childRef = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
@@ -280,15 +279,15 @@ export default {
           .catch((error) => {
             this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             this.showMessageDialog.value = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     },
     showDialog() {
@@ -300,43 +299,43 @@ export default {
     },
     addItem() {
       this.showFormDialog = true;
-      this.action = "add";
-      this.actionLabel = "Submit";
+      this.action = 'add';
+      this.actionLabel = 'Submit';
     },
     editItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
-        this.action = "edit";
-        this.actionLabel = "Update";
+        this.searchValue = this.selected[0]['code'];
+        this.action = 'edit';
+        this.actionLabel = 'Update';
       }
     },
     viewItem() {
       if (this.selected.length > 0) {
         this.showFormDialog = true;
-        this.searchValue = this.selected[0]["code"];
-        this.action = "view";
-        this.actionLabel = "Done";
+        this.searchValue = this.selected[0]['code'];
+        this.action = 'view';
+        this.actionLabel = 'Done';
       }
     },
     handleRowClick(event, row) {
-      console.log("Row clicked:", row, "  >>>selected>>>>>", this.selected);
-      if (this.row.status.code == "A") {
-        this.actionBtn = "clear";
+      console.log('Row clicked:', row, '  >>>selected>>>>>', this.selected);
+      if (this.row.status.code == 'A') {
+        this.actionBtn = 'clear';
       } else {
-        this.actionBtn = "done";
+        this.actionBtn = 'done';
       }
-      console.log(">>>>>>>>>selected.value.target>>>>>", this.selected.target);
+      console.log('>>>>>>>>>selected.value.target>>>>>', this.selected.target);
       selected.value = row;
     },
     getSelectedString(row) {
       // Example function to return label for selected row (if needed)
-      return row ? row.name : "No client selected";
+      return row ? row.name : 'No client selected';
     },
     async deleteItem() {
       try {
         const data = this.selected;
-        console.log(">>>>>>data>>>>>>>",data)
+        console.log('>>>>>>data>>>>>>>',data)
         const response = await axios.post(
           path.ORG_ANNUAL_PAYMENT_REMOVE,
           data,
@@ -346,29 +345,29 @@ export default {
           this.fetchData();
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData();
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

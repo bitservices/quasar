@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Property Connect</string>
+    <string name="title_activity_main">Property Connect</string>
+    <string name="package_name">com.bitintegrated.propertyconnect</string>
+    <string name="custom_url_scheme">com.bitintegrated.propertyconnect</string>
+</resources>

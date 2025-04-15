@@ -185,7 +185,12 @@
 "useroutstandingpayment":{
   "pagename": "User Outstanding Paymentss",
   "hint":"This page is used by an Organisation/Center to create the outstanding payment for all their members."   
+},
+"dannumber":{
+  "pagename": "Dynamic Authentication Number",
+  "hint":"This page allows users to configure their dynamic authentication number (DAN) within an organization, which will be used to authorize specific transactions. Users can set up different DANs for various organizational operations"   
 }
+
 
 
 

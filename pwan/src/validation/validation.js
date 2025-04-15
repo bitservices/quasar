@@ -13,38 +13,37 @@ export const validateUsername = (value) => {
 
  
   export const validatePassword =  (value) => {
-    return value.length > 0 || "Passwrod is required";
+    return value.length > 0 || 'Passwrod is required';
   };
 
-  export const validateConfirmPassword =  (value, password) => {
-    console.log(">>>>>>password >>>>>>>",password)
-    if (value != password)  return "Confirm Password and New Password mismatch";
-    if(value.length == 0) return "Confirm Password is Required";
+  export const validateConfirmPassword =  (value, password) => { 
+    if (value != password)  return 'Confirm Password and New Password mismatch';
+    if(value.length == 0) return 'Confirm Password is Required';
     return true
   };
 
   export const amountFieldRule =  (value) => {  
-    if(value < 0) return "Amount must not not be less than zero";
+    if(value < 0) return 'Amount must not not be less than zero';
     return true
   }; 
   
   
 
   export const validateCode =  (value) => {
-    return value.length > 0 || "Validation Code is required";
+    return value.length > 0 || 'Validation Code is required';
   };
   
   export const validatePhoneNumber =  (value) => {
-    return value.length > 0 || "Phone Number is required";
+    return value.length > 0 || 'Phone Number is required';
   }; 
   
   export const inputFieldRequired =  (value) => {
-    return value.length > 0 || "This field is required";
+    return value.length > 0 || 'This field is required';
   };
 
 
   export const isRequired =  (value) => {
-    return value || "This field is required";
+    return value || 'This field is required';
   }; 
   
   

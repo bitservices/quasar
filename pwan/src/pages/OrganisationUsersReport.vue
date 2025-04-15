@@ -1,52 +1,52 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
         <q-form>
           <q-select
             filled
             bottom-slots
-            v-model="formData.status"
-            :options="statuses"
-            label="Select Status" 
-            :dense="dense"
+            v-model='formData.status'
+            :options='statuses'
+            label='Select Status' 
+            :dense='dense'
           />  
           
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchUsers"
+            size='md'
+            color='primary'
+            label='Search'
+            @click='searchUsers'
             v-close-popup
           />
           <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
+            label='Download'
+            color='secondary'
+            @click='downloadReport'
+            size='md'
             rounded
             v-close-popup
           />
         </q-card-actions>
       </q-card-section>
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Organisation User's Report"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Organisation Users Report'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Organisation User's Report</q-label>
@@ -58,41 +58,41 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath';
 import { format } from 'date-fns';
 export default {
    
   data() {
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = ""; 
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
+    const userEmail = ''; 
     const columns = [
       {
-        name: "name",
+        name: 'name',
         required: false,
-        label: "Name",
-        align: "left",
+        label: 'Name',
+        align: 'left',
         field: (row) =>
-          row.userId.last_name + " "+ row.userId.first_name + " "+row.userId.middle_name,
+          row.userId.last_name + ' '+ row.userId.first_name + ' '+row.userId.middle_name,
         format: (val) => `${val}`,
         sortable: true,
       },
      
       {
-        name: "status",
-        align: "left",
-        label: "Status",
+        name: 'status',
+        align: 'left',
+        label: 'Status',
         field: (row) => row.status.name,
         sortable: true,
       },
        
       {
-        name: "registrationDate",
-        align: "left",
-        label: "Registration Date",
+        name: 'registrationDate',
+        align: 'left',
+        label: 'Registration Date',
         field: (row) => format(row.createdDate, 'yyyy-MM-dd'),
         sortable: true,
       }, 
@@ -123,11 +123,11 @@ export default {
             organisation: this.profile.organisation,
           },
         };
-         if(this.formData.status != null && this.formData.status.value != null &&  this.formData.status.value != ""){
-          requestParams["params"]["status"] = this.formData.status.value
+         if(this.formData.status != null && this.formData.status.value != null &&  this.formData.status.value != ''){
+          requestParams['params']['status'] = this.formData.status.value
         } 
       try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log('>>>>>requestParams>>>>>>>>',requestParams)
         const promise = axios.get(
           path.ORG_USER_SEARCH,
           requestParams,
@@ -136,15 +136,15 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
@@ -155,8 +155,8 @@ export default {
             organisation: this.profile.organisation,
           },
         };
-         if(this.formData.status != null && this.formData.status.value != null &&  this.formData.status.value != ""){
-          requestParams["params"]["status"] = this.formData.status.value
+         if(this.formData.status != null && this.formData.status.value != null &&  this.formData.status.value != ''){
+          requestParams['params']['status'] = this.formData.status.value
         } 
       try { 
         const promise = axios.get(
@@ -182,56 +182,56 @@ export default {
             
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
  mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
     try {
        
       const promise = axios.get(
         path.STATUS_ALL, 
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
           
-        console.log(">>>>>>>>response>>>>>>>", response.data);
+        console.log('>>>>>>>>response>>>>>>>', response.data);
           this.statuses = response.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
-           console.log(">>>>>>>>statuses>>>>>>>", this.statuses);
+           console.log('>>>>>>>>statuses>>>>>>>', this.statuses);
         })
         .catch((error) => {
           console.log(error);
         }); 
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

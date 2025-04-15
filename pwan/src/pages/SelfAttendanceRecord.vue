@@ -1,85 +1,85 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
        <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
-        <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
         </div>
-        <div class="q-pa-md q-gutter-lg">
+        <div class='q-pa-md q-gutter-lg'>
           <q-toggle
-              v-model="toggleValue"
-              :label="toggleLabel"
-              @update:model-value="onToggleChange"
+              v-model='toggleValue'
+              :label='toggleLabel'
+              @update:model-value='onToggleChange'
             />
             <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
         </div>
-      <div  v-if="toggleValue">
-        <q-card  v-if="position.isSet" class="card-flex-display">
+      <div  v-if='toggleValue'>
+        <q-card  v-if='position.isSet' class='card-flex-display'>
           <q-card-section> 
-            <q-form @submit.prevent="recordFormAttendance" ref="selfAttendanceForm">
+            <q-form @submit.prevent='recordFormAttendance' ref='selfAttendanceForm'>
               <q-select
                 filled
                 bottom-slots
-                v-model="formData.client"
-                @update:model-value="handleClientChange"
-                :options="clients"
-                label="Select Client"
-                :rules="[requiredRule]" 
+                v-model='formData.client'
+                @update:model-value='handleClientChange'
+                :options='clients'
+                label='Select Client'
+                :rules='[requiredRule]' 
               />
               <q-select
                 filled
                 bottom-slots
-                v-model="formData.organisation"
-                :options="organisations"
-                label="Select Organisation"
-                :rules="[requiredRule]" 
+                v-model='formData.organisation'
+                :options='organisations'
+                label='Select Organisation'
+                :rules='[requiredRule]' 
               />
               
-              <q-card-actions align="center"> 
+              <q-card-actions align='center'> 
               <q-btn
-              class="pwan-button"
-                label="Record Attendance" 
-                type="submit"
-                size="md"
+              class='pwan-button'
+                label='Record Attendance' 
+                type='submit'
+                size='md'
                 rounded 
-                :disabled="isDisabled"
+                :disabled='isDisabled'
               />
             </q-card-actions>
           </q-form>
           </q-card-section> 
       </q-card>
       </div>
-    <q-card v-else class="q-mt-md">  
-          <QRCodeScanner v-if="position.isSet" ref="qrcodescanner"
-            @scannedDataSubmitted="recordScannedAttendance"
+    <q-card v-else class='q-mt-md'>  
+          <QRCodeScanner v-if='position.isSet' ref='qrcodescanner'
+            @scannedDataSubmitted='recordScannedAttendance'
             />
       </q-card>
 
-      <div class="q-pa-md">
+      <div class='q-pa-md'>
      <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Attendance"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"         
-        selection="single" 
-        v-model:selected="selected"
+        title='Attendance'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'         
+        selection='single' 
+        v-model:selected='selected'
       >
         <template v-slot:top>
           <q-label>Attendance List</q-label>
@@ -92,19 +92,18 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { Geolocation } from '@capacitor/geolocation';
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue"; 
-import ResponseDialog from "src/components/ResponseDialog.vue";  
+import HeaderPage from 'src/components/HeaderPage.vue'; 
+import ResponseDialog from 'src/components/ResponseDialog.vue';  
 import { isRequired } from 'src/validation/validation';
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios"; 
-import path from "src/router/urlpath";
-import { useRouter } from "vue-router";   
-import QRCodeScanner from "src/components/QRCodeScanner.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios'; 
+import path from 'src/router/urlpath';  
+import QRCodeScanner from 'src/components/QRCodeScanner.vue'; 
 import { format } from 'date-fns'; 
-
-const router = useRouter();
+ 
 export default {
   components: { 
     HeaderPage,
@@ -117,8 +116,8 @@ export default {
     const pageName = computed(()=> t('selfattendance.pagename'))
     const hint = computed(()=> t('selfattendance.hint'))
     const showSpinner = ref(false); 
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = LocalStorage.getItem('userEmail');
     const clients = ref([]);
     const selected = ref([]);
     const organisations = ref([]); 
@@ -133,49 +132,49 @@ export default {
       isSet : false
     }
      const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
     const columns = [
       
       
        {
-        name: "organisation",
-        align: "left",
-        label: "Organisation/Center",
+        name: 'organisation',
+        align: 'left',
+        label: 'Organisation/Center',
         field: (row) => row.organisation.name,
         sortable: true,
       },
       {
-        name: "client",
-        align: "left",
-        label: "Client/Center",
+        name: 'client',
+        align: 'left',
+        label: 'Client/Center',
         field: (row) => row.client.name,
         sortable: true,
       },
        {
-        name: "attendanceDate",
-        align: "left",
-        label: "Attendance Date",
+        name: 'attendanceDate',
+        align: 'left',
+        label: 'Attendance Date',
         field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
         sortable: true,
       },
        {
-        name: "attendanceTime",
-        align: "left",
-        label: "Attendance Time",
+        name: 'attendanceTime',
+        align: 'left',
+        label: 'Attendance Time',
         field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
         sortable: true,
       },
        
        {
-        name: "seatNumber",
-        align: "left",
-        label: "Seat Number",
+        name: 'seatNumber',
+        align: 'left',
+        label: 'Seat Number',
         field: (row) => row.seatNumber,
         sortable: true,
       },
@@ -196,7 +195,7 @@ export default {
       showMessageDialog:false, 
       requiredRule: value => isRequired(value), 
       toggleValue:ref(false), 
-      toggleLabel:"Record Attendance By Scanning Center/Organisation QR Code",
+      toggleLabel:'Record Attendance By Scanning Center/Organisation QR Code',
       columns,
       rows,
       selected,
@@ -205,9 +204,9 @@ export default {
   methods: {
     onToggleChange(value){ 
       if(value){
-        this.toggleLabel = "Record Attendance By Filling Form"
+        this.toggleLabel = 'Record Attendance By Filling Form'
       }else{ 
-         this.toggleLabel = "Record Attendance By Scanning Center/Organisation QR Code"
+         this.toggleLabel = 'Record Attendance By Scanning Center/Organisation QR Code'
       } 
       if(this.$refs.qrcodescanner != null)
           this.$refs.qrcodescanner.stopCamera();
@@ -225,10 +224,10 @@ export default {
             })); 
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleClientChange(selectedItem) {
@@ -242,7 +241,7 @@ export default {
           .get(path.ORGANISATION_SEARCH, requestParam, this.headers)
           .then((response) => {
             console.log(
-              "organisations Response >>>>>>>>>>>>",
+              'organisations Response >>>>>>>>>>>>',
               response.data.data
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
@@ -250,13 +249,13 @@ export default {
               label: option.name,
               value: option.code,
             }));
-            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+            console.log('this.organisation >>>>>>>>>>>>', this.organisations);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
    recordScannedAttendance(record){
@@ -295,18 +294,18 @@ export default {
             if (result.success) {    
                this.childRef = {
               message: response.data.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };  
             }else{ 
                 this.childRef = {
                 message: result.message,
-                label: "Error",
-                cardClass: "bg-negative text-white error",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal"
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal'
               };  
             }
             this.loadUserAttendance();
@@ -315,26 +314,26 @@ export default {
  
           })
           .catch((error) => {
-            console.log("Error>>>>>>>>Axios error:", error);
+            console.log('Error>>>>>>>>Axios error:', error);
                 this.childRef = {
                 message: error.message,
-                label: "Error",
-                cardClass: "bg-negative text-white error",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal"
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal'
               }; 
                this.showMessageDialog = true;
              this.showSpinner= false;
           });
       } catch (error) {
         
-        console.log("Error try Catch error>>>>:", error);
+        console.log('Error try Catch error>>>>:', error);
            this.childRef = {
                 message: error.message,
-                label: "Error",
-                cardClass: "bg-negative text-white error",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal"
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal'
               }; 
               this.showMessageDialog = true;
              this.showSpinner= false
@@ -344,12 +343,12 @@ export default {
          const requestParams = {
           params: { 
             email: this.userEmail,
-            order_by : "-attendanceDate" 
+            order_by : '-attendanceDate' 
           },
         };
          
       try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log('>>>>>requestParams>>>>>>>>',requestParams)
         const promise = axios.get(
           path.ATTENDANCE_SEARCH,
           requestParams,
@@ -358,35 +357,58 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data.data); 
+            console.log('response data>>>>>>>', response.data.data); 
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
              
+             consle.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
+    async getCurrentLocation() {
+  try {
+    console.log("calling getCurrentLocation for mobile app")
+    const permission = await Geolocation.requestPermissions();
+    if (permission.location === 'granted') {
+      const position = await Geolocation.getCurrentPosition();
+
+      this.position = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                  isSet : true, 
+                };
+                this.isDisabled = false
+      console.log('Latitude:', position.coords.latitude);
+      console.log('Longitude:', position.coords.longitude);
+    } else {
+      console.warn('Location permission denied by the user.');
+    }
+  } catch (error) {
+    console.error('Error getting location:', error.message);
+  }
+},
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
     this.loadUserClients();
     this.loadUserAttendance()
-    console.log(">>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>mounted>>>>>>>>>>');
     try{
         if ('geolocation' in navigator) {
-          console.log('Geolocation is supported');
+          console.log('Geolocation xxxxxx is supported');
           navigator.geolocation.getCurrentPosition(
               (position) => {
                 // Success callback
@@ -398,38 +420,74 @@ export default {
                 };
                 this.isDisabled = false
               },
-              (error) => {
+              (error) => {                 
                 // Error callback
+                console.log(">>>>>>>>returning error >>>>>>>>>>")
                 console.log(error)
-              this.childRef = {
-              message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal"
-            }; 
-                this.isDisabled = true;
-                this.showMessageDialog=true;
-              }
+                 try{ 
+           console.log("calling get Current Location 2222>>>>>>")
+            this.getCurrentLocation()
+          }catch(error){
+            console.log("error >>>>>",error)
+            this.childRef = {
+                        message: error.message,
+                        label: 'Error',
+                        cardClass: 'bg-negative text-white error',
+                        textClass: 'q-pt-none',
+                        buttonClass: 'bg-white text-teal'
+                      }; 
+                          this.isDisabled = true;
+                          this.showMessageDialog=true; 
+                  }
+              
+            }
             );
         } else {
-          console.log('Geolocation is not supported by this browser');
+              try{
+                  console.log("calling get Current Location111>>>>>>")
+                  this.getCurrentLocation()
+                }catch(error){
+                   console.log("error >>>>>",error)
+                   this.childRef = {
+                        message: error.message,
+                        label: 'Error',
+                        cardClass: 'bg-negative text-white error',
+                        textClass: 'q-pt-none',
+                        buttonClass: 'bg-white text-teal'
+                      }; 
+                          this.isDisabled = true;
+                          this.showMessageDialog=true;
+                }
         }
     }catch(error){
-      console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
+      try{ 
+           console.log("calling get Current Location 2222>>>>>>")
+            this.getCurrentLocation()
+          }catch(error){
+            console.log("error >>>>>",error)
+            this.childRef = {
+                        message: error.message,
+                        label: 'Error',
+                        cardClass: 'bg-negative text-white error',
+                        textClass: 'q-pt-none',
+                        buttonClass: 'bg-white text-teal'
+                      }; 
+                          this.isDisabled = true;
+                          this.showMessageDialog=true;
+          }
     }
   },
  
   beforeUpdate() {
-    console.log(">>>>>>>>before updated>>>>>>>>>>");
+    console.log('>>>>>>>>before updated>>>>>>>>>>');
   },
   updated() {
-    console.log(">>>>>>>>updated>>>>>>>>>>");
+    console.log('>>>>>>>>updated>>>>>>>>>>');
   },
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

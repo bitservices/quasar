@@ -1,4 +1,4 @@
-# Pwan Group App (pwan)
+# Property connect App (pwan)
 
 A Property connect App Activities for Real Estate Industry
 

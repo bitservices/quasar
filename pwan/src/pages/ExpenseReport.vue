@@ -1,75 +1,75 @@
 <template>
   <q-page padding>
      <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     >  
       <q-card-section>
         <q-form>
           <q-select
             filled
             bottom-slots
-            v-model="formData.vendorCode"
-            :options="vendors"
-            label="Select Vendor" 
-            :dense="dense"
+            v-model='formData.vendorCode'
+            :options='vendors'
+            label='Select Vendor' 
+            :dense='dense'
           />  
            <q-input
               filled
               bottom-slots
-              v-model="formData.amount"
-              placeholder="Payable Amount"
-              type="number"
-              :dense="dense"
+              v-model='formData.amount'
+              placeholder='Payable Amount'
+              type='number'
+              :dense='dense'
             />
           <q-select
             filled
             bottom-slots
-            v-model="formData.paymentMode"
-            :options="paymentModes"
-            label="Select Payment Mode"
-            :dense="dense"
+            v-model='formData.paymentMode'
+            :options='paymentModes'
+            label='Select Payment Mode'
+            :dense='dense'
           />
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchExpenseReportData"
+            size='md'
+            color='primary'
+            label='Search'
+            @click='searchExpenseReportData'
             v-close-popup
           />
           <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
+            label='Download'
+            color='secondary'
+            @click='downloadReport'
+            size='md'
             rounded
             v-close-popup
           />
         </q-card-actions>
       </q-card-section>
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Vendor Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Vendor Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Expense Report</q-label>
@@ -81,12 +81,12 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref,computed } from "vue"; 
-import path from "src/router/urlpath"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref,computed } from 'vue'; 
+import path from 'src/router/urlpath'; 
 import { useI18n } from 'vue-i18n'
- import HeaderPage from "src/components/HeaderPage.vue";
+ import HeaderPage from 'src/components/HeaderPage.vue';
 
 export default {
   components: { 
@@ -96,45 +96,45 @@ export default {
     const { t } = useI18n();
     const pageName = computed(()=> t('expensereport.pagename'))
     const hint = computed(()=> t('expensereport.hint'))
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = ""; 
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
+    const userEmail = ''; 
     const columns = [
       {
-        name: "vendor",
+        name: 'vendor',
         required: false,
-        label: "Vendor",
-        align: "left",
+        label: 'Vendor',
+        align: 'left',
         field: (row) =>
           row.vendorCode.name,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "description",
-        align: "left",
-        label: "Description",
+        name: 'description',
+        align: 'left',
+        label: 'Description',
         field: (row) => row.description, 
         sortable: true,
       },
       {
-        name: "amount",
-        align: "left",
-        label: "Amount",
+        name: 'amount',
+        align: 'left',
+        label: 'Amount',
         field: (row) => row.amount, 
         sortable: true,
       },
       {
-        name: "paymentMode",
-        align: "left",
-        label: "Payment Mode",
+        name: 'paymentMode',
+        align: 'left',
+        label: 'Payment Mode',
         field: (row) => row.paymentMode.name,
         sortable: true,
       },
       {
-        name: "payemntDate",
-        align: "left",
-        label: "Payment Date",
+        name: 'payemntDate',
+        align: 'left',
+        label: 'Payment Date',
         field: (row) => row.paymentDate,
         sortable: true,
       }, 
@@ -170,14 +170,14 @@ export default {
             organisation: this.profile.organisation,
           },
         };
-         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ""){
-          requestParams["params"]["vendorCode"] = this.formData.vendorCode.value
+         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ''){
+          requestParams['params']['vendorCode'] = this.formData.vendorCode.value
         }
-        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ''){
+          requestParams['params']['paymentMode'] = this.formData.paymentMode.value
         } 
-        if(this.formData.amount != null &&   this.formData.amount != "" && parseFloat(this.formData.amount) > 0 ){
-          requestParams["params"]["amount"] = this.formData.amount
+        if(this.formData.amount != null &&   this.formData.amount != '' && parseFloat(this.formData.amount) > 0 ){
+          requestParams['params']['amount'] = this.formData.amount
         } 
       try { 
         const promise = axios.get(
@@ -192,10 +192,10 @@ export default {
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
@@ -206,14 +206,14 @@ export default {
             organisation: this.profile.organisation,
           },
         };
-         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ""){
-          requestParams["params"]["vendorCode"] = this.formData.vendorCode.value
+         if(this.formData.vendorCode != null && this.formData.vendorCode.value != null &&  this.formData.vendorCode.value != ''){
+          requestParams['params']['vendorCode'] = this.formData.vendorCode.value
         }
-        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+        if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ''){
+          requestParams['params']['paymentMode'] = this.formData.paymentMode.value
         } 
-        if(this.formData.amount != null &&   this.formData.amount != "" && parseFloat(this.formData.amount) > 0 ){
-          requestParams["params"]["amount"] = this.formData.amount
+        if(this.formData.amount != null &&   this.formData.amount != '' && parseFloat(this.formData.amount) > 0 ){
+          requestParams['params']['amount'] = this.formData.amount
         } 
       try { 
         const promise = axios.get(
@@ -239,27 +239,27 @@ export default {
             
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
  mounted() {
-    console.log(">>>>>>>>>Expwnse Report mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>Expwnse Report mounted>>>>>>>>>>');
     try {
       const requestParams = {
         params: {
@@ -272,7 +272,7 @@ export default {
         requestParams,
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
           this.vendors = response.data.data.map((option) => ({
@@ -288,27 +288,27 @@ export default {
         path.PAYMENTMODE_SEARCH,
         this.headers
       );
-      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
+      console.log('>>>>>>>>paymentModePromise>>>>>>>', paymentModePromise);
       paymentModePromise
         .then((response) => {
           this.paymentModes = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
-          console.log("paymentModes>>>>>>>>>", this.paymentModes);
+          console.log('paymentModes>>>>>>>>>', this.paymentModes);
         })
         .catch((error) => {
           console.log(error);
         });
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

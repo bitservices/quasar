@@ -1,11 +1,11 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
+        <div class='text-h6'>{{ form.label }}</div>
       </q-card-section>
 
       <q-card-section>
@@ -13,60 +13,60 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :dense="dense"
+            v-model='formData.code'
+            label='Code'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
           />
            <q-select
             filled
             bottom-slots
-            v-model="formData.countryCode"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense"
+            v-model='formData.countryCode'
+            :options='countries'
+            label='Select Country'
+            @update:model-value='handleCountryChange'
+            :dense='dense'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterCountries"
+            @filter='filterCountries'
           /> 
           
           <q-select
             filled
             bottom-slots
-            v-model="formData.stateCode" 
-            :options="stateList"
-            label="State"
-            :dense="dense"
+            v-model='formData.stateCode' 
+            :options='stateList'
+            label='State'
+            :dense='dense'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterStates"
+            @filter='filterStates'
           />
            
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Cancel"
+            size='md'
+            color='primary'
+            label='Cancel'
             v-close-popup
           />
           <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
+            :label='actionLabel'
+            color='secondary'
+            @click='saveRecord'
+            size='md'
             rounded
             v-close-popup
           />
@@ -77,13 +77,13 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios"; 
-import path from "src/router/urlpath"; 
+import { SessionStorage } from 'quasar';
+import {  ref } from 'vue';
+import axios from 'axios'; 
+import path from 'src/router/urlpath'; 
 
 export default {
-  name: "CountyFormDialog",
+  name: 'CountyFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -119,18 +119,18 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px"; 
-    const headers = SessionStorage.getItem("headers");
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px'; 
+    const headers = SessionStorage.getItem('headers');
 
     const formData = ref({
-      code: "",
-      name: "",
+      code: '',
+      name: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -151,8 +151,8 @@ export default {
   methods: {
     
     filterCountries(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.countries = this.allCountries;
         });
@@ -168,8 +168,8 @@ export default {
     }, 
 
     filterStates(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.stateList = this.allStates;
         });
@@ -184,77 +184,76 @@ export default {
       });
     },  
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.formData
+      console.log('>>>>>>>thisis inside handle Save,', this.formData); 
       //this.onClick(formData.value);
       this.formData.countryCode = this.formData.countryCode.value
       this.formData.stateCode = this.formData.stateCode.value
-      this.$emit("formDataSubmitted", this.formData);
+      this.$emit('formDataSubmitted', this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
     },
     handleCountryChange(selectedItem){
-      console.log("calling country change", selectedItem.value)
+      console.log('calling country change', selectedItem.value)
       const requestParams = {
           params: {
             countryCode: selectedItem.value,
           },
         };
-        console.log(">>>>>>this.headers>>>>>>>",this.headers)
+        console.log('>>>>>>this.headers>>>>>>>',this.headers)
       axios
       .get(path.STATE_SEARCH,requestParams,this.headers)
       .then((response) => {
-        console.log("State Response >>>>>>>>>>>>", response.data);
+        console.log('State Response >>>>>>>>>>>>', response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.stateList = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
         this.allStates = this.stateList;
-        console.log("this.stateList >>>>>>>>>>>>", this.stateList);
+        console.log('this.stateList >>>>>>>>>>>>', this.stateList);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
     }
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
      axios
       .get(path.COUNTRY_ALL)
       .then((response) => {
-        console.log("country Response >>>>>>>>>>>>", response.data);
+        console.log('country Response >>>>>>>>>>>>', response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.countries = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
         this.allCountries = this.countries
-        console.log("this.countries >>>>>>>>>>>>", this.countries);
+        console.log('this.countries >>>>>>>>>>>>', this.countries);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "" };
+    console.log('Calling unmounted>>>>>>>>>>');
+    this.formData = { code: '', name: '' };
   },
   updated() { 
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
         const requestParams = {
           params: {
@@ -262,12 +261,12 @@ export default {
           },
         };
         const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        console.log('>>>>>>>>>>promise>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            console.log('>>>>>>>>result>>>>>>>', result.data);
             if (result.success) {
               this.formData = result.data[0];
             }
@@ -276,10 +275,10 @@ export default {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
-      this.formData = { code: "", name: "" };
+      this.formData = { code: '', name: '' };
     }
   },
 };

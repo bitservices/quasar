@@ -1,65 +1,67 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     >  
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section> 
       <q-card-section>
-         <q-form @submit.prevent="purchaseUnit" ref="msgIntegrationForm">
-          <div class="row">
-            <div class="col-8"></div> 
-            <div  class="col-4" style="display: flex; justify-content: flex-end">
-              <q-badge rounded :label="`Unit(s):   `+equivalentUnit" class="pwan-btton text-h6" />
+         <q-form @submit.prevent='purchaseUnit' ref='msgIntegrationForm'>
+          <div class='row'>
+            <div class='col-8'></div> 
+            <div  class='col-4' style='display: flex; justify-content: flex-end'>
+              <q-badge rounded :label='`Unit(s):   `+equivalentUnit' class='pwan-btton text-h6' />
             </div>
           </div>
           <q-select
             filled
             bottom-slots
-            v-model="formData.messageChannel"
-            :options="messageChannels"
-            label="Select Messsage Channel" 
-            :dense="dense"  
-             :rules="[requiredRule]"  
-            @update:model-value="handleChannelChange"
+            v-model='formData.messageChannel'
+            :options='messageChannels'
+            label='Select Messsage Channel' 
+            :dense='dense'  
+             :rules='[requiredRule]'  
+            @update:model-value='handleChannelChange'
           />
           
           <q-input 
                 filled
                 bottom-slots 
-                v-model="formData.amount" 
-                placeholder="Enter Amount"
-                type="number"
-                :dense="dense"  
-                @change="handleAmountChange"
-                :rules="[inputRequiredRule]"  
+                v-model='formData.amount' 
+                placeholder='Enter Amount'
+                type='number'
+                :dense='dense'  
+                @change='handleAmountChange'
+                :rules='[inputRequiredRule]'  
               />
 
-            <q-card-actions align="center">              
+            <q-card-actions align='center'>              
               <q-btn
-                class="pwan-button top-margin full-width"
-                label="Buy Unit(s)"  
-                type="submit" 
+                rounded
+                class='pwan-button top-margin'
+                label='Buy Unit(s)'  
+                type='submit' 
               />
+              <Done />
             </q-card-actions>
         </q-form>
       </q-card-section>
      
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Message Integration(s)"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Message Integration(s)'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Message Integration(s)</q-label>
@@ -71,40 +73,42 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref,computed } from "vue";  
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref,computed } from 'vue';  
+import path from 'src/router/urlpath';
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue";  
-import { isRequired,inputFieldRequired } from 'src/validation/validation';  
+import HeaderPage from 'src/components/HeaderPage.vue';  
+import { isRequired,inputFieldRequired } from 'src/validation/validation';   
+import Done from 'src/components/Done.vue';  
 export default {
     components: {  
     HeaderPage, 
+    Done,
   },
   
   data() {
      const { t } = useI18n() 
     const pageName = computed(()=> t('msgintegration.pagename'))
     const hint = computed(()=> t('msgintegration.hint'))
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
+    const userEmail = LocalStorage.getItem('userEmail');
      
     const columns = [
       {
-        name: "messageChannel",
+        name: 'messageChannel',
         required: false,
-        label: "Message Channel",
-        align: "left",
+        label: 'Message Channel',
+        align: 'left',
         field: (row) => row.messagingChannel.name  , 
         sortable: true,
       },
       {
-        name: "totalUnit",
-        align: "left",
-        label: "Total Unit",
-        field: (row) => new Intl.NumberFormat("en-US", {
+        name: 'totalUnit',
+        align: 'left',
+        label: 'Total Unit',
+        field: (row) => new Intl.NumberFormat('en-US', {
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0,
               }).format( row.totalUnit), 
@@ -116,11 +120,11 @@ export default {
     const selected = ref([]);
     const formData = ref({});
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
 
@@ -168,7 +172,7 @@ export default {
           },
         };
       try {
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log('>>>>>requestParams>>>>>>>>',requestParams)
         const promise = axios.get(
           path.MESSAGINGINTEGRATION_SEARCH,
           requestParams,
@@ -177,44 +181,43 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     purchaseUnit(){
-      console.log(">>>>>>>>purchase unit>>>>>>>>")
+      console.log('>>>>>>>>purchase unit>>>>>>>>')
       if (this.$refs.msgIntegrationForm.validate()) {
-          this.showSpinner= true  
-          let data = [];  
-          console.log("the form is valid>>>>>>>>");
-          this.logPaymentItems("pk_test_8f42f8d746d6f8bd63d34d6025d6390e24123d61","PAYSTACK")
+          this.showSpinner= true   
+          console.log('the form is valid>>>>>>>>');
+          this.logPaymentItems('pk_test_8f42f8d746d6f8bd63d34d6025d6390e24123d61','PAYSTACK')
       }
     },
     logPaymentItems(publicKey,paymentChannel){
-        console.log(">>>>>>>publicKey>>>>",publicKey) 
+        console.log('>>>>>>>publicKey>>>>',publicKey) 
               if(this.formData.amount > 0 && this.unitPrice > 0 ){  
                 let item = {
                   client: this.profile.client,
                   organisation : this.profile.organisation,
-                  paymentMode : "O" , 
+                  paymentMode : 'O' , 
                   createdBy : this.userEmail,
                   amount : this.formData.amount, 
                   messageChannel : this.formData.messageChannel.value,
                   totalUnit:this.equivalentUnit,
                   unitPrice:this.unitPrice,
-                  status : "A"
+                  status : 'A'
                 }            
-                console.log(">>>>>>>>item>>>>>>",item) 
-                let data = {"paymentItems":JSON.stringify(item),  "totalAmount":this.formData.amount, "createdBy":this.userEmail, 
-                "paymentStatus":"P", "paymentChannel":paymentChannel}
-              console.log("data>>>>>>>",data) 
+                console.log('>>>>>>>>item>>>>>>',item) 
+                let data = {'paymentItems':JSON.stringify(item),  'totalAmount':this.formData.amount, 'createdBy':this.userEmail, 
+                'paymentStatus':'P', 'paymentChannel':paymentChannel}
+              console.log('data>>>>>>>',data) 
               const promise = axios.post(path.PAYMENTINTEGRATIONLOG_CREATE, data, this.headers);
                 promise
                   .then((response) => {
@@ -222,22 +225,22 @@ export default {
                     const result = response.data;  
                     
                     if (result.success) {  
-                        if(paymentChannel=="PAYSTACK") {  
+                        if(paymentChannel=='PAYSTACK') {  
                           this.payWithPaystack(publicKey,result.data);
-                        } else if(paymentChannel=="REMITA"){
+                        } else if(paymentChannel=='REMITA'){
                             this.payWithPaystack(publicKey,result.data);
                         }
                     } 
                     this.showSpinner = false;  
                   })
                   .catch((error) => {
-                    debug("Error:", error);
+                    debug('Error:', error);
                       this.childRef = {
                       message: error.message,
-                      label: "Success",
-                      cardClass: "bg-negative text-white error",
-                      textClass: "q-pt-none",
-                      buttonClass: "bg-white text-teal",
+                      label: 'Success',
+                      cardClass: 'bg-negative text-white error',
+                      textClass: 'q-pt-none',
+                      buttonClass: 'bg-white text-teal',
                     }; 
                     this.showSpinner = false; 
                   });
@@ -247,7 +250,7 @@ export default {
       try{
               this.showSpinner = true;
               let paymentItems = JSON.parse(data.paymentItems);  
-              console.log(">>>>>>>>paymentItems 2222 >>>>>>>>>>>>>>",paymentItems) 
+              console.log('>>>>>>>>paymentItems 2222 >>>>>>>>>>>>>>',paymentItems) 
               const referenceNumber = response.reference;
               const transactionReference = response.transaction; 
               const promise = axios.post(path.MESSAGINGINTEGRATION_CREATE, paymentItems, this.headers);
@@ -255,14 +258,15 @@ export default {
               .then((response) => {
                 // Extract data from the response
                 const result = response.data;  
-                console.log(">>>>>>>>result>>>>>>>>>",result)
+                console.log('>>>>>>>>result>>>>>>>>>',result)
                 if (result.success) {  
                   
                   try { 
-                    const record = {"referenceNumber":referenceNumber, "transactionReference":transactionReference,  "paymentStatus":"A" }
+                    const record = {'referenceNumber':referenceNumber, 'transactionReference':transactionReference,  'paymentStatus':'A' }
                     const promise = axios.put(path.PAYMENTINTEGRATIONLOG_UPDATE, record, this.headers);
                     promise
                       .then((response) => {
+                        console.log(response)
                           setTimeout(() => {
                           window.location.reload();
                         }, 2000);
@@ -270,15 +274,15 @@ export default {
                       .catch((error) => {
                         childRef.value = {
                           message: error.message,
-                          label: "Error",
-                          cardClass: "bg-negative text-white error",
-                          textClass: "q-pt-none",
-                          buttonClass: "bg-white text-teal",
+                          label: 'Error',
+                          cardClass: 'bg-negative text-white error',
+                          textClass: 'q-pt-none',
+                          buttonClass: 'bg-white text-teal',
                         };
                         showMessageDialog.value = true;
                       });
                   } catch (error) {
-                    console.error("Error:", error);
+                    console.error('Error:', error);
                   } 
                 // setTimeout(() => {
                 //     window.location.reload();
@@ -286,7 +290,7 @@ export default {
                 } 
               })
             }catch(error){
-              console.log(">>>error>>>>>>>",error)
+              console.log('>>>error>>>>>>>',error)
             } 
     },
      payWithPaystack(publicKey, data) {
@@ -310,17 +314,17 @@ export default {
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
     try {  
          const promise =  axios.get(
           path.MESSAGINGCHANNEL_SEARCH, 
@@ -328,7 +332,7 @@ export default {
         ); 
          promise
           .then((response) => {
-            console.log(">>>>>response.data.data>>>>>>>",response.data.data)
+            console.log('>>>>>response.data.data>>>>>>>',response.data.data)
           this.messageChannels = response.data.data.map((option) => (
           {
           label: option.name,
@@ -336,7 +340,7 @@ export default {
           unitPrice : option.unitPrice,
         })); 
           
-         console.log(">>>>>>>>this.messageChannel>>>>>>>",this.messageChannels)
+         console.log('>>>>>>>>this.messageChannel>>>>>>>',this.messageChannels)
           })
           .catch((error) => {
             console.log(error);
@@ -344,14 +348,14 @@ export default {
         
       this.searchData();
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

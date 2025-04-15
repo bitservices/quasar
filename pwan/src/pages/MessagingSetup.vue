@@ -1,160 +1,162 @@
 <template>
   <q-page padding>
     <q-card>
-        <q-card-section class="pwan-blue text-white">
+        <q-card-section class='pwan-blue text-white'>
           <HeaderPage  
-              :label="pageName"
-              :hint="hint"  
+              :label='pageName'
+              :hint='hint'  
             />
         </q-card-section>
       </q-card>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
-        <q-form  @submit.prevent="saveRecord" ref="msgingSetupForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <q-form  @submit.prevent='saveRecord' ref='msgingSetupForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
            <q-select
                 filled
                 bottom-slots
-                v-model="formData.messageType"
-                :options="messageTypes"
-                label="Select Message Type" 
-                :dense="dense"
+                v-model='formData.messageType'
+                :options='messageTypes'
+                label='Select Message Type' 
+                :dense='dense'
                 :rule=[requiredRule]
               />
               
              <q-input
               filled
               bottom-slots
-              v-model="formData.message"
-              label="message"
-              type="textarea"
-              rows="4"
-              maxlength="1000"
-              :rules="[inputFieldRule]"
+              v-model='formData.message'
+              label='message'
+              type='textarea'
+              rows='4'
+              maxlength='1000'
+              :rules='[inputFieldRule]'
               counter 
             />
              <q-select
             filled
             bottom-slots
-            v-model="messagingChannels"
-            :options="messageChannelList"
-            label="Select Messaging Channels" 
-            :dense="dense" 
+            v-model='messagingChannels'
+            :options='messageChannelList'
+            label='Select Messaging Channels' 
+            :dense='dense' 
             multiple
             emit-value
             map-options 
             use-input
-            input-debounce="300"
+            input-debounce='300'
             stack-label
-            class="q-mb-md"
+            class='q-mb-md'
            /> 
 
-          <q-card-actions align="center">
+          <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Reset" 
-            @click="resetForm" 
+            size='md'
+            color='primary'
+            label='Reset' 
+            @click='resetForm' 
           />
           <q-btn
-            id="actionBtn"
-            :label="actionLabel"
-            class="pwan-button"
-            type="submit"
-             size="md"
+            id='actionBtn'
+            :label='actionLabel'
+            class='pwan-button'
+            type='submit'
+             size='md'
             rounded
             v-close-popup
           />
+          <Done />
         </q-card-actions>
         </q-form>
       </q-card-section> 
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Payment Integration List"
-        :rows="rows"
-        :columns="columns"
-        row-key="id" 
-        selection="single" 
-        v-model:selected="selected"
+        title='Payment Integration List'
+        :rows='rows'
+        :columns='columns'
+        row-key='id' 
+        selection='single' 
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Messaging Setup List</q-label>
           <q-space />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="deleteItem"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='deleteItem'
           />
         </template>  
       </q-table>
       <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
     </div>
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref, computed } from "vue"; 
-import path from "src/router/urlpath";
-import { format } from 'date-fns';
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref, computed } from 'vue'; 
+import path from 'src/router/urlpath'; 
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { inputFieldRequired } from 'src/validation/validation'; 
-import ResponseDialog from "src/components/ResponseDialog.vue";
+import ResponseDialog from 'src/components/ResponseDialog.vue'; 
+import Done from 'src/components/Done.vue';
 
 export default {
   components: { 
     HeaderPage,
     ResponseDialog,
+    Done,
   },
   data() {
     const { t } = useI18n();
     const pageName = computed(()=> t('msgingsetup.pagename'))
     const hint = computed(()=> t('msgingsetup.hint'))
-    const headers = SessionStorage.getItem("headers");  
-    const profile = LocalStorage.getItem("turnelParams");
+    const headers = SessionStorage.getItem('headers');  
+    const profile = LocalStorage.getItem('turnelParams');
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
    
       const columns = [
       {
-        name: "message Type",
+        name: 'message Type',
         required: false,
-        label: "Message Type",
-        align: "left",
+        label: 'Message Type',
+        align: 'left',
         field: (row) =>
           row.messageType.name,
         format: (val) => `${val}`,
@@ -162,16 +164,16 @@ export default {
       },
      
       {
-        name: "message",
-        align: "left",
-        label: "Message",
+        name: 'message',
+        align: 'left',
+        label: 'Message',
         field: (row) => row.message,
         sortable: true,
       },
       {
-        name: "messagingChannel",
-        align: "left",
-        label: "Messaging Channels",
+        name: 'messagingChannel',
+        align: 'left',
+        label: 'Messaging Channels',
         field: (row) => row.messagingChannels,
         sortable: true,
       },
@@ -181,8 +183,8 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const formData = ref({
-      messageType : "",
-      message:"",
+      messageType : '',
+      message:'',
       client:profile.client,
       organisation:profile.organisation,
       createdBy : profile.email
@@ -203,8 +205,8 @@ export default {
       requiredRule: value => inputFieldRequired(value),
       showSpinner,
       showMessageDialog, 
-      action: "add",
-      actionLabel:"Create",
+      action: 'add',
+      actionLabel:'Create',
       messageTypes:[],
       messagingChannels:[],
       messageChannelList:[],
@@ -230,43 +232,43 @@ export default {
           .then((response) => {
             // Extract data from the response 
             
-            console.log("response.data.data>>>>>>>>>",response.data.data)
+            console.log('response.data.data>>>>>>>>>',response.data.data)
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
      
     saveRecord() { 
       if (this.$refs.msgingSetupForm.validate()) {  
         try {
-          console.log("this.action>>>>>>",this.action)
-           let promise = ""
+          console.log('this.action>>>>>>',this.action)
+           let promise = ''
            this.showSpinner = true; 
           this.formData.client= this.profile.client;
           this.formData.organisation= this.profile.organisation;
           this.formData.createdBy = this.profile.email;
-          this.formData.messageType = this.formData.messageType.value,
+          this.formData.messageType = this.formData.messageType.value;
           this.formData.messagingChannels = JSON.stringify(this.messagingChannels)
-          if(this.action == "add"){
+          if(this.action == 'add'){
                 promise = axios.post(
             path.MESSAGINGSETUP_CREATE,
             this.formData,
             this.headers
           ); 
-          }else if(this.action == "edit"){
+          }else if(this.action == 'edit'){
                 promise = axios.put(
             path.MESSAGINGSETUP_UPDATE,
             this.formData,
             this.headers
               );
           } 
-          else if(this.action == "delete"){
+          else if(this.action == 'delete'){
              promise = axios.post(
             path.MESSAGINGSETUP_REMOVE,
             this.formData,
@@ -282,10 +284,10 @@ export default {
               {  
                 this.childRef = {
                 message: result.message,
-                label: "Success",
-                cardClass: "bg-positive text-white",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal",
+                label: 'Success',
+                cardClass: 'bg-positive text-white',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
               };   
               this.showSpinner= false;
               this.showMessageDialog = true;
@@ -294,10 +296,10 @@ export default {
               }else{
                 this.childRef = {
                   message: result.message,
-                  label: "Error",
-                  cardClass: "bg-negative text-white error",
-                  textClass: "q-pt-none",
-                  buttonClass: "bg-white text-teal",
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
                 };
                 this.showSpinner= false;
                 this.showMessageDialog = true;
@@ -308,10 +310,10 @@ export default {
             .catch((error) => {
              this.childRef = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };  
               this.showSpinner= false;
               this.showMessageDialog = true;
@@ -320,38 +322,38 @@ export default {
             this.resetForm();
               
         } catch (error) {
-          console.error("Error submitting form:", error);
+          console.error('Error submitting form:', error);
         }
       }
     }, 
     resetForm(){ 
       this.formData = {messageType:'',message:'', createdBy : this.profile.email, organisation:this.profile.organisation, client:this.profile.client}; 
-      this.action = "add";
-      this.actionLabel="Create";
+      this.action = 'add';
+      this.actionLabel='Create';
       this.messagingChannels = [];
     },
     editItem() {
       if (this.selected.length > 0) { 
         this.setformData()
-         console.log(">>>>this.formData>>>>",this.formData)
-        this.action = "edit";
-        this.actionLabel=" Edit "; 
+         console.log('>>>>this.formData>>>>',this.formData)
+        this.action = 'edit';
+        this.actionLabel=' Edit '; 
       }
     },
    viewItem () {
-    console.log(">>>>>this.formData>>>>>>>",this.selected[0])
+    console.log('>>>>>this.formData>>>>>>>',this.selected[0])
       if (this.selected.length > 0) { 
         this.setformData()
-       this.action = "view";
-       this.actionLabel=" View ";  
+       this.action = 'view';
+       this.actionLabel=' View ';  
       }
     },
     deleteItem() {
-      console.log(">>>>>this.formData>>>>>>>",this.selected[0])
+      console.log('>>>>>this.formData>>>>>>>',this.selected[0])
        if (this.selected.length > 0) { 
          this.setformData()
-        this.action = "delete";
-        this.actionLabel="Delete"; 
+        this.action = 'delete';
+        this.actionLabel='Delete'; 
         document.getElementById('actionBtn').click();
       }
     },
@@ -369,46 +371,46 @@ export default {
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.profile);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.profile);
   },
   mounted() {  
-    console.log(">>>>>>>>>>>profile>>>>>>>>>>",this.profile);
+    console.log('>>>>>>>>>>>profile>>>>>>>>>>',this.profile);
     this.loadMessagingSetups()
      axios
       .get(path.MESSAGETYPE_SEARCH)
       .then((response) => {
-        console.log("payment channel Response >>>>>>>>>>>>", response.data); 
+        console.log('payment channel Response >>>>>>>>>>>>', response.data); 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.messageTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.messageTypes >>>>>>>>>>>>", this.messageTypes);
+        console.log('this.messageTypes >>>>>>>>>>>>', this.messageTypes);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
       axios
       .get(path.MESSAGINGCHANNEL_SEARCH)
       .then((response) => {
-        console.log("payment channel Response >>>>>>>>>>>>", response.data); 
+        console.log('payment channel Response >>>>>>>>>>>>', response.data); 
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.messageChannelList = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.messageChannelList >>>>>>>>>>>>", this.messageChannelList);
+        console.log('this.messageChannelList >>>>>>>>>>>>', this.messageChannelList);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       });
 
 
@@ -417,7 +419,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

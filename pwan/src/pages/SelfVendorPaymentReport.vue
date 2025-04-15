@@ -1,68 +1,69 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
         <q-form>
            <q-select
             filled
             bottom-slots
-            v-model="formData.client"
-            :options="clients"
-            label="Select Client" 
-            :dense="dense"
-            @update:model-value="handleClientChange"
+            v-model='formData.client'
+            :options='clients'
+            label='Select Client' 
+            :dense='dense'
+            @update:model-value='handleClientChange'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.organisation"
-            :options="organisations"
-            label="Select Organisation"
-            :dense="dense" 
+            v-model='formData.organisation'
+            :options='organisations'
+            label='Select Organisation'
+            :dense='dense' 
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.paymentMode"
-            :options="paymentModes"
-            label="Select Payment Mode"
-            :dense="dense"
+            v-model='formData.paymentMode'
+            :options='paymentModes'
+            label='Select Payment Mode'
+            :dense='dense'
           />
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchVendorPaymentData"
+            size='md'
+            color='primary'
+            label='Search'
+            @click='searchVendorPaymentData'
             v-close-popup
           />
           <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
+            label='Download'
+            color='secondary'
+            @click='downloadReport'
+            size='md'
             rounded
             v-close-popup
           />
+          <Done />
         </q-card-actions>
       </q-card-section>
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Vendor Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Vendor Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>Vendor Payment Report</q-label>
@@ -74,59 +75,66 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath";
-import { format } from 'date-fns';
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath';
+import { format } from 'date-fns'; 
+import HeaderPage from 'src/components/HeaderPage.vue';  
+import DatePicker from 'src/components/DatePicker.vue'; 
+import Done from 'src/components/Done.vue'; 
 export default {
-   
+    components: { 
+    HeaderPage, 
+    DatePicker,
+    Done,
+  },
   data() {
-    const headers = SessionStorage.getItem("headers"); 
-    const userEmail = LocalStorage.getItem("userEmail"); 
+    const headers = SessionStorage.getItem('headers'); 
+    const userEmail = LocalStorage.getItem('userEmail'); 
     const columns = [
       {
-        name: "vendor",
+        name: 'vendor',
         required: false,
-        label: "Vendor",
-        align: "left",
+        label: 'Vendor',
+        align: 'left',
         field: (row) =>
           row.vendorCode.name,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "description",
-        align: "left",
-        label: "Description",
+        name: 'description',
+        align: 'left',
+        label: 'Description',
         field: (row) => row.description, 
         sortable: true,
       },
       {
-        name: "amount",
-        align: "left",
-        label: "Amount",
+        name: 'amount',
+        align: 'left',
+        label: 'Amount',
         field: (row) => row.amount,
         sortable: true,
       },
       {
-        name: "paymentMode",
-        align: "left",
-        label: "Payment Mode",
+        name: 'paymentMode',
+        align: 'left',
+        label: 'Payment Mode',
         field: (row) => row.paymentMode.name,
         sortable: true,
       },
       {
-        name: "payemntDate",
-        align: "left",
-        label: "Payment Date",
+        name: 'payemntDate',
+        align: 'left',
+        label: 'Payment Date',
         field: (row) => format(row.paymentDate, 'yyyy-MM-dd'),
         sortable: true,
       }, 
        {
-        name: "organisation",
-        align: "left",
-        label: "Organisation",
+        name: 'organisation',
+        align: 'left',
+        label: 'Organisation',
         field: (row) => row.organisation.name,
         sortable: true,
       }, 
@@ -152,7 +160,7 @@ export default {
   methods: {
       loadUserClients() {
       try {
-        console.log(">>>>>calling LoadUserClients>>>>>>>>>", this.userEmail);
+        console.log('>>>>>calling LoadUserClients>>>>>>>>>', this.userEmail);
         const requestParam = {
           params: {
             email: this.userEmail,
@@ -161,24 +169,24 @@ export default {
         axios
           .get(path.ACTIVE_USER_CLIENT_SEARCH, requestParam, this.headers)
           .then((response) => {
-            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            console.log('client Response >>>>>>>>>>>>', response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.clients = response.data.data.map((option) => ({
               label: option.client.name,
               value: option.client.code,
             }));
-            console.log("this.clients >>>>>>>>>>>>", this.clients);
+            console.log('this.clients >>>>>>>>>>>>', this.clients);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleClientChange(selectedItem) {
       try {
-        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
+        console.log('>>>>>calling handleClientChange>>>>>>>>>', selectedItem);
         const requestParam = {
           params: {
             client: selectedItem.value,
@@ -189,7 +197,7 @@ export default {
           .get(path.ACTIVE_ORG_USER_SEARCH, requestParam, this.headers)
           .then((response) => {
             console.log(
-              "organisations Response >>>>>>>>>>>>",
+              'organisations Response >>>>>>>>>>>>',
               response.data.data
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
@@ -197,13 +205,13 @@ export default {
               label: option.organisation.name,
               value: option.organisation.code,
             }));
-            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+            console.log('this.organisation >>>>>>>>>>>>', this.organisations);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     searchVendorPaymentData() {
@@ -212,14 +220,14 @@ export default {
             email: this.userEmail, 
           },
         };
-         if(this.formData.client != null && this.formData.client.value != null &&  this.formData.client.value != ""){
-          requestParams["params"]["client"] = this.formData.client.value
+         if(this.formData.client != null && this.formData.client.value != null &&  this.formData.client.value != ''){
+          requestParams['params']['client'] = this.formData.client.value
         }
-         if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ""){
-          requestParams["params"]["organisation"] = this.formData.organisation.value
+         if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ''){
+          requestParams['params']['organisation'] = this.formData.organisation.value
         }
-         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ''){
+          requestParams['params']['paymentMode'] = this.formData.paymentMode.value
         } 
       try {
         const promise = axios.get(
@@ -233,10 +241,10 @@ export default {
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
@@ -246,14 +254,14 @@ export default {
             email: this.userEmail, 
           },
         };
-         if(this.formData.client != null && this.formData.client.value != null &&  this.formData.client.value != ""){
-          requestParams["params"]["client"] = this.formData.client.value
+         if(this.formData.client != null && this.formData.client.value != null &&  this.formData.client.value != ''){
+          requestParams['params']['client'] = this.formData.client.value
         }
-         if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ""){
-          requestParams["params"]["organisation"] = this.formData.organisation.value
+         if(this.formData.organisation != null && this.formData.organisation.value != null &&  this.formData.organisation.value != ''){
+          requestParams['params']['organisation'] = this.formData.organisation.value
         }
-         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ""){
-          requestParams["params"]["paymentMode"] = this.formData.paymentMode.value
+         if(this.formData.paymentMode != null && this.formData.paymentMode.value != null &&  this.formData.paymentMode.value != ''){
+          requestParams['params']['paymentMode'] = this.formData.paymentMode.value
         }
       try { 
         const promise = axios.get(
@@ -264,7 +272,7 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response 
-            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const blob = new Blob([response.data], { type: 'application/pdf','Content-Disposition': 'attachment; filename="vendor_payment_report.pdf"'  });
 
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);
@@ -279,24 +287,24 @@ export default {
             
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
  mounted() {
     try{
@@ -305,27 +313,27 @@ export default {
         path.PAYMENTMODE_SEARCH,
         this.headers
       );
-      console.log(">>>>>>>>paymentModePromise>>>>>>>", paymentModePromise);
+      console.log('>>>>>>>>paymentModePromise>>>>>>>', paymentModePromise);
       paymentModePromise
         .then((response) => {
           this.paymentModes = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
-          console.log("paymentModes>>>>>>>>>", this.paymentModes);
+          console.log('paymentModes>>>>>>>>>', this.paymentModes);
         })
         .catch((error) => {
           console.log(error);
         });
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

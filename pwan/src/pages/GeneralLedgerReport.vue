@@ -1,52 +1,52 @@
 <template>
   <q-page padding>
     <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     > 
       <q-card-section>
         <q-form>
           <q-select
             filled
             bottom-slots
-            v-model="formData.transactionType"
-            :options="transactionTypes"
-            label="Select Transaction Type" 
-            :dense="dense"
+            v-model='formData.transactionType'
+            :options='transactionTypes'
+            label='Select Transaction Type' 
+            :dense='dense'
           />  
           
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchVendorPaymentData"
+            size='md'
+            color='primary'
+            label='Search'
+            @click='searchVendorPaymentData'
             v-close-popup
           />
           <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
+            label='Download'
+            color='secondary'
+            @click='downloadReport'
+            size='md'
             rounded
             v-close-popup
           />
         </q-card-actions>
       </q-card-section>
     </q-card>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Vendor Payments"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
+        title='Vendor Payments'
+        :rows='rows'
+        :columns='columns'
+        row-key='id'
+        v-model:selected='selected'
       > 
         <template v-slot:top>
           <q-label>General Ledger Report</q-label>
@@ -58,23 +58,22 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath"; 
-import { format } from 'date-fns';
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath';  
 export default {
    
   data() {
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
-    const userEmail = ""; 
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
+    const userEmail = ''; 
     const columns = [
       {
-        name: "transactionType",
+        name: 'transactionType',
         required: false,
-        label: "Transaction Type",
-        align: "left",
+        label: 'Transaction Type',
+        align: 'left',
         field: (row) =>
           row.transactionType.name,
         format: (val) => `${val}`,
@@ -82,17 +81,17 @@ export default {
       },
      
       {
-        name: "amount",
-        align: "left",
-        label: "Amount",
+        name: 'amount',
+        align: 'left',
+        label: 'Amount',
         field: (row) => row.sumAmount,
         sortable: true,
       },
               
       {
-        name: "organisation",
-        align: "left",
-        label: "Organisation",
+        name: 'organisation',
+        align: 'left',
+        label: 'Organisation',
         field: (row) => row.organisation.name,
         sortable: true,
       }, 
@@ -126,7 +125,7 @@ export default {
         };
        
       try {
-         if(this.formData.transactionType != null && this.formData.transactionType.value.trim() != ""){ 
+         if(this.formData.transactionType != null && this.formData.transactionType.value.trim() != ''){ 
           requestParams = {
           params: { 
             client: this.profile.client,
@@ -135,7 +134,7 @@ export default {
           },
         };
         }
-        console.log(">>>>>requestParams>>>>>>>>",requestParams)
+        console.log('>>>>>requestParams>>>>>>>>',requestParams)
         const promise = axios.get(
           path.GENERAL_LEDGER_TRANSACTION_SEARCH,
           requestParams,
@@ -144,15 +143,15 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
@@ -164,7 +163,7 @@ export default {
           },
         };
       try { 
-        if(this.formData.transactionType != null && this.formData.transactionType.value.trim() != ""){ 
+        if(this.formData.transactionType != null && this.formData.transactionType.value.trim() != ''){ 
           requestParams = {
           params: { 
             client: this.profile.client,
@@ -196,34 +195,34 @@ export default {
             
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     }
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
  mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
     try {
        
       const promise = axios.get(
         path.TRANSACTIONTYPE_SEARCH, 
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
           this.transactionTypes = response.data.data.map((option) => ({
@@ -236,14 +235,14 @@ export default {
         }); 
        
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

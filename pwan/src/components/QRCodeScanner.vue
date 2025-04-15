@@ -1,39 +1,43 @@
 <template>
   <q-card
-      class="card-flex-display"
+      class='card-flex-display'
       
     >
     <q-card-section>
-    <video ref="video" width="300" height="300" autoplay></video>
-    <canvas ref="canvas" style="display: none;"></canvas> 
+    <video ref='video' width='300' height='300' autoplay></video>
+    <canvas ref='canvas' style='display: none;'></canvas> 
     </q-card-section>
     <q-card-section>
-       <q-card-actions align="center"> 
+       <q-card-actions align='center'> 
         <q-btn
-            class="pwan-button top-margin"
-            label="  Start Scan   " 
-             @click="startCamera"
-            size="md"
+            class='pwan-button top-margin'
+            label='  Start Scan   ' 
+             @click='startCamera'
+            size='md'
             rounded 
             
           />
           <q-btn
-            class="pwan-blue top-margin"
-            label="  Stop Scan   " 
-             @click="stopCamera"
-            size="md"
+            class='pwan-blue top-margin'
+            label='  Stop Scan   ' 
+             @click='stopCamera'
+            size='md'
             rounded 
             
           />
+          <Done />
       </q-card-actions>
     </q-card-section>
   </q-card>
 </template>
 
 <script>
-import jsQR from "jsqr";
-
+import jsQR from 'jsqr'; 
+import Done from 'src/components/Done.vue';
 export default {
+  components:{
+    Done,
+  },
   data() {
     return {  
       videoStream: null,
@@ -42,8 +46,8 @@ export default {
   methods: {
     async startCamera() {
       const constraints = [
-        { video: { facingMode: { exact: "environment" } } }, // Back camera
-        { video: { facingMode: "user" } } // Front camera
+        { video: { facingMode: { exact: 'environment' } } }, // Back camera
+        { video: { facingMode: 'user' } } // Front camera
       ];
       for (const constraint of constraints) {
         try {
@@ -53,15 +57,15 @@ export default {
             this.$refs.video.play();
             this.scanQRCode();
             break; 
-            console.log(stream, "Stream>>>")
+            console.log(stream, 'Stream>>>')
           } catch (err) {
-              console.warn("Camera not accessible, trying next option...", err);
+              console.warn('Camera not accessible, trying next option...', err);
             }
       }
     },
     scanQRCode() {
       const canvas = this.$refs.canvas;
-      const context = canvas.getContext("2d");
+      const context = canvas.getContext('2d');
 
       const scan = () => {
         if (this.videoStream) {
@@ -71,8 +75,8 @@ export default {
  
 
           if (code) {  
-            console.log(code, "Code before stop stopCamera")
-            this.$emit("scannedDataSubmitted", code.data);
+            console.log(code, 'Code before stop stopCamera')
+            this.$emit('scannedDataSubmitted', code.data);
             this.stopCamera();
           }
         }
@@ -83,7 +87,7 @@ export default {
     },
     stopCamera() {
       if (this.videoStream) {
-        console.log("Stop Camera...")
+        console.log('Stop Camera...')
         const tracks = this.videoStream.getTracks();
         tracks.forEach(track => track.stop());
       }

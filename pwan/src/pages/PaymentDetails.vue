@@ -1,56 +1,58 @@
 <template>
   <q-page padding> 
         <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card> 
           
            
-         <div class="card-container"> 
+         <div class='card-container'> 
                       
            <q-card
-            v-for="item in paymentItems"
-            :key="item.id" 
-             class="my-card-d text-white"
+            v-for='item in paymentItems'
+            :key='item.id' 
+             class='my-card-d text-white'
           >
-              <router-link :to="`/selfpayment/${item.organisation.code}/${item.client.code}`" class="q-card-link" style="text-decoration: none;">
+              <router-link :to='`/selfpayment/${item.organisation.code}/${item.client.code}`' class='q-card-link' style='text-decoration: none;'>
                 <q-card-section>
-                  <div class="text-h6 text-center"><q-icon :name="item.icon" size="40px" />{{ item.organisation.name }}</div>
-                  <div class="text-h6 text-center">N {{ item.outstandingAmount }}</div>
+                  <div class='text-h6 text-center'><q-icon :name='item.icon' size='40px' />{{ item.organisation.name }}</div>
+                  <div class='text-h6 text-center'>N {{ item.outstandingAmount }}</div>
                   <q-separator />
-                  <div class="text-center">Preview</div>
-                </q-card-section>
-                 
-              </router-link>
+                  <div class='text-center'>Preview</div>
+                </q-card-section> 
+              </router-link>  
            </q-card>
         </div>  
+        <Done />
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from 'quasar';
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue";
+import axios from 'axios';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger'; 
+import HeaderPage from 'src/components/HeaderPage.vue';
+import Done from 'src/components/Done.vue';
 
 export default {
   components: { 
     HeaderPage,
+    Done,
   },
   data() {
     const { t } = useI18n() 
     const pageName = computed(()=> t('paymentdetails.pagename'))
     const hint = computed(()=> t('paymentdetails.hint'))
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail"); 
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = LocalStorage.getItem('userEmail'); 
      
     return { 
       headers,
@@ -80,44 +82,44 @@ export default {
             if (result.success) {    
                
               result.data.forEach(item => {
-                item.outstandingAmount = new Intl.NumberFormat("en-US", {
+                item.outstandingAmount = new Intl.NumberFormat('en-US', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,
               }).format(item.outstandingAmount);
             }); 
-            console.log(">>>>result>>>",result)
+            console.log('>>>>result>>>',result)
             this.paymentItems =  result.data;
             console.log(this.paymentItems)
             } 
               
           })
           .catch((error) => {
-            debug("Error:", error);
+            debug('Error:', error);
           });
  
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData(); 
   },
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

@@ -1,66 +1,71 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="User Leads"
-        :rows="rows"
-        :columns="columns"
-        row-key="name"
-        :selected-rows-label="getSelectedString"
-        selection="single"
-        v-model:selected="selected"
+        title='User Leads'
+        :rows='rows'
+        :columns='columns'
+        row-key='name'
+        :selected-rows-label='getSelectedString'
+        selection='single'
+        v-model:selected='selected'
       /> 
     </div>
+    <Done />
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath'; 
+import Done from 'src/components/Done.vue'; 
 export default { 
+   components: { 
+    Done,
+  },
   setup() {
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = "";
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = '';
     const columns = [
        
       {
-        name: "name",
-        align: "left",
-        label: "Prospect Name",
+        name: 'name',
+        align: 'left',
+        label: 'Prospect Name',
         field: (row) => row.name,
         sortable: true,
       },
       {
-        name: "email",
-        align: "left",
-        label: "Prospect Email",
+        name: 'email',
+        align: 'left',
+        label: 'Prospect Email',
         field: (row) => row.email,
         sortable: true,
       },
       {
-        name: "phoneNumber",
-        align: "left",
-        label: "Prospect Mobile",
+        name: 'phoneNumber',
+        align: 'left',
+        label: 'Prospect Mobile',
         field: (row) => row.phoneNumber,
         sortable: true,
       },
 
       {
-        name: "subject",
-        align: "left",
-        label: "Subject",
+        name: 'subject',
+        align: 'left',
+        label: 'Subject',
         field: (row) => row.subject,
         sortable: true,
       },
        {
-        name: "message",
-        align: "left",
-        label: "Message",
+        name: 'message',
+        align: 'left',
+        label: 'Message',
         field: (row) => row.message,
         sortable: true,
       },
@@ -72,7 +77,7 @@ export default {
     
     const fetchData = async () => {
       try { 
-        const userEmail = LocalStorage.getItem("userEmail");
+        const userEmail = LocalStorage.getItem('userEmail');
         const requestParam = {
           params: {
             agencyEmail: userEmail,
@@ -89,7 +94,7 @@ export default {
           selected.value = []; 
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     };
  
@@ -105,24 +110,24 @@ export default {
     };
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData();
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

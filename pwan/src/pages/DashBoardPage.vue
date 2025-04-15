@@ -1,47 +1,47 @@
 <template>
   <q-page padding> 
         <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
-        <q-card v-if="websitelink != null" style="margin-bottom: 10px;">
-          <q-card-section class="text-center">
-          Your Estate Agency Link is :  <a :href="websitelink" target="_blank"   rel="noopener noreferrer"> {{websitelink}}</a> 
+        <q-card v-if='websitelink != null' style='margin-bottom: 10px;'>
+          <q-card-section class='text-center'>
+          Your Estate Agency Link is :  <a :href='websitelink' target='_blank'   rel='noopener noreferrer'> {{websitelink}}</a> 
            </q-card-section>
         </q-card>
           
            <q-toggle
-              v-model="toggleValue"
-              :label="toggleLabel"
-              @update:model-value="onToggleChange"
+              v-model='toggleValue'
+              :label='toggleLabel'
+              @update:model-value='onToggleChange'
             />
 
-         <div class="card-container" v-if="!toggleValue"> 
+         <div class='card-container' v-if='!toggleValue'> 
           <q-card
-            v-if="isSupperUser"
-            key="websitesetup" 
-             class="my-card-d text-white"
+            v-if='isSupperUser'
+            key='websitesetup' 
+             class='my-card-d text-white'
           > 
-              <router-link to="/userwebsitesetup" class="q-card-link" style="text-decoration: none;">
+              <router-link to='/userwebsitesetup' class='q-card-link' style='text-decoration: none;' @click='handleClick("/userwebsitesetup")'>
                 <q-card-section>
-                  <div class="text-h6"><q-icon name="fa fa-wifi" size="40px" />Website Setup</div>
+                  <div class='text-h6'><q-icon name='fa fa-wifi' size='40px' />Website Setup</div>
                   <div>Website Setup</div>
                 </q-card-section>
               </router-link>
            </q-card>
            <q-card
-            v-if="isSupperUser"
-            key="organisations-upload" 
-             class="my-card-d"
+            v-if='isSupperUser'
+            key='organisations-upload' 
+             class='my-card-d'
           > 
-              <router-link to="/orgupload" class="q-card-link" style="text-decoration: none;">
+              <router-link to='/orgupload' class='q-card-link' style='text-decoration: none;' @click='handleClick("/orgupload")'>
                
                 <q-card-section> 
-                  <div class="text-h6"><q-icon name="upload" size="40px" />Upload Organistions</div>
+                  <div class='text-h6'><q-icon name='upload' size='40px' />Upload Organistions</div>
                   <div>Upload Organisations</div> 
                 </q-card-section>
                 
@@ -49,60 +49,60 @@
            </q-card>
            
            <q-card
-            v-for="item in items"
-            :key="item.id" 
-             class="my-card-d text-white"
+            v-for='item in items'
+            :key='item.id' 
+             class='my-card-d text-white'
           >
-              <router-link :to="`${item.link}`" class="q-card-link" style="text-decoration: none;">
+              <router-link :to='`${item.link}`' class='q-card-link' style='text-decoration: none;' @click='handleClick(`${item.link}`)'>
                 <q-card-section>
-                  <div class="text-h6"><q-icon :name="item.icon" size="40px" />{{ item.title }}</div>
+                  <div class='text-h6'><q-icon :name='item.icon' size='40px' />{{ item.title }}</div>
                   <div>{{ item.description }}</div>
                 </q-card-section>
               </router-link>
            </q-card>
         </div>
       
-      <div class="q-pa-md row items-start q-gutter-md" v-else>  
+      <div class='q-pa-md row items-start q-gutter-md' v-else>  
         <q-card
-          class="my-card-d text-white"
-          style="background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)" v-if="outstanding.length > 0">
+          class='my-card-d text-white'
+          style='background: radial-gradient(circle, #35a2ff 0%, #014a88 100%)' v-if='outstanding.length > 0'>
           <q-card-section>
-            <div class="text-h6 text-center">OutStanding Payment(s)</div> 
+            <div class='text-h6 text-center'>OutStanding Payment(s)</div> 
           </q-card-section>  
           <q-separator dark inset /> 
-            <q-card-section v-for="(field, index) in outstanding" :key="index"> 
-                <div class="col-3">{{field.organisation__name}}</div>  
+            <q-card-section v-for='(field, index) in outstanding' :key='index'> 
+                <div class='col-3'>{{field.organisation__name}}</div>  
                 <hr>
-                <div class="col-3">Current Debit: <b>N {{field.currentDebit}}</b> | Paid: <b>N {{field.paid}}</b> </div>  
+                <div class='col-3'>Current Debit: <b>N {{field.currentDebit}}</b> | Paid: <b>N {{field.paid}}</b> </div>  
             
             </q-card-section>
         </q-card>
 
-        <q-card dark bordered class="bg-red-9 my-card-d text-white"  v-if="contributions.length > 0">
+        <q-card dark bordered class='bg-red-9 my-card-d text-white'  v-if='contributions.length > 0'>
           <q-card-section>
-            <div class="text-h6 text-center">Total Contribution(s)</div> 
+            <div class='text-h6 text-center'>Total Contribution(s)</div> 
           </q-card-section>
           <q-separator dark inset /> 
-            <q-card-section v-for="(field, index) in contributions" :key="index"> 
-                <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
+            <q-card-section v-for='(field, index) in contributions' :key='index'> 
+                <div class='col-3'>{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-puple-9 my-card-d text-white"  v-if="attendance.length > 0">
+        <q-card dark bordered class='bg-puple-9 my-card-d text-white'  v-if='attendance.length > 0'>
           <q-card-section>
-            <div class="text-h6 text-center">Attendance</div> 
+            <div class='text-h6 text-center'>Attendance</div> 
           </q-card-section>
           <q-separator dark inset /> 
-            <q-card-section v-for="(field, index) in attendance" :key="index"> 
-                <div class="col-3">{{field.organisation__name}}: <b>{{field.count}}</b></div>  
+            <q-card-section v-for='(field, index) in attendance' :key='index'> 
+                <div class='col-3'>{{field.organisation__name}}: <b>{{field.count}}</b></div>  
             </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-green-9 my-card-d text-white"  v-if="benefits.length > 0">
+        <q-card dark bordered class='bg-green-9 my-card-d text-white'  v-if='benefits.length > 0'>
           <q-card-section>
-            <div class="text-h6 text-center">Total Receivable(s)</div> 
+            <div class='text-h6 text-center'>Total Receivable(s)</div> 
           </q-card-section>
           <q-separator dark inset /> 
-            <q-card-section v-for="(field, index) in benefits" :key="index"> 
-                <div class="col-3">{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
+            <q-card-section v-for='(field, index) in benefits' :key='index'> 
+                <div class='col-3'>{{field.organisation__name}}: <b>N {{field.transactionAmount}}</b></div>  
             </q-card-section>
         </q-card>
         
@@ -111,15 +111,15 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
+import { LocalStorage, SessionStorage } from 'quasar';
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import axios from "axios";
-import { ref } from "vue";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import HeaderPage from "src/components/HeaderPage.vue";
+import axios from 'axios';
+import { ref } from 'vue';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger'; 
+import HeaderPage from 'src/components/HeaderPage.vue';
 
 export default {
   components: { 
@@ -129,8 +129,8 @@ export default {
     const { t } = useI18n() 
     const pageName = computed(()=> t('dashboard.pagename'))
     const hint = computed(()=> t('dashboard.hint'))
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail"); 
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = LocalStorage.getItem('userEmail'); 
     const websitelink = ref(null)
     const contributions = ref([])
     const attendance = ref([])
@@ -149,7 +149,7 @@ export default {
       websitelink,
       isSupperUser:false,
       toggleValue:ref(false), 
-      toggleLabel:"Dashboard Transaction Details",
+      toggleLabel:'Dashboard Transaction Details',
        items: [
         
 
@@ -166,6 +166,14 @@ export default {
     };
   },
     methods:{
+
+      handleClick(link){  
+        console.log(">>>>>>>>>link>>>>>",link)
+        var pageStacking = LocalStorage.getItem('pagestack') 
+        pageStacking.push(link)  
+       LocalStorage.set('pagestack',pageStacking) 
+        
+      },
        fetchData() {
       console.log(this.userEmail);
       const requestParam = {
@@ -189,11 +197,11 @@ export default {
               
           })
           .catch((error) => {
-            debug("Error:", error);
+            debug('Error:', error);
           });
  
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     loadUser(){
@@ -211,17 +219,17 @@ export default {
             const result = response.data;   
             if (result.success) {   
               this.isSupperUser =  result.data.is_superuser
-              SessionStorage.set("isSupperUser", result.data.is_superuser);
+              SessionStorage.set('isSupperUser', result.data.is_superuser);
  
             }  
   
           })
           .catch((error) => {
-            debug("Error:", error);
+            debug('Error:', error);
           });
  
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     loadUserWebsiteSetup() { 
@@ -243,34 +251,34 @@ export default {
             this.websitelink = path.ESTATE_AGENCY_URL + result[0].refId
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     
     onToggleChange(value){  
       if(value){
-          this.toggleLabel = "Dashboard Actions"
+          this.toggleLabel = 'Dashboard Actions'
       }else{          
-         this.toggleLabel = "Dashboard Transaction Details"
+         this.toggleLabel = 'Dashboard Transaction Details'
       }
          
     },
 
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData();
     this.loadUser();
     this.loadUserWebsiteSetup()
@@ -278,7 +286,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

@@ -1,11 +1,11 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
+        <div class='text-h6'>{{ form.label }}</div>
       </q-card-section>
 
       <q-card-section>
@@ -13,61 +13,61 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :dense="dense"
+            v-model='formData.code'
+            label='Code'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.url"
-            label="Url"
-            :dense="dense"
+            v-model='formData.url'
+            label='Url'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.icon"
-            label="Icon"
-            :dense="dense"
+            v-model='formData.icon'
+            label='Icon'
+            :dense='dense'
           />
           <q-checkbox
-            v-model="formData.restrictAccess"
-            label="Restrict Access"
-            color="primary"
+            v-model='formData.restrictAccess'
+            label='Restrict Access'
+            color='primary'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.menuCode"
-            :options="menus"
-            label="Select Parent Menu"
-            @input="handleChange"
-            :dense="dense"
+            v-model='formData.menuCode'
+            :options='menus'
+            label='Select Parent Menu'
+            @input='handleChange'
+            :dense='dense'
           />
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Cancel"
+            size='md'
+            color='primary'
+            label='Cancel'
             v-close-popup
           />
           <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
+            :label='actionLabel'
+            color='secondary'
+            @click='saveRecord'
+            size='md'
             rounded
             v-close-popup
           />
@@ -78,13 +78,13 @@
 </template>
 
 <script>
-import { SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios";
-import path from "src/router/urlpath";
+import { SessionStorage } from 'quasar';
+import {  ref } from 'vue';
+import axios from 'axios';
+import path from 'src/router/urlpath';
 
 export default {
-  name: "MenuItemFormDialog",
+  name: 'MenuItemFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -120,18 +120,18 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
 
     const formData = ref({
-      code: "",
-      name: "",
-      url: "",
+      code: '',
+      name: '',
+      url: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -147,51 +147,51 @@ export default {
   },
   methods: {
     saveRecord() {
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
+      console.log('>>>>>>>thisis inside handle Save,', this.formData);
       this.formData.menuCode = this.formData.menuCode.value
       //this.onClick(formData.value);
-      this.$emit("formDataSubmitted", this.formData);
+      this.$emit('formDataSubmitted', this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
+    console.log('mounted>>>>>>>>>>>>');
      axios
       .get(path.MENU_SEARCH_ALL)
       .then((response) => {
-        console.log("menuitem Response >>>>>>>>>>>>", response.data);
+        console.log('menuitem Response >>>>>>>>>>>>', response.data);
         // Assuming the response data is an array of objects with 'value' and 'label' properties
         this.menus = response.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
-        console.log("this.countries >>>>>>>>>>>>", this.menus);
+        console.log('this.countries >>>>>>>>>>>>', this.menus);
       })
       .catch((error) => {
-        console.error("Error fetching options:", error);
+        console.error('Error fetching options:', error);
       }); 
      
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
-    this.formData = { code: "", name: "", url: "" };
+    console.log('Calling unmounted>>>>>>>>>>');
+    this.formData = { code: '', name: '', url: '' };
   },
   updated() {
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem('headers');
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
         const requestParams = {
           params: {
@@ -199,12 +199,12 @@ export default {
           },
         };
         const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        console.log('>>>>>>>>>>promise>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            console.log('>>>>>>>>result>>>>>>>', result.data);
             if (result.success) {
               this.formData = result.data[0];
               this.formData.menuCode= {
@@ -217,10 +217,10 @@ export default {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
-      this.formData = { code: "", name: "", url: "" };
+      this.formData = { code: '', name: '', url: '' };
     }
   },
 };

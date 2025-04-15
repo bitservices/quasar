@@ -70,54 +70,54 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref } from "vue"; 
-import path from "src/router/urlpath"; 
-import ResponseDialog from "src/components/ResponseDialog.vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue'; 
+import path from 'src/router/urlpath'; 
+import ResponseDialog from 'src/components/ResponseDialog.vue'; 
 export default {
   components: { 
     ResponseDialog,
   }, 
    
   data() {
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");  
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');  
     const medium_dialog = ref(false); 
      const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
     const columns = [
       {
-        name: "userName",
+        name: 'userName',
         required: false,
-        label: "User",
-        align: "left",
+        label: 'User',
+        align: 'left',
         field: (row) =>
           row.userId.last_name +
-          " " +
+          ' ' +
           row.userId.first_name +
-          " " +
+          ' ' +
           row.userId.middle_name,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: "Role",
-        align: "left",
-        label: "Role",
+        name: 'Role',
+        align: 'left',
+        label: 'Role',
         field: (row) => row.roleCode.name, 
         sortable: true,
       }, 
       {
-        name: "organisation",
-        align: "left",
-        label: "Organisation",
+        name: 'organisation',
+        align: 'left',
+        label: 'Organisation',
         field: (row) => row.organisation.name,
         sortable: true,
       },
@@ -167,30 +167,31 @@ export default {
             if(result.success){
               this.childRef = {
                 message: response.data.message,
-                label: "Success",
-                cardClass: "bg-positive text-white",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal",
+                label: 'Success',
+                cardClass: 'bg-positive text-white',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
               };
             }else{
                 this.childRef = {
                 message: result.message,
-                label: "Error",
-                cardClass: "bg-negative text-white error",
-                textClass: "q-pt-none",
-                buttonClass: "bg-white text-teal"
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal'
               };
             } 
              this.showMessageDialog = true;
           })
           .catch((error) => { 
-              
+               console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     loadMenuitemList(role) {
+       console.log(role)
      try { 
       const requestParams = {
         params: {
@@ -216,7 +217,7 @@ export default {
           console.log(error);
         }); 
        } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
 
     },
@@ -227,9 +228,9 @@ export default {
      showDialog(){
        if (this.selected.length > 0) {
         this.medium_dialog = true;
-         const name =this.selected[0].userId.last_name + " "+this.selected[0].userId.first_name + " "+this.selected[0].userId.middle_name
+         const name =this.selected[0].userId.last_name + ' '+this.selected[0].userId.first_name + ' '+this.selected[0].userId.middle_name
           
-         this.dialog_message=" Are you Sure you want to Remove Role  "+ this.selected[0].roleCode.name + " from " + name
+         this.dialog_message=' Are you Sure you want to Remove Role  '+ this.selected[0].roleCode.name + ' from ' + name
          
       } else {
         this.medium_dialog = false;
@@ -238,13 +239,13 @@ export default {
  
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount"); 
+    console.log('beforeMount'); 
   },
  
  mounted() { 
@@ -291,7 +292,7 @@ export default {
 
 
     } catch (error) {
-      console.error("Error:", error);
+      console.error('Error:', error);
     }
   },
   updated() {},

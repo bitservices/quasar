@@ -1,7 +1,7 @@
 
  function  filterAffilates(val, update) {
-    console.log(">>>>val>>>>>>",val)
-  if (val === "") {
+    console.log('>>>>val>>>>>>',val)
+  if (val === '') {
     update(() => {
       this.clients = this.allClients;
     });
@@ -17,8 +17,8 @@
 };
 
  function filterCountries(val, update) {
-    console.log(">>>>val>>>>>>",val)
-  if (val === "") {
+    console.log('>>>>val>>>>>>',val)
+  if (val === '') {
     update(() => {
       this.countries = this.allCountries;
     });
@@ -33,8 +33,8 @@
   });
 };
  function filterStates(val, update) {
-    console.log(">>>>val>>>>>>",val)
-  if (val === "") {
+    console.log('>>>>val>>>>>>',val)
+  if (val === '') {
     update(() => {
       this.states = this.allStates;
     });
@@ -49,8 +49,8 @@
   });
 };
  function filterCounties(val, update) {
-    console.log(">>>>val>>>>>>",val)
-  if (val === "") {
+    console.log('>>>>val>>>>>>',val)
+  if (val === '') {
     update(() => {
       this.counties = this.allCounties;
     });
@@ -65,4 +65,4 @@
   });
 }
 
- export {filterAffilates, filterCountries, filterStates, filterCounties}
+ export default {filterAffilates, filterCountries,filterStates, filterCounties}

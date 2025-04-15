@@ -1,76 +1,76 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-table
-        class="my-sticky-header-table"
+        class='my-sticky-header-table'
         flat
         bordered
-        title="Contact Information"
-        :rows="rows"
-        :columns="columns"
-        row-key="name"
-        selection="single"
-        v-model:selected="selected"
+        title='Contact Information'
+        :rows='rows'
+        :columns='columns'
+        row-key='name'
+        selection='single'
+        v-model:selected='selected'
       >
         <template v-slot:top>
           <q-label>Contact Information</q-label>
           <q-space />
-          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
-          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
+          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
           <q-btn
             rounded
-            color="info"
-            icon="visibility"
-            size="sm"
-            @click="viewItem"
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
           />
           <UserContactInfoDialog
-            v-model="showFormDialog"
-            :onClick="saveRecord"
-            @formDataSubmitted="saveRecord"
-            label="Contact Information"
-            :searchValue="searchValue"
-            :action="action"
-            :actionLabel="actionLabel"
-            :urlLink="urlLink"
+            v-model='showFormDialog'
+            :onClick='saveRecord'
+            @formDataSubmitted='saveRecord'
+            label='Contact Information'
+            :searchValue='searchValue'
+            :action='action'
+            :actionLabel='actionLabel'
+            :urlLink='urlLink'
           />
           <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
           <q-btn
             rounded
-            color="red"
-            icon="delete"
-            size="sm"
-            @click="showDialog"
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='showDialog'
           >
-            <q-dialog v-model="medium_dialog">
-              <q-card style="width: 700px" class="bg-info text-white">
+            <q-dialog v-model='medium_dialog'>
+              <q-card style='width: 700px' class='bg-info text-white'>
                 <q-card-section>
-                  <div class="text-h6">Delete Item(s)</div>
+                  <div class='text-h6'>Delete Item(s)</div>
                 </q-card-section>
 
-                <q-card-section class="q-pt-none">
+                <q-card-section class='q-pt-none'>
                   Are you sure you want to delete selected item(s)
                 </q-card-section>
-                <q-card-actions align="center" class="bg-white text-teal">
+                <q-card-actions align='center' class='bg-white text-teal'>
                   <q-btn
-                    @click="deleteItem"
+                    @click='deleteItem'
                     flat
-                    label="Yes"
+                    label='Yes'
                     v-close-popup
-                    class="bg-negative text-white"
+                    class='bg-negative text-white'
                     rounded
                   />
                   <q-btn
                     flat
-                    label="No"
-                    class="bg-secondary text-white"
+                    label='No'
+                    class='bg-secondary text-white'
                     v-close-popup
                     rounded
                   />
@@ -80,66 +80,65 @@
           </q-btn>
         </template>
       </q-table>
+      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage, Loading } from "quasar";
-import axios from "axios";
-import { ref } from "vue";
-import UserContactInfoDialog from "src/components/UserContactInfoDialog.vue";
-import ResponseDialog from "src/components/ResponseDialog.vue";
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage, Loading } from 'quasar';
+import axios from 'axios';
+import { ref } from 'vue';
+import UserContactInfoDialog from 'src/components/UserContactInfoDialog.vue';
+import ResponseDialog from 'src/components/ResponseDialog.vue';
+import Done from 'src/components/Done.vue';
+import path from 'src/router/urlpath';
 export default {
   components: {
     UserContactInfoDialog,
     ResponseDialog,
+    Done,
   },
   setup() {
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = "";
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = '';
     const columns = [
       {
-        name: "phoneNumber",
-        align: "center",
-        label: "Phone Number",
+        name: 'phoneNumber',
+        align: 'center',
+        label: 'Phone Number',
         field: (row) => row.phoneNumber,
         sortable: true,
       },
       {
-        name: "whatsappNumber",
-        align: "center",
-        label: "Whatsapp Number",
+        name: 'whatsappNumber',
+        align: 'center',
+        label: 'Whatsapp Number',
         field: (row) => row.whatsappNumber,
         sortable: true,
       },
     ];
-    const parentData = ref({
-      code: "",
-      name: "",
-    });
     const urlLink = ref(path.CONTACTINFO_SEARCH);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
-    const action = ref("");
-    const searchValue = ref("");
+    const action = ref('');
+    const searchValue = ref('');
     const rows = ref([]);
     const selected = ref([]);
-    const actionLabel = ref("Submit");
+    const actionLabel = ref('Submit');
     const medium_dialog = ref(false);
     const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
 
     const fetchData = async () => {
       try { 
-        const userEmail = LocalStorage.getItem("userEmail");
+        const userEmail = LocalStorage.getItem('userEmail');
         const requestParam = {
           params: {
             email: userEmail,
@@ -150,20 +149,20 @@ export default {
           requestParam,
           headers
         );
-        console.log("response data", response.data);
+        console.log('response data', response.data);
         if (response.data) {
           rows.value = response.data.data;
           selected.value = [];
           Loading.hide();
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     };
     const saveRecord = (record) => {
-      if (action.value == "add") {
+      if (action.value == 'add') {
         createRecord(record);
-      } else if (action.value == "edit") {
+      } else if (action.value == 'edit') {
         updateRecord(record);
       }
     };
@@ -180,10 +179,10 @@ export default {
 
             childRef.value = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
@@ -191,20 +190,20 @@ export default {
           .catch((error) => {
             childRef.value = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             showMessageDialog.value = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     };
     const updateRecord = (record) => {
       try {
-        console.log("calling Update Record from Child Component", record);
+        console.log('calling Update Record from Child Component', record);
         const promise = axios.put(path.CONTACTINFO_UPDATE, record, headers);
         promise
           .then((response) => {
@@ -217,10 +216,10 @@ export default {
 
             childRef.value = {
               message: result.message,
-              label: "Success",
-              cardClass: "bg-positive text-white",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
@@ -228,15 +227,15 @@ export default {
           .catch((error) => {
             childRef.value = {
               message: error.message,
-              label: "Error",
-              cardClass: "bg-negative text-white error",
-              textClass: "q-pt-none",
-              buttonClass: "bg-white text-teal",
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
             };
             showMessageDialog.value = true;
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     };
     const showDialog = () => {
@@ -248,23 +247,23 @@ export default {
     };
     const addItem = () => {
       showFormDialog.value = true;
-      action.value = "add";
-      actionLabel.value = "Submit";
+      action.value = 'add';
+      actionLabel.value = 'Submit';
     };
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["id"];
-        action.value = "edit";
-        actionLabel.value = "Update";
+        searchValue.value = selected.value[0]['id'];
+        action.value = 'edit';
+        actionLabel.value = 'Update';
       }
     };
     const viewItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        searchValue.value = selected.value[0]["code"];
-        action.value = "view";
-        actionLabel.value = "Done";
+        searchValue.value = selected.value[0]['code'];
+        action.value = 'view';
+        actionLabel.value = 'Done';
       }
     };
     const deleteItem = async () => {
@@ -279,7 +278,7 @@ export default {
           fetchData();
         }
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     };
 
@@ -309,24 +308,24 @@ export default {
     };
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
-    console.log(">>>>>>>>>user Email >>>>>", this.userEmail);
+    console.log('beforeMount');
+    console.log('>>>>>>>>>user Email >>>>>', this.userEmail);
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
     this.fetchData();
   },
   updated() {},
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

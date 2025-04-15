@@ -1,61 +1,61 @@
 <template>
-  <q-dialog v-model="showDialog" persistent width="1229px" height="600px">
+  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
     <q-card
-      class="card-flex-display"
-      :style="{ width: form.width, height: form.height }"
+      class='card-flex-display'
+      :style='{ width: form.width, height: form.height }'
     >
       <q-card-section>
-        <div class="text-h6">{{ form.label }}</div>
+        <div class='text-h6'>{{ form.label }}</div>
       </q-card-section>
 
       <q-card-section>
         <q-form>
-          <q-input type="hidden" v-model="formData.email" />
+          <q-input type='hidden' v-model='formData.email' />
 
           <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Vendor Code"
-            :dense="dense"
+            v-model='formData.code'
+            label='Vendor Code'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Vendor Name"
-            :dense="dense"
+            v-model='formData.name'
+            label='Vendor Name'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.phoneNumber"
-            label="Phone Number"
-            :dense="dense"
+            v-model='formData.phoneNumber'
+            label='Phone Number'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.email"
-            label="Email"
-            :dense="dense"
+            v-model='formData.email'
+            label='Email'
+            :dense='dense'
           />
         </q-form>
       </q-card-section>
       <q-card-section>
-        <q-card-actions align="center">
+        <q-card-actions align='center'>
           <q-btn
             rounded
-            size="md"
-            color="primary"
-            label="Cancel"
+            size='md'
+            color='primary'
+            label='Cancel'
             v-close-popup
           />
           <q-btn
-            :label="actionLabel"
-            color="secondary"
-            @click="saveRecord"
-            size="md"
+            :label='actionLabel'
+            color='secondary'
+            @click='saveRecord'
+            size='md'
             rounded
             v-close-popup
           />
@@ -66,12 +66,12 @@
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import { onUnmounted, ref } from "vue";
-import axios from "axios";
+import { LocalStorage, SessionStorage } from 'quasar';
+import {  ref } from 'vue';
+import axios from 'axios';
 
 export default {
-  name: "VendorFormDialog",
+  name: 'VendorFormDialog',
   props: {
     onClick: {
       type: Function,
@@ -107,20 +107,20 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + "px";
-    const dialogHeight = controlHeight + "px";
+    const dialogWidth = controlWidth + 'px';
+    const dialogHeight = controlHeight + 'px';
 
     const formData = ref({
-      code: "",
-      name: "",
-      email: "",
-      phoneNumber: "",
-      createdBy: "",
+      code: '',
+      name: '',
+      email: '',
+      phoneNumber: '',
+      createdBy: '',
     });
     const form = ref({
-      label: "",
-      width: "10px",
-      height: "10px",
+      label: '',
+      width: '10px',
+      height: '10px',
     });
     const showDialog = ref(false);
 
@@ -134,44 +134,44 @@ export default {
   },
   methods: {
     saveRecord() {
-      let profile = LocalStorage.getItem("turnelParams");
-      this.formData.createdBy = LocalStorage.getItem("userEmail");
+      let profile = LocalStorage.getItem('turnelParams');
+      this.formData.createdBy = LocalStorage.getItem('userEmail');
       this.formData.client = profile.client;
       this.formData.organisation = profile.organisation;
-      console.log(">>>>>>>thisis inside handle Save,", this.formData);
-      this.$emit("formDataSubmitted", this.formData);
+      console.log('>>>>>>>thisis inside handle Save,', this.formData);
+      this.$emit('formDataSubmitted', this.formData);
       this.showDialog = true;
       console.log(this.showDialog);
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted");
+    console.log('mounted');
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    console.log('Calling unmounted>>>>>>>>>>');
     this.formData = {
-      code: "",
-      name: "",
-      email: "",
-      phoneNumber: "",
-      email: "",
+      code: '',
+      name: '',
+      email: '',
+      phoneNumber: '',
+      email: '',
     };
   },
   updated() {
-    const headers = SessionStorage.getItem("headers");
+    const headers = SessionStorage.getItem('headers');
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
-    if (this.action == "edit" || this.action == "view") {
+    if (this.action == 'edit' || this.action == 'view') {
       try {
         const requestParams = {
           params: {
@@ -179,12 +179,12 @@ export default {
           },
         };
         const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log(">>>>>>>>>>promise>>>>>>>>", promise);
+        console.log('>>>>>>>>>>promise>>>>>>>>', promise);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>result>>>>>>>", result.data);
+            console.log('>>>>>>>>result>>>>>>>', result.data);
             if (result.success) {
               this.formData = result.data[0];
             }
@@ -193,15 +193,15 @@ export default {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       }
     } else {
       this.formData = {
-        id: "",
-        prospectName: "",
-        prospectEmail: "",
-        phoneNumber: "",
-        email: "",
+        id: '',
+        prospectName: '',
+        prospectEmail: '',
+        phoneNumber: '',
+        email: '',
       };
     }
   },

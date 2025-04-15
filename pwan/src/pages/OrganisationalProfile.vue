@@ -1,128 +1,128 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-card
-      class="card-flex-display" 
+      class='card-flex-display' 
     >
-    <q-card-section class="pwan-blue text-white">
+    <q-card-section class='pwan-blue text-white'>
         <HeaderPage  
-            :label="pageName"
-            :hint="hint"  
+            :label='pageName'
+            :hint='hint'  
           />
       </q-card-section>
       <q-card-section>
-        <q-form  @submit.prevent="saveRecord" ref="orgProfileForm">
-          <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <q-form  @submit.prevent='saveRecord' ref='orgProfileForm'>
+          <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
             </div>  
              <q-input
             filled
             bottom-slots
-            v-model="formData.code"
-            label="Code"
-            :dense="dense"
-            :readonly="isReadonly" 
-            :rules="[inputRequiredRule]"
+            v-model='formData.code'
+            label='Code'
+            :dense='dense'
+            :readonly='isReadonly' 
+            :rules='[inputRequiredRule]'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.name"
-            label="Name"
-            :dense="dense"
-            :rules="[inputRequiredRule]"
+            v-model='formData.name'
+            label='Name'
+            :dense='dense'
+            :rules='[inputRequiredRule]'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.client"
-            :options="clients"
-            label="Select client" 
-            :dense="dense"
-            :readonly="isReadonly"
+            v-model='formData.client'
+            :options='clients'
+            label='Select client' 
+            :dense='dense'
+            :readonly='isReadonly'
           />
            <q-select
             filled
             bottom-slots
-            v-model="formData.country"
-            :options="countries"
-            label="Select Country"
-            @update:model-value="handleCountryChange"
-            :dense="dense"
-            :rules="[selectedRule]"
+            v-model='formData.country'
+            :options='countries'
+            label='Select Country'
+            @update:model-value='handleCountryChange'
+            :dense='dense'
+            :rules='[selectedRule]'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterCountries"
+            @filter='filterCountries'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.state"
-            :options="stateList"
-            label="Select State"
-            @update:model-value="handleStateChange"
-            :dense="dense"
-            :rules="[selectedRule]"
+            v-model='formData.state'
+            :options='stateList'
+            label='Select State'
+            @update:model-value='handleStateChange'
+            :dense='dense'
+            :rules='[selectedRule]'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterStates"
+            @filter='filterStates'
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.county"
-            :options="counties"
-            label="Select County"
-            :dense="dense"
-            :rules="[selectedRule]"
+            v-model='formData.county'
+            :options='counties'
+            label='Select County'
+            :dense='dense'
+            :rules='[selectedRule]'
             use-input
-            input-debounce="200"
+            input-debounce='200'
             clearable
-            @filter="filterCounties"
+            @filter='filterCounties'
           />
 
          <q-input
             filled
             bottom-slots
-            v-model="formData.website"
-            label="website"
-            :dense="dense"
+            v-model='formData.website'
+            label='website'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.address"
-            label="address"
-            type="textarea"
-            rows="3"
-            maxlength="300"
+            v-model='formData.address'
+            label='address'
+            type='textarea'
+            rows='3'
+            maxlength='300'
             counter
-            :rules="[inputRequiredRule]"
+            :rules='[inputRequiredRule]'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.longitude"
-            label="longitude"
-            :dense="dense"
-            type="number"
+            v-model='formData.longitude'
+            label='longitude'
+            :dense='dense'
+            type='number'
           />
 
           <q-input
             filled
             bottom-slots
-            v-model="formData.latitude"
-            label="latitude"
-            :dense="dense"
-            type="number"
+            v-model='formData.latitude'
+            label='latitude'
+            :dense='dense'
+            type='number'
           >
               <template v-slot:append>
             <q-icon
-              name="edit"
-              @click="getPosition"
-              class="cursor-pointer"
+              name='edit'
+              @click='getPosition'
+              class='cursor-pointer'
               
             />
           </template>
@@ -130,139 +130,139 @@
           <q-input
             filled
             bottom-slots
-            v-model="formData.radius"
-            label="radius"
-            :dense="dense"
-            type="number"
+            v-model='formData.radius'
+            label='radius'
+            :dense='dense'
+            type='number'
           />
          <q-input
             filled
             bottom-slots
-            v-model="formData.slogan"
-            label="slogan"
-            :dense="dense"
+            v-model='formData.slogan'
+            label='slogan'
+            :dense='dense'
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.meetingDays"
-            label="Meeting Days"
-            type="textarea"
-            rows="2"
-            maxlength="200"
+            v-model='formData.meetingDays'
+            label='Meeting Days'
+            type='textarea'
+            rows='2'
+            maxlength='200'
             counter
-            :readonly="dense"
+            :readonly='dense'
           >  
               <template v-slot:append>
                 <q-icon
-                  name="edit"
-                  @click="loadMeetingDays"
-                  class="cursor-pointer"
+                  name='edit'
+                  @click='loadMeetingDays'
+                  class='cursor-pointer'
                   
                 />
               </template>
             </q-input>
            <q-checkbox
-            v-model="formData.allowSeatAllocation"
-            label="Allowed Seet Allocation"
-            color="primary"
+            v-model='formData.allowSeatAllocation'
+            label='Allowed Seet Allocation'
+            color='primary'
           />
           <q-checkbox
-            v-model="formData.validateMeetingStartTime"
-            label="Validate Meeting Start Time"
-            color="primary"
+            v-model='formData.validateMeetingStartTime'
+            label='Validate Meeting Start Time'
+            color='primary'
           /> 
           <q-input
             filled
             bottom-slots
-            v-model="formData.reservedSeats"
-            label="Number of Seats For Reservation"
-            :dense="dense"
-            type="number"
+            v-model='formData.reservedSeats'
+            label='Number of Seats For Reservation'
+            :dense='dense'
+            type='number'
           /> 
           <q-input
             filled
             bottom-slots
-            v-model="formData.seatPrefix"
-            label="Seat Prefix"
-            :dense="dense" 
+            v-model='formData.seatPrefix'
+            label='Seat Prefix'
+            :dense='dense' 
           />
           <q-input
             filled
             bottom-slots
-            v-model="formData.seatSufix"
-            label="Seat Surffix"
-            :dense="dense" 
+            v-model='formData.seatSufix'
+            label='Seat Surffix'
+            :dense='dense' 
           />
          
-          <div class="row">
-            <q-btn  id="closeBtn"
+          <div class='row'>
+            <q-btn  id='closeBtn'
                   rounded  
-                  label="Close"
-                  icon="close"
+                  label='Close'
+                  icon='close'
                   v-close-popup
-                  class="pwan-blue top-margin full-width"
+                  class='pwan-blue top-margin full-width'
                 />  
             <q-btn
-                  :label="actionLabel"
+                  :label='actionLabel'
                   rounded
-                  type="submit"
-                  icon="save" 
-                  class="pwan-button top-margin full-width"
+                  type='submit'
+                  icon='save' 
+                  class='pwan-button top-margin full-width'
                 />
           </div>
-          <div v-if="showMeetingDialog">
-            <q-dialog v-model="showMeetingDialog" width="1229px" height="600px">
-                <q-card style="width: 1229px"> 
-                  <q-card-actions align="right">
-                  <q-btn rounded color="green" icon="add" size="sm" @click="addMeetingDays" />
-                   <q-btn rounded color="red" icon="delete" size="sm"  @click="removeMeetingDays" />
+          <div v-if='showMeetingDialog'>
+            <q-dialog v-model='showMeetingDialog' width='1229px' height='600px'>
+                <q-card style='width: 1229px'> 
+                  <q-card-actions align='right'>
+                  <q-btn rounded color='green' icon='add' size='sm' @click='addMeetingDays' />
+                   <q-btn rounded color='red' icon='delete' size='sm'  @click='removeMeetingDays' />
                   </q-card-actions>
-                  <q-card-section class="q-pt-none">
-                    <div v-if="meetingDays" class="row full-width" ref="meetingDaysDiv"> 
-                      <div  v-for="(item, index) in meetingDays" :key="index">
-                          <div class="row meetingdays">
-                             <div class="col-3"> 
+                  <q-card-section class='q-pt-none'>
+                    <div v-if='meetingDays' class='row full-width' ref='meetingDaysDiv'> 
+                      <div  v-for='(item, index) in meetingDays' :key='index'>
+                          <div class='row meetingdays'>
+                             <div class='col-3'> 
                                     <q-select
                                     filled
                                     bottom-slots
-                                    v-model="item.day"
-                                    :options="daysOfWeek"
-                                    label="Select Day" 
-                                    :dense="dense"  
-                                    :ref="'meetingday' + index"
+                                    v-model='item.day'
+                                    :options='daysOfWeek'
+                                    label='Select Day' 
+                                    :dense='dense'  
+                                    :ref='"meetingday" + index'
                                   /> 
                                 </div>
-                                <div class="col-3">
+                                <div class='col-3'>
                                   <q-input
                                   filled
                                   bottom-slots
-                                  v-model="item.meetingName" 
-                                  label="Meeting Name" 
-                                  :dense="dense"  
-                                  :ref="'meetingName' + index"
+                                  v-model='item.meetingName' 
+                                  label='Meeting Name' 
+                                  :dense='dense'  
+                                  :ref='"meetingName" + index'
                                 />
                                 </div>
-                                <div class="col-3">
+                                <div class='col-3'>
                                   <q-input
                                   filled
                                   bottom-slots
-                                  v-model="item.startTime"
-                                  type="time"
-                                  label="Start  Time"
-                                  :dense="dense" 
-                                  :ref="'starttime' + index"
+                                  v-model='item.startTime'
+                                  type='time'
+                                  label='Start  Time'
+                                  :dense='dense' 
+                                  :ref='"starttime" + index'
                                 />
                                 </div>
-                                <div class="col-3">
+                                <div class='col-3'>
                                 <q-input
                                   filled
                                   bottom-slots
-                                  v-model="item.endTime"
-                                  type="time"
-                                  label="End Time"
-                                  :dense="dense"  
-                                  :ref="'endtime' + index"
+                                  v-model='item.endTime'
+                                  type='time'
+                                  label='End Time'
+                                  :dense='dense'  
+                                  :ref='"endtime" + index'
                                 />
                               </div> 
                               </div>
@@ -273,23 +273,23 @@
             </q-dialog>
           </div>
         
-            <q-row class="q-mt-md" justify="center">
-            <q-col cols="6" sm="4" class="q-mb-md">
+            <q-row class='q-mt-md' justify='center'>
+            <q-col cols='6' sm='4' class='q-mb-md'>
               <q-btn
                       rounded  
-                      label="Cancel"
-                      icon="cancel"
+                      label='Cancel'
+                      icon='cancel'
                       v-close-popup
-                      class="pwan-blue top-margin full-width"
+                      class='pwan-blue top-margin full-width'
                     /> 
             </q-col>
-            <q-col cols="6" sm="4" class="q-mb-md">
+            <q-col cols='6' sm='4' class='q-mb-md'>
                <q-btn
-                          label="Save" 
+                          label='Save' 
                           rounded
-                          type="submit"
-                          icon="save"
-                          class="pwan-button top-margin full-width"
+                          type='submit'
+                          icon='save'
+                          class='pwan-button top-margin full-width'
                         />
             </q-col>
           </q-row>
@@ -303,16 +303,15 @@
 
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import { isReadonly, computed, ref } from "vue"; 
+import { LocalStorage, SessionStorage } from 'quasar';
+import {  computed, ref } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import axios from "axios";
-import path from "src/router/urlpath";
-import debug from "src/router/debugger"; 
-import { useRouter } from "vue-router"; 
-import HeaderPage from "src/components/HeaderPage.vue"; 
+import axios from 'axios';
+import path from 'src/router/urlpath';
+import debug from 'src/router/debugger'; 
+import { useRouter } from 'vue-router'; 
+import HeaderPage from 'src/components/HeaderPage.vue'; 
 import { inputFieldRequired,isRequired } from 'src/validation/validation'; 
-import { format } from 'date-fns';
 
 export default {
    components: { 
@@ -325,12 +324,12 @@ export default {
     const pageName = computed(()=> t('orgprofile.pagename'))
     const hint = computed(()=> t('orgprofile.hint'))
     const router = useRouter();
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams");
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams');
     const formData = ref({
-      last_name: "",
-      middle_name: "",
-      first_name: "", 
+      last_name: '',
+      middle_name: '',
+      first_name: '', 
     });
     
 
@@ -356,8 +355,8 @@ export default {
   },
   methods: {
     filterCountries(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.countries = this.allCountries;
         });
@@ -373,8 +372,8 @@ export default {
     }, 
 
     filterStates(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.stateList = this.allStates;
         });
@@ -389,8 +388,8 @@ export default {
       });
     }, 
     filterCounties(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.counties = this.allCounties;
         });
@@ -411,12 +410,12 @@ export default {
           this.formData.status = this.formData.status.code
           const requestData = new FormData();
           for (let key in this.formData) { 
-            console.log(key, ":::",this.formData[key])
+            console.log(key, ':::',this.formData[key])
             requestData.append(key, this.formData[key]);
           }
           
           try { 
-            console.log(">>>>reqeust data>>>>>>>",requestData)
+            console.log('>>>>reqeust data>>>>>>>',requestData)
             const promise = axios.put(path.USER_UPDATE, requestData, this.headers);
             promise
               .then((response) => {
@@ -425,11 +424,11 @@ export default {
                 if (result.success) {  
                   this.formData = result.data; 
                   this.formData.gender = {
-                    value : result.data.gender == null? "" : result.data.gender.code,
-                    label : result.data.gender == null? "" : result.data.gender.name,
+                    value : result.data.gender == null? '' : result.data.gender.code,
+                    label : result.data.gender == null? '' : result.data.gender.name,
                   }
                   this.showSpinner = false;
-                  this.router.push({ path: "/dashboard" });
+                  this.router.push({ path: '/dashboard' });
                   
 
                 }
@@ -437,10 +436,10 @@ export default {
                 // You can access properties of the response data as needed
               })
               .catch((error) => {
-                debug("Error:", error);
+                debug('Error:', error);
               });
           } catch (error) {
-            debug("Error:", error);
+            debug('Error:', error);
           }
        }    
     }, 
@@ -453,14 +452,14 @@ export default {
             client : this.profile.client,
           },
         };
-        console.log(">>>>>>>>>>requestParams>>>>>>>", requestParams);
+        console.log('>>>>>>>>>>requestParams>>>>>>>', requestParams);
         const promise = axios.get(path.ORGANISATION_SEARCH, requestParams, this.headers);
         
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log(">>>>>>>>resultsssssssss>>>>>>>", result.data);
+            console.log('>>>>>>>>resultsssssssss>>>>>>>', result.data);
             if (result.success) {
               this.formData = result.data[0];
               this.formData.client = {
@@ -492,11 +491,11 @@ export default {
             console.log(error);
           });
       } catch (error) {
-        console.error("Error:", error);
+        console.error('Error:', error);
       } 
     },
     handleCountryChange(selectedItem) {
-      console.log(">>>selectedItem>>>>",selectedItem)
+      console.log('>>>selectedItem>>>>',selectedItem)
       const requestParams = {
         params: {
           countryCode: selectedItem.value,
@@ -511,10 +510,10 @@ export default {
             value: option.code,
           }));
           this.allStates = this.stateList;
-          console.log("this.state List >>>>>>>>>>>>", this.stateList);
+          console.log('this.state List >>>>>>>>>>>>', this.stateList);
         })
         .catch((error) => {
-          console.error("Error fetching options:", error);
+          console.error('Error fetching options:', error);
         });
     },
     handleStateChange(selectedItem) {
@@ -534,18 +533,20 @@ export default {
           }));
           this.allCounties = this.counties;
         })
-        .catch((error) => {});
+        .catch((error) => {
+          console.log(error)
+        });
     },
     loadMeetingDays(){ 
       this.showMeetingDialog=true;  
-      if(this.formData.meetingDays == null || this.formData.meetingDays.trim() == "" || this.formData.meetingDays == "null"){
+      if(this.formData.meetingDays == null || this.formData.meetingDays.trim() == '' || this.formData.meetingDays == 'null'){
            this.meetingDays = [{day:'', meetingName:'',startTime:'', endTime:''}];
       }else{
         try { 
                const meetingDaysStr = this.formData.meetingDays; 
               let days = meetingDaysStr.replace(/\\/g, '') 
 
-              days = meetingDaysStr.replace(/\\/g, '').slice(days.indexOf("["),  days.indexOf("]") + 1);  
+              days = meetingDaysStr.replace(/\\/g, '').slice(days.indexOf('['),  days.indexOf(']') + 1);  
                 days = JSON.parse(days);  
                this.meetingDays = days;   
 
@@ -562,25 +563,25 @@ export default {
       let meetingDaysArray = [];
 
       for (let i = 0; i < this.meetingDays.length; i++) {
-        console.log("day: ",this.$refs['meetingday' + i][0])
-         console.log("meetingName: ",this.$refs['meetingName' + i][0])
-          console.log("starttime: ",this.$refs['starttime' + i][0])
-           console.log("endtime: ",this.$refs['endtime' + i][0])
+        console.log('day: ',this.$refs['meetingday' + i][0])
+         console.log('meetingName: ',this.$refs['meetingName' + i][0])
+          console.log('starttime: ',this.$refs['starttime' + i][0])
+           console.log('endtime: ',this.$refs['endtime' + i][0])
 
          let day = this.$refs['meetingday' + i][0].modelValue;
          let meetingName = this.$refs['meetingName' + i][0].modelValue;
          let startTime = this.$refs['starttime' + i][0].modelValue;
          let endTime = this.$refs['endtime' + i][0].modelValue; 
          let resolvedDay = day.value;
-         if(day.value ==null || day.value==undefined || day.value == "undefined"){
+         if(day.value ==null || day.value==undefined || day.value == 'undefined'){
             resolvedDay = day
          }        
-         console.log("day",day.value, "meetingName",meetingName, "startTime",startTime, "endTime",endTime)
-         let meetingObj = {"day":resolvedDay, "meetingName":meetingName, "startTime":startTime, "endTime":endTime}
+         console.log('day',day.value, 'meetingName',meetingName, 'startTime',startTime, 'endTime',endTime)
+         let meetingObj = {'day':resolvedDay, 'meetingName':meetingName, 'startTime':startTime, 'endTime':endTime}
           meetingDaysArray.push(meetingObj)
 
       }
-      console.log(">>>>>meetingDaysArray>>>>>>>",meetingDaysArray)
+      console.log('>>>>>meetingDaysArray>>>>>>>',meetingDaysArray)
       this.formData.meetingDays = JSON.stringify(meetingDaysArray);
 
 
@@ -624,8 +625,8 @@ export default {
           navigator.geolocation.getCurrentPosition(
               (position) => {
                 // Success callbac 
-                  this.formData.latitude= position.coords.latitude,
-                  this.formData.longitude =  position.coords.longitude
+                  this.formData.latitude= position.coords.latitude;
+                  this.formData.longitude =  position.coords.longitude;
                   
               },
               (error) => {
@@ -637,22 +638,22 @@ export default {
           console.log('Geolocation is not supported by this browser');
         }
     }catch(error){
-      console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>",error)
+      console.log('>>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>',error)
     }
     },
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
      axios
       .get(path.COUNTRY_ALL)
       .then((response) => {
@@ -662,7 +663,7 @@ export default {
           value: option.code,
         }));
         this.allCountries = this.countries;
-        console.log(">>>>>>>>>>countries>>>>>",this.countries) 
+        console.log('>>>>>>>>>>countries>>>>>',this.countries) 
       this.loadOrganisation()     
       })  
   },
@@ -670,7 +671,7 @@ export default {
      
   },
   updated() {
-    console.log(">>>>>>>>>>>update>>>>>>") 
+    console.log('>>>>>>>>>>>update>>>>>>') 
   },
 };
 </script>

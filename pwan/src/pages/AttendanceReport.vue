@@ -48,6 +48,7 @@
             rounded
             v-close-popup
           />
+          <Done />
         </q-card-actions>
       </q-card-section>
     </q-card>
@@ -66,69 +67,76 @@
           <q-label>Attendance Report</q-label>
           <q-space /> 
         </template> 
-      </q-table>
+      </q-table> 
+       <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios";
-import { ref, computed } from "vue"; 
-import path from "src/router/urlpath";
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios';
+import { ref, computed } from 'vue'; 
+import path from 'src/router/urlpath';
 import { format } from 'date-fns';
 import { useI18n } from 'vue-i18n';
-import HeaderPage from "src/components/HeaderPage.vue";  
-import DatePicker from "src/components/DatePicker.vue"; 
+import HeaderPage from 'src/components/HeaderPage.vue';  
+import DatePicker from 'src/components/DatePicker.vue';  
+import Done from 'src/components/Done.vue'; 
+import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";  
+import { Capacitor } from "@capacitor/core"; 
+import { Browser } from "@capacitor/browser";
 export default {
   components: { 
     HeaderPage, 
     DatePicker,
+    Done,
   },
    
   data() {
     const { t } = useI18n();
     const pageName = computed(()=> t('attendancereport.pagename'))
     const hint = computed(()=> t('attendancereport.hint'))
-    const headers = SessionStorage.getItem("headers"); 
-    const profile = LocalStorage.getItem("turnelParams"); 
+    const headers = SessionStorage.getItem('headers'); 
+    const profile = LocalStorage.getItem('turnelParams'); 
+    
    const columns = [
       {
-        name: "name",
+        name: 'name',
         required: false,
-        label: "Name",
-        align: "left",
+        label: 'Name',
+        align: 'left',
         field: (row) =>
-          row.userId.last_name +" "+row.userId.first_name + " "+row.userId.middle_name,
+          row.userId.last_name +' '+row.userId.first_name + ' '+row.userId.middle_name,
         format: (val) => `${val}`,
         sortable: true,
       },
      
       {
-        name: "email",
-        align: "left",
-        label: "Email",
+        name: 'email',
+        align: 'left',
+        label: 'Email',
         field: (row) => row.userId.email,
         sortable: true,
       },
       {
-        name: "phoneNumber",
-        align: "left",
-        label: "Phone Number",
+        name: 'phoneNumber',
+        align: 'left',
+        label: 'Phone Number',
         field: (row) => row.userId.phoneNumber,
         sortable: true,
       }, 
        {
-        name: "attendanceDate",
-        align: "left",
-        label: "Attendance Date",
+        name: 'attendanceDate',
+        align: 'left',
+        label: 'Attendance Date',
         field: (row) => format(row.attendanceDate, 'yyyy-MM-dd'),
         sortable: true,
       },
        {
-        name: "attendanceTime",
-        align: "left",
-        label: "Attendance Time",
+        name: 'attendanceTime',
+        align: 'left',
+        label: 'Attendance Time',
         field: (row) => format(row.attendanceDate, 'hh:mm:ss'),
         sortable: true,
       },
@@ -166,13 +174,13 @@ export default {
             organisation: this.profile.organisation
           },
         };
-        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
-          requestParams["params"]["userId"] = this.formData.userId.value
+        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ''){
+          requestParams['params']['userId'] = this.formData.userId.value
         }
-        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ""){
-          requestParams["params"]["attendanceDate"] = this.attendanceDate
+        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ''){
+          requestParams['params']['attendanceDate'] = this.attendanceDate
         }
-        console.log("requestParams>>>>>>>>",requestParams)
+        console.log('requestParams>>>>>>>>',requestParams)
         
       try { 
         const promise = axios.get(
@@ -183,65 +191,141 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data>>>>>>>", response.data);
+            console.log('response data>>>>>>>', response.data);
             this.rows = response.data.data;  
             this.selected = [];
           })
           .catch((error) => {
-             
+             console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
-    },
+    }, 
 
-    downloadReport(){ 
-           const requestParams = {
+async requestFilesystemPermission() {
+
+console.log(">>>>>>inside requestFilesystemPermission>>>>>>",Capacitor.getPlatform())
+  if (Capacitor.getPlatform() === 'android') {
+    const permissionStatus = await Filesystem.requestPermissions();
+    console.log('Filesystem permission status:', permissionStatus);
+  }
+}, 
+ 
+async downloadReport() {
+  console.log(">>>>>>calling download file 22222 2222>>>>>>>>>>>")  
+  try {
+     const requestParams = {
           params: { 
             client: this.profile.client,
             organisation: this.profile.organisation,
           },
         };
           
-        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ""){
-          requestParams["params"]["userId"] = this.formData.userId.value
+        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ''){
+          requestParams['params']['userId'] = this.formData.userId.value
         }
-        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ""){
-          requestParams["params"]["attendanceDate"] = this.attendanceDate
+        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ''){
+          requestParams['params']['attendanceDate'] = this.attendanceDate
         }
-        console.log("requestParams>>>>>>>>",requestParams)
-      try { 
-        const promise = axios.get(
+    const fileData = ""
+     const response = await axios.get(
           path.ATTENDANCE_REPORT,
           requestParams,
           this.headers
         ); 
+    console.log(">>>>>>>>>>>>fileData>>>>>>>",response.data) 
+      console.log('File saved in browser successfully!');
+        // Extract data from the response 
+            const blob = new Blob([response.data], { type: 'application/pdf', 'Content-Disposition': 'attachment; filename="attendance_report.pdf"' });
+          // Create a URL for the Blob (useful for download or preview)
+          const blobUrl = URL.createObjectURL(blob);
+
+          // Create a link element to trigger the download
+          if (Capacitor.isNativePlatform()) { 
+            console.log(">>>>>>>>>>inside capacitor platform>>>>>>>>>")
+            await Browser.open({ url: blobUrl }); 
+              // Optional: Revoke the blob URL after a delay (cleanup)
+              setTimeout(() => URL.revokeObjectURL(blobUrl), 30000);
+          }else{ 
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = 'attendance_report.pdf'; // Set the filename for download 
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+          console.log("File downloaded in browser!")
+        }
+ 
+  } catch (error) {
+    console.error('Filesystem error:', error);
+  }
+},
+
+
+async downloadFilexxx() {
+  await requestPermission(); // Ensure permission is granted
+  
+          const requestParams = {
+          params: { 
+            client: this.profile.client,
+            organisation: this.profile.organisation,
+          },
+        };
+          
+        if(this.formData.userId != null && this.formData.userId.value != null &&  this.formData.userId.value != ''){
+          requestParams['params']['userId'] = this.formData.userId.value
+        }
+        if(this.attendanceDate != null && this.attendanceDate != null &&  this.attendanceDate != ''){
+          requestParams['params']['attendanceDate'] = this.attendanceDate
+        }
+        console.log('requestParams>>>>>>>>',requestParams)
+      try { 
+        const response =  await axios.get(
+          path.ATTENDANCE_REPORT,
+          requestParams,
+          this.headers
+        ); 
+        console.log(">>>>>>>>>>>promise>>>>>>>>>>")
         promise
-          .then((response) => {
+          .then((response) => { 
+      if (Capacitor.isNativePlatform()) {
+      // Mobile: Convert Byte Array to Base64 and Save  
+        Filesystem.writeFile({
+          path: "attendance_report.pdf",
+          data: response.data,
+          directory: Directory.Documents,
+          encoding: Encoding.Base64,
+        });
+        console.log("File saved on mobile!");
+      } else {
             // Extract data from the response 
             const blob = new Blob([response.data], { type: 'application/pdf', 'Content-Disposition': 'attachment; filename="attendance_report.pdf"' });
-
           // Create a URL for the Blob (useful for download or preview)
           const blobUrl = URL.createObjectURL(blob);
 
           // Create a link element to trigger the download
           const a = document.createElement('a');
           a.href = blobUrl;
-          a.download = 'attendance_report.pdf'; // Set the filename for download
-          a.textContent = 'Download File';
+          a.download = 'attendance_report.pdf'; // Set the filename for download 
           document.body.appendChild(a);
           a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+          console.log("File downloaded in browser!")
+        }
             
           })
           .catch((error) => {
-             
+              console.log(error)
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
      loadUserImage(userObj){
-      console.log(">>>>>>>inside loadUserImage>>>>>>>>>")
+      console.log('>>>>>>>inside loadUserImage>>>>>>>>>')
        const requestParam = {
         params: {
           userId: userObj.value, 
@@ -255,7 +339,7 @@ export default {
          promise
           .then((response) => {
  
-            this.imageFile = "data:image/jpeg;base64," + response.data.data.imageByte;
+            this.imageFile = 'data:image/jpeg;base64,' + response.data.data.imageByte;
           })
           .catch((error) => {
             console.log(error);
@@ -263,21 +347,29 @@ export default {
     },
     setAttendanceDate(value){
       this.attendanceDate = value;
-    }
+    },
+  arrayBufferToBase64(buffer) {
+  let binary = "";
+  const bytes = new Uint8Array(buffer);
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
      
     
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() { 
   },
  
  mounted() { 
-  console.log(">>>>>>this.profile>>>>>",this.profile)
+  console.log('>>>>>>this.profile>>>>>',this.profile)
       const requestParams = {
         params: {
           client: this.profile.client,
@@ -289,15 +381,15 @@ export default {
         requestParams,
         this.headers
       );
-      console.log(">>>>>>>>promise>>>>>>>", promise);
+      console.log('>>>>>>>>promise>>>>>>>', promise);
       promise
         .then((response) => {
-          console.log(">>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>",response.data.data)
+          console.log('>>>>>>>>>>>>response.data.data>>>>>>>>>>>>>>>>',response.data.data)
           this.orgUsers = response.data.data.map((option) => ({
             label: option.userId.last_name +
-          " " +
+          ' ' +
           option.userId.first_name +
-          " " +
+          ' ' +
           option.userId.middle_name,
             value: option.userId.id,
           }));

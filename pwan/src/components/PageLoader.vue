@@ -1,16 +1,15 @@
 <template> 
 		 
-   <div class="text-center"> 
-        <q-spinner v-if="show" color="primary" size="60px" />
+   <div class='text-center'> 
+        <q-spinner v-if='show' color='primary' size='60px' />
     </div> 
 
 </template>
 
 <script> 
-
-import { mapState } from 'vuex';
+ 
 export default {
-  name: "PageLoader",  
+  name: 'PageLoader',  
   props: { 
     show: {
       type: Boolean,
@@ -19,7 +18,7 @@ export default {
   },
   data() {
    
-    console.log(">>>inside the pageLoader", this.show)
+    console.log('>>>inside the pageLoader', this.show)
     return {
        
     };
@@ -28,24 +27,24 @@ export default {
      
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log("mounted>>>>>>>>>>>>");
+    console.log('mounted>>>>>>>>>>>>');
      
   },
   unmounted() {
-    console.log("Calling unmounted>>>>>>>>>>");
+    console.log('Calling unmounted>>>>>>>>>>');
     
   },
   updated() {
-     console.log("Calling Updated LifeCycle>>>>>>>>>>");
+     console.log('Calling Updated LifeCycle>>>>>>>>>>');
   },
 };
 </script>

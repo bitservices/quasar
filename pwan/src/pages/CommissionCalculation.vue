@@ -1,77 +1,78 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
-        <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
         </div>
       <q-card> 
       <q-card-section> 
-        <q-form @submit.prevent="calculateCommission" ref="commissionForm">
+        <q-form @submit.prevent='calculateCommission' ref='commissionForm'>
           <q-select
             filled
             bottom-slots
-            v-model="formData.client"
-            @update:model-value="handleClientChange"
-            :options="clients"
-            label="Select Client"
-            :rules="[requiredRule]" 
+            v-model='formData.client'
+            @update:model-value='handleClientChange'
+            :options='clients'
+            label='Select Client'
+            :rules='[requiredRule]' 
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.organisation"
-            @update:model-value="handleOrganisationChange"
-            :options="organisations"
-            label="Select Organisation"
-            :rules="[requiredRule]" 
+            v-model='formData.organisation'
+            @update:model-value='handleOrganisationChange'
+            :options='organisations'
+            label='Select Organisation'
+            :rules='[requiredRule]' 
           />
           <q-select
             filled
             bottom-slots
-            v-model="formData.product"
-            :options="commissionsettings"
-            label="Select Service Name"
-            :rules="[requiredRule]" 
+            v-model='formData.product'
+            :options='commissionsettings'
+            label='Select Service Name'
+            :rules='[requiredRule]' 
           />
            <q-input
             filled
             bottom-slots
-            v-model="formData.amount"
-            label="Sales Amount"
-            type="number"
-            step="0.01"
-            :rules="[inputRequiredRule]" 
+            v-model='formData.amount'
+            label='Sales Amount'
+            type='number'
+            step='0.01'
+            :rules='[inputRequiredRule]' 
           />  
         
-            <q-card-actions align="center"> 
+            <q-card-actions align='center'> 
             <q-btn
-            class="pwan-button"
-              label="Calculate Commission" 
-              type="submit"
-              size="md"
+            class='pwan-button'
+              label='Calculate Commission' 
+              type='submit'
+              size='md'
               rounded  
             />
+            <Done/>
           </q-card-actions>
         </q-form>
         </q-card-section> 
     </q-card>
-       <div v-if="showCommission"> 
+       <div v-if='showCommission'> 
           <q-table
-            class="my-sticky-header-table"
+            class='my-sticky-header-table'
             flat
             bordered
-            title="Commission List"
-            :rows="rows"
-            :columns="columns"
-            row-key="code" 
+            title='Commission List'
+            :rows='rows'
+            :columns='columns'
+            row-key='code' 
           /> 
       </div>
     </div>
@@ -79,18 +80,18 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue";  
+import HeaderPage from 'src/components/HeaderPage.vue';  
 import { isRequired, inputFieldRequired } from 'src/validation/validation';
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios"; 
-import path from "src/router/urlpath";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { LocalStorage, SessionStorage } from 'quasar'; 
+import Done from 'src/components/Done.vue';  
+import axios from 'axios'; 
+import path from 'src/router/urlpath'; 
 export default {
   components: { 
     HeaderPage, 
+    Done,
   },
   data() {
     
@@ -98,8 +99,8 @@ export default {
     const pageName = computed(()=> t('commission.pagename'))
     const hint = computed(()=> t('commission.hint'))
     const showSpinner = ref(false); 
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = LocalStorage.getItem('userEmail');
     const clients = ref([]);
     const organisations = ref([]);
     const commissionsettings  = ref([]);  
@@ -108,26 +109,26 @@ export default {
       organisation: null,
     });
      const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
     const columns = [
       {
-        name: "level",
+        name: 'level',
         required: false,
-        label: "Commission Level",
-        align: "left",
+        label: 'Commission Level',
+        align: 'left',
         field: (row) => row.header, 
         sortable: true,
       },
       {
-        name: "commission",
-        align: "center",
-        label: "Total Commission (NGN)",
+        name: 'commission',
+        align: 'center',
+        label: 'Total Commission (NGN)',
         field: (row) => new Intl.NumberFormat('en-US', {
                     style: 'decimal',
                     minimumFractionDigits: 2,
@@ -136,9 +137,9 @@ export default {
         sortable: true,
       },
       {
-        name: "vat",
-        align: "center",
-        label: "Tax/Vat (NGN)",
+        name: 'vat',
+        align: 'center',
+        label: 'Tax/Vat (NGN)',
         field: (row) => new Intl.NumberFormat('en-US', {
                     style: 'decimal',
                     minimumFractionDigits: 2,
@@ -147,9 +148,9 @@ export default {
         sortable: true,
       },
       {
-        name: "netAmount",
-        align: "center",
-        label: "Net Amount (NGN)",
+        name: 'netAmount',
+        align: 'center',
+        label: 'Net Amount (NGN)',
         field: (row) => new Intl.NumberFormat('en-US', {
                     style: 'decimal',
                     minimumFractionDigits: 2,
@@ -191,24 +192,24 @@ export default {
         axios
           .get(path.CLIENT_SEARCH, requestParam,this.headers)
           .then((response) => {
-            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            console.log('client Response >>>>>>>>>>>>', response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.clients = response.data.data.map((option) => ({
               label: option.name,
               value: option.code,
             }));
-            console.log("this.clients >>>>>>>>>>>>", this.clients);
+            console.log('this.clients >>>>>>>>>>>>', this.clients);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleClientChange(selectedItem) {
       try {
-        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
+        console.log('>>>>>calling handleClientChange>>>>>>>>>', selectedItem);
         const requestParam = {
           params: {
             client: selectedItem.value, 
@@ -218,7 +219,7 @@ export default {
           .get(path.ORGANISATION_SEARCH, requestParam, this.headers)
           .then((response) => {
             console.log(
-              "organisations Response >>>>>>>>>>>>",
+              'organisations Response >>>>>>>>>>>>',
               response.data.data
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
@@ -226,19 +227,19 @@ export default {
               label: option.name,
               value: option.code,
             }));
-            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+            console.log('this.organisation >>>>>>>>>>>>', this.organisations);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
 
     handleOrganisationChange(selectedItem) {
       try {
-        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
+        console.log('>>>>>calling handleClientChange>>>>>>>>>', selectedItem);
         const requestParam = {
           params: {
             organisation: selectedItem.value,
@@ -249,7 +250,7 @@ export default {
           .get(path.COMMISSION_SETTINGS_SEARCH, requestParam, this.headers)
           .then((response) => {
             console.log(
-              "organisations Response >>>>>>>>>>>>",
+              'organisations Response >>>>>>>>>>>>',
               response.data.data
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
@@ -257,13 +258,13 @@ export default {
               label: option.name,
               value: option.id,
             }));
-            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+            console.log('this.organisation >>>>>>>>>>>>', this.organisations);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     calculateCommission() {
@@ -280,45 +281,45 @@ export default {
               let commissionObj = []; 
               Object.keys(this.commissionList).forEach((item) => {
                 
-                 this.commissionList[item]["header"] = item.replace(/_/g, " ").toUpperCase()
+                 this.commissionList[item]['header'] = item.replace(/_/g, ' ').toUpperCase()
                  commissionObj.push(this.commissionList[item]);
               });  
-              console.log(">>>>>this.commissionObj>>>>",commissionObj)
+              console.log('>>>>>this.commissionObj>>>>',commissionObj)
               this.rows = commissionObj;
               this.showCommission = true;
             })
             .catch((error) => {
-              console.error("Error fetching options:", error);
+              console.error('Error fetching options:', error);
             });
         } catch (error) {
-          console.error("Error submitting form:", error);
+          console.error('Error submitting form:', error);
         }
       }
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
     this.loadCommissionClients();
-    console.log(">>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>mounted>>>>>>>>>>');
   },
   beforeUpdate() {
-    console.log(">>>>>>>>before updated>>>>>>>>>>");
+    console.log('>>>>>>>>before updated>>>>>>>>>>');
   },
   updated() {
-    console.log(">>>>>>>>updated>>>>>>>>>>");
+    console.log('>>>>>>>>updated>>>>>>>>>>');
   },
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

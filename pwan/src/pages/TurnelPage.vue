@@ -1,58 +1,59 @@
 <template>
   <q-page padding>
-    <div class="q-pa-md">
+    <div class='q-pa-md'>
       <q-card>
-          <q-card-section class="pwan-blue text-white">
+          <q-card-section class='pwan-blue text-white'>
             <HeaderPage  
-                :label="pageName"
-                :hint="hint"  
+                :label='pageName'
+                :hint='hint'  
               />
           </q-card-section>
         </q-card>
-        <div class="text-center"> 
-                <q-spinner v-if="showSpinner" color="primary" size="60px" />
+        <div class='text-center'> 
+                <q-spinner v-if='showSpinner' color='primary' size='60px' />
         </div>
       <q-card> 
       <q-card-section> 
-        <q-form @submit.prevent="handleTurnelling" ref="turnelingForm">
+        <q-form @submit.prevent='handleTurnelling' ref='turnelingForm'>
           <q-select
             filled
             bottom-slots
-            v-model="formData.client"
-            @update:model-value="handleClientChange"
-            :options="clients"
-            label="Select Client"
-            :rules="[requiredRule]" 
+            v-model='formData.client'
+            @update:model-value='handleClientChange'
+            :options='clients'
+            label='Select Client'
+            :rules='[requiredRule]' 
             use-input
             clearable
-            input-debounce="200"
-            @filter="filterClients"
+            input-debounce='200'
+            @filter='filterClients'
           />
-          <!--<ClientSelect clearable  @update:model-value="handleClientChange" ref="clientRef"/>-->
+          <!--<ClientSelect clearable  @update:model-value='handleClientChange' ref='clientRef'/>-->
           <q-select
             filled
             bottom-slots
-            v-model="formData.organisation"
-            :options="organisations"
-            label="Select Organisation"
-            :rules="[requiredRule]" 
+            v-model='formData.organisation'
+            :options='organisations'
+            label='Select Organisation'
+            :rules='[requiredRule]' 
           />
         <ResponseDialog
-            v-model="showMessageDialog"
-            :cardClass="childRef.cardClass"
-            :textClass="childRef.textClass"
-            :label="childRef.label"
-            :message="childRef.message"
-            :buttonClass="childRef.buttonClass"
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
           />
-            <q-card-actions align="center"> 
+            <q-card-actions align='center'> 
             <q-btn
-            class="pwan-button"
-              label="Turnel" 
-              type="submit"
-              size="md"
+            class='pwan-button'
+              label='Turnel' 
+              type='submit'
+              size='md'
               rounded  
-            />
+            /> 
+            <Done  />
           </q-card-actions>
         </q-form>
         </q-card-section>
@@ -63,21 +64,20 @@
 </template>
 
 <script>
-import { ref, computed } from "vue"; 
+import { ref, computed } from 'vue'; 
 import { useI18n } from 'vue-i18n'
-import HeaderPage from "src/components/HeaderPage.vue"; 
-import ResponseDialog from "src/components/ResponseDialog.vue";  
-import ClientSelect from "src/components/ClientSelect.vue";  
+import HeaderPage from 'src/components/HeaderPage.vue'; 
+import ResponseDialog from 'src/components/ResponseDialog.vue';   
 import { isRequired } from 'src/validation/validation';
-import { LocalStorage, SessionStorage } from "quasar";
-import axios from "axios"; 
-import path from "src/router/urlpath";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import { LocalStorage, SessionStorage } from 'quasar';
+import axios from 'axios'; 
+import path from 'src/router/urlpath';  
+import Done from 'src/components/Done.vue';  
 export default {
   components: { 
     HeaderPage,
     ResponseDialog, 
+    Done,
   },
   data() {
     
@@ -85,8 +85,8 @@ export default {
     const pageName = computed(()=> t('turnel.pagename'))
     const hint = computed(()=> t('turnel.hint'))
     const showSpinner = ref(false); 
-    const headers = SessionStorage.getItem("headers");
-    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem('headers');
+    const userEmail = LocalStorage.getItem('userEmail');
     const clients = ref([]);
     const organisations = ref([]);
     const menus = ref([]);
@@ -95,11 +95,11 @@ export default {
       organisation: null,
     });
      const childRef = ref({
-      label: "",
-      message: "",
-      textClass: "",
-      cardClass: "",
-      buttonClass: "",
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
       data: {},
     });
     return {
@@ -120,8 +120,8 @@ export default {
   },
   methods: {
      filterClients(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.clients = this.allClients;
         });
@@ -138,7 +138,7 @@ export default {
 
     loadUserClients() {
       try {
-        console.log(">>>>>calling LoadUserClients>>>>>>>>>", this.userEmail);
+        console.log('>>>>>calling LoadUserClients>>>>>>>>>', this.userEmail);
         const requestParam = {
           params: {
             email: this.userEmail,
@@ -147,25 +147,25 @@ export default {
         axios
           .get(path.ACTIVE_USER_CLIENT_SEARCH, requestParam, this.headers)
           .then((response) => {
-            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            console.log('client Response >>>>>>>>>>>>', response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.clients = response.data.data.map((option) => ({
               label: option.name,
               value: option.code,
             }));
             this.allClients = this.clients
-            console.log("this.clients >>>>>>>>>>>>", this.clients);
+            console.log('this.clients >>>>>>>>>>>>', this.clients);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleClientChange(selectedItem) {
       try {
-        console.log(">>>>>calling handleClientChange>>>>>>>>>", selectedItem);
+        console.log('>>>>>calling handleClientChange>>>>>>>>>', selectedItem);
         const requestParam = {
           params: {
             client: selectedItem.value,
@@ -176,7 +176,7 @@ export default {
           .get(path.ACTIVE_ORG_USER_SEARCH, requestParam, this.headers)
           .then((response) => {
             console.log(
-              "organisations Response >>>>>>>>>>>>",
+              'organisations Response >>>>>>>>>>>>',
               response.data.data
             );
             // Assuming the response data is an array of objects with 'value' and 'label' properties
@@ -184,13 +184,13 @@ export default {
               label: option.name,
               value: option.code,
             }));
-            console.log("this.organisation >>>>>>>>>>>>", this.organisations);
+            console.log('this.organisation >>>>>>>>>>>>', this.organisations);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
     handleTurnelling() {
@@ -201,7 +201,7 @@ export default {
           organisation: this.formData.organisation.value,
           orgName : this.formData.organisation.label,
         };
-        LocalStorage.set("turnelParams", turnelParams);
+        LocalStorage.set('turnelParams', turnelParams);
         try {
           const requestParam = {
             params: turnelParams,
@@ -216,6 +216,7 @@ export default {
                 let sectionItems = this.menus[key];
                 let menuitems = [];
                 sectionItems.forEach(function (menu, index) {
+                  console.log(index)
                   let menuitem = {
                     title: menu.name,
                     caption: menu.code,
@@ -224,44 +225,44 @@ export default {
                   };
                   menuitems.push(menuitem);
                 });
-                menuSection["menuitems"] = menuitems;
+                menuSection['menuitems'] = menuitems;
                 updatedMenu.push(menuSection);
               });
-              console.log("Inside turnelling >>>>>>>>>>>>>>",updatedMenu)
-              this.$emit("update-menu", updatedMenu);
+              console.log('Inside turnelling >>>>>>>>>>>>>>',updatedMenu)
+              this.$emit('update-menu', updatedMenu);
             })
             .catch((error) => {
-              console.error("Error fetching options:", error);
+              console.error('Error fetching options:', error);
             });
         } catch (error) {
-          console.error("Error submitting form:", error);
+          console.error('Error submitting form:', error);
         }
       }
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
     this.loadUserClients();
-    console.log(">>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>mounted>>>>>>>>>>');
   },
   beforeUpdate() {
-    console.log(">>>>>>>>before updated>>>>>>>>>>");
+    console.log('>>>>>>>>before updated>>>>>>>>>>');
   },
   updated() {
-    console.log(">>>>>>>>updated>>>>>>>>>>");
+    console.log('>>>>>>>>updated>>>>>>>>>>');
   },
 };
 </script>
 
-<style lang="sass">
+<style lang='sass'>
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

@@ -1,18 +1,18 @@
 <template>
   <div>
     <q-input
-      v-model="selectedDate"
-      :label="label"   
-      @change="onChangeDate" 
+      v-model='selectedDate'
+      :label='label'   
+      @change='onChangeDate' 
 
     >
       <template v-slot:append>
-        <q-icon name="event" @click="showDatePicker = !showDatePicker" class="cursor-pointer" />
+        <q-icon name='event' @click='showDatePicker = !showDatePicker' class='cursor-pointer' />
       </template>
     </q-input> 
-      <q-date v-if="showDatePicker"
-        v-model="selectedDate" 
-        @click="setDateValue"
+      <q-date v-if='showDatePicker'
+        v-model='selectedDate' 
+        @click='setDateValue'
       /> 
   </div>
 </template>
@@ -21,7 +21,7 @@
 import { date } from 'quasar'; // Import Quasar's date utilities
 
 export default {
-   name: "DatePicker", 
+   name: 'DatePicker', 
   props: { 
     label: {
       type: String,
@@ -54,23 +54,23 @@ export default {
     }, 
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("before Mount");
+    console.log('before Mount');
   },
   mounted() {
-    console.log(">>>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>>mounted>>>>>>>>>>');
    
   },
   unmounted() { 
      
   },
   updated() {  
-    console.log(">>>>>>>>>>>")
+    console.log('>>>>>>>>>>>')
   },
 };
  

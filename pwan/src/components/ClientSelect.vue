@@ -2,34 +2,32 @@
            <q-select
             filled
             bottom-slots
-            v-model="client" 
-            :options="clients" 
-            :label="label"
-            :placeholder="placeholder"
-            :clearable="clearable"
+            v-model='client' 
+            :options='clients' 
+            :label='label'
+            :placeholder='placeholder'
+            :clearable='clearable'
             emit-value
             map-options
-            @input="updateValue"
-            :rules="[requiredRule]" 
-            :use-input="useInput"
-            input-debounce="200"
-            @filter="filterClients"
+            @input='updateValue'
+            :rules='[requiredRule]' 
+            :use-input='useInput'
+            input-debounce='200'
+            @filter='filterClients'
           />  
 </template>
 
 <script>
 import { isRequired, inputFieldRequired } from 'src/validation/validation'; 
-import axios from "axios"; 
-import path from "src/router/urlpath";
-import { useRouter } from "vue-router";
-const router = useRouter();
+import axios from 'axios'; 
+import path from 'src/router/urlpath'; 
 export default { 
-    name: "ClientSelect",
+    name: 'ClientSelect',
     props: {
     
     label: {
       type: String,
-      default: "Select a Client",
+      default: 'Select a Client',
     },
     placeholder: {
       type: String, 
@@ -55,11 +53,11 @@ export default {
   },
   methods: {  
      updateValue(value) {
-      this.$emit("input", value);
+      this.$emit('input', value);
     },   
      filterClients(val, update) {
-        console.log(">>>>val>>>>>>",val)
-      if (val === "") {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
         update(() => {
           this.clients = this.allClients;
         });
@@ -79,41 +77,41 @@ export default {
         axios
           .get(path.CLIENT_SEARCH, this.headers)
           .then((response) => {
-            console.log("client Response >>>>>>>>>>>>", response.data.data);
+            console.log('client Response >>>>>>>>>>>>', response.data.data);
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.clients = response.data.data.map((option) => ({
               label: option.name,
               value: option.code,
             }));
             this.allClients = this.clients;
-            console.log("this.clients >>>>>>>>>>>>", this.clients);
+            console.log('this.clients >>>>>>>>>>>>', this.clients);
           })
           .catch((error) => {
-            console.error("Error fetching options:", error);
+            console.error('Error fetching options:', error);
           });
       } catch (error) {
-        console.error("Error submitting form:", error);
+        console.error('Error submitting form:', error);
       }
     },
   },
   beforeCreate() {
-    console.log("beforeCreate");
+    console.log('beforeCreate');
   },
   created() {
-    console.log("created");
+    console.log('created');
   },
   beforeMount() {
-    console.log("beforeMount");
+    console.log('beforeMount');
   },
   mounted() {
     this.loadClients();
-    console.log(">>>>>>>>mounted>>>>>>>>>>");
+    console.log('>>>>>>>>mounted>>>>>>>>>>');
   },
   beforeUpdate() {
-    console.log(">>>>>>>>before updated>>>>>>>>>>");
+    console.log('>>>>>>>>before updated>>>>>>>>>>');
   },
   updated() {
-    console.log(">>>>>>>>updated>>>>>>>>>>");
+    console.log('>>>>>>>>updated>>>>>>>>>>');
   },
 };
 </script>
