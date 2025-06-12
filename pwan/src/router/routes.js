@@ -354,6 +354,23 @@ const routes = [
         path: '/outstandingreport',
         component: () => import('src/reports/outstandingreport.vue'),
       },
+
+      {
+        path: '/productportfolio',
+        component: () => import('src/pages/AffilateProducts.vue'),
+      },
+      {
+        path: '/usermsgintegration',
+        component: () => import('src/pages/UserMessagIntegration.vue'),
+      },
+      {
+        path: '/usermessagingchannel',
+        component: () => import('src/pages/UserMessagingChannel.vue'),
+      },
+      {
+        path: '/agencywebsite',
+        component: () => import('src/pages/WebsiteSetup.vue'),
+      }, 
  
  
       

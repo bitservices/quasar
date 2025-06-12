@@ -6,7 +6,7 @@
     >
       <q-card-section>
         <div class='row'>
-          <div class='col-8 text-h6'>Organisation User Assignment </div>
+          <div class='col-8 text-h6'>Website Configuration </div>
           <div v-if='imageFile' class='col-4' style='display: flex; justify-content: flex-end'>
                   <img :src='imageFile' alt='Preview' style='max-width: 100px' width='150px'  height='100px' />
           </div>

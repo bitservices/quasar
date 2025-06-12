@@ -1,13 +1,14 @@
 
 
 
-// const BASEPATH = 'http://localhost:8000';
-const QUASR_PATH = ''; 
-// const BASEPATH = 'https://pwan.traisoft.com';
-// const QUASR_PATH =  'https://propertyconnect.traisoft.com';
+ //const BASEPATH = 'http://localhost:8000'; 
+const BASEPATH = 'https://pwan.traisoft.com';  
 
-const BASEPATH = 'https://pwan.traisoft.com';
+
 // const QUASR_PATH =  'http://localhost';
+// const QUASR_PATH =  'http://localhost';
+const QUASR_PATH =  'https://propertyconnect.traisoft.com';
+
 const APP_PATH = BASEPATH + '/api/pwanproperties/'; 
 const path = {
   ESTATE_AGENCY_URL: 'https://estateagency.traisoft.com/?ref=',
@@ -428,6 +429,26 @@ FUNDINGPAYMENT_TRANSACTION_CREATE: APP_PATH + 'fundingpayment/create/',
 
 DANVALIDATE_CREATE: APP_PATH + 'danvalidate/create/',
 DANVALIDATE_UPDATE: APP_PATH + 'fundingtype/update/', 
+
+
+PRODUCTPORTFOLIO_CREATE: APP_PATH + 'productportfolio/create/',
+PRODUCTPORTFOLIO_UPDATE: APP_PATH + 'productportfolio/update/', 
+PRODUCTPORTFOLIO_REMOVE: APP_PATH + 'productportfolio/remove/', 
+PRODUCTPORTFOLIO_SEARCH: APP_PATH + 'productportfolio/search/', 
+
+
+USER_MESSAGINGINTEGRATION_CREATE: APP_PATH + 'usermsgintegration/create/', 
+USER_MESSAGINGINTEGRATION_SEARCH: APP_PATH + 'usermsgintegration/search/', 
+USER_MESSAGINGINTEGRATION_UPDATE: APP_PATH + 'usermsgintegration/update/',
+
+
+USER_MESSAGINGCHANNEL_CREATE: APP_PATH + 'usermessagingchannel/create/', 
+USER_MESSAGINGCHANNEL_SEARCH: APP_PATH + 'usermessagingchannel/search/', 
+USER_MESSAGINGCHANNEL_UPDATE: APP_PATH + 'usermessagingchannel/update/', 
+USER_MESSAGINGCHANNEL_DELETE: APP_PATH + 'usermessagingchannel/delete/',  
+USER_MESSAGINGCHANNEL_REMOVE: APP_PATH + 'usermessagingchannel/remove/',
+
+
 
 
   

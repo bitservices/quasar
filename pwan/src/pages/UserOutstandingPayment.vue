@@ -591,9 +591,7 @@ export default {
           path.USR_OUTSTANDING_PAYMENT_REMOVE,
           data,
           this.headers
-        );
-         
-         
+        ); 
         console.log(">>>>>>>promise >>>>>>>>>>>>>",promise)
          promise.then((response) => {
             // Extract data from the response

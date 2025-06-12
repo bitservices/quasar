@@ -189,6 +189,14 @@
 "dannumber":{
   "pagename": "Dynamic Authentication Number",
   "hint":"This page allows users to configure their dynamic authentication number (DAN) within an organization, which will be used to authorize specific transactions. Users can set up different DANs for various organizational operations"   
+},
+"usermsgintegration":{
+  "pagename": "User Message Integration",
+  "hint":"This page is used by user to buy the required units need to be used in sending messages through SMS, Whatsapp and Email etc"   
+},
+"websitesetup":{
+  "pagename": "Real Estate Website Setup",
+  "hint":"This page allows users to set up or renew their real estate website, where they can showcase and market their properties."   
 }
 
 

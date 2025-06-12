@@ -152,15 +152,15 @@ export default {
       toggleLabel:'Dashboard Transaction Details',
        items: [
         
-
-        { id: 1, title: 'Payment', description: 'Make Online Payment',link:'/viewpayments',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'payment'}, 
-        { id: 2, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'home'}, 
-        { id: 3, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon : 'loop', },
-        { id: 4, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'wallet'},
-        { id: 5, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'check',},
-        { id: 6, title: 'Client/Center', description: 'Client/Affilate/Center',link:'/client' ,gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon:'company'},
-        { id: 7, title: 'Organisation/Branches', description: 'Organisation/Branches',link:'/organisation',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'fa fa-sitemap'},
-        { id: 8, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'fa fa-qrcode'},
+        { id: 1, title: 'Real Estate Website', description: 'Create/Renew Your Real Estate Website',link:'/agencywebsite',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'create'}, 
+        { id: 2, title: 'Payment', description: 'Make Online Payment',link:'/viewpayments',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'payment'}, 
+        { id: 3, title: 'Properties', description: 'Search for Properties',link:'/properties',gradient: 'linear-gradient(to right, #FF5733, #FFC300)',icon:'home'}, 
+        { id: 4, title: 'Turnel', description: 'Turnelling to Different Client/Affilate', link:'/turnel',gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon : 'loop', },
+        { id: 5, title: 'Commision', description: 'Calculate Commission',link:'/calculatecommission',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'wallet'},
+        { id: 6, title: 'Attendance', description: 'Record Attendance',link:'/selfattendance',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'check',},
+        { id: 7, title: 'Client/Center', description: 'Client/Affilate/Center',link:'/client' ,gradient: 'linear-gradient(to right, #33FF57, #33FFC3)', icon:'company'},
+        { id: 8, title: 'Organisation/Branches', description: 'Organisation/Branches',link:'/organisation',gradient: 'linear-gradient(to right, #FF5733, #FFC300)', icon:'fa fa-sitemap'},
+        { id: 9, title: 'QR Code', description: 'QR Code',link:'/userqrcode',gradient: 'linear-gradient(to right, #3357FF, #C300FF)', icon:'fa fa-qrcode'},
        
       ],
     };

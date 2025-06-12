@@ -65,9 +65,15 @@ const handleClick = (prop) => {
   console.log('>>>>>>prop>>>>>>',prop.trim());
   var pageStacking =   LocalStorage.getItem('pagestack')
   console.log(">>>>pageStack>>>",pageStacking)
+  if(pageStacking == null){ 
+     const pagestack = ["/dashboard"]
+      pagestack.push(prop.trim())
+      LocalStorage.set('pagestack', pagestack); 
+  }else{
   pageStacking.push(prop.trim())
    LocalStorage.set('pagestack',pageStacking)
   console.log(router);
+}
   router.push(prop.trim());
 };
 </script>

@@ -167,14 +167,29 @@ let defaultList = [
         icon: 'key',
         link: '/outstandingreport',
       },
-      
-      /*
-      {
-        title: ' Dynamic Type Setup', 
+     {
+        title: 'Buy Credit', 
         icon: 'key',
-        link: '/dantype',
+        link: '/usermsgintegration',
+      },
+      {
+        title: 'Marketing Affilate', 
+        icon: 'key',
+        link: '/productportfolio',
+      },
+
+{
+        title: 'User Messaging Channel', 
+        icon: 'key',
+        link: '/usermessagingchannel',
+      },
+      {
+        title: 'Send Message', 
+        icon: 'key',
+        link: '/sendmsg',
       },
       
+       /*
       {
         title: ' User Dynamic Authentication', 
         icon: 'key',
