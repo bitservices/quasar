@@ -4,34 +4,79 @@
       class='card-flex-display'
       :style='{ width: form.width, height: form.height }'
     >
-      <q-card-section>
-        <div class='text-h6'>{{ form.label }}</div>
-      </q-card-section>
+        <q-card-section class='pwan-blue text-white'>
+            <HeaderPage  
+                :label='pageName'
+                :hint='hint'  
+              />
+          </q-card-section> 
 
       <q-card-section>
-        <q-form>
-          <q-input
+        <q-form>  
+
+            
+            <q-select
             filled
             bottom-slots
-            v-model='formData.subscriber'
-            label='Client Name'
+            v-model='formData.client'
+            :options='clients'
+            label='Affilate/Client'  
             :dense='dense'
+            use-input
+            input-debounce='200'
+            clearable
+            @filter='filterAffilates'
+            @update:model-value='handleClientChange'
           />
+
+           <q-select
+            filled
+            bottom-slots
+            v-model="formData.products"
+            :options="productList"
+            label="Select Products" 
+            :dense="dense" 
+            map-options 
+            use-input 
+            stack-label
+            class="q-mb-md"
+            @update:model-value='handleProductChange'
+           /> 
           <q-input
             filled
             bottom-slots
-            v-model='formData.salerId'
+            v-model='formData.amount'
+            label='Enter Subscribed Amount'
+            type='number'
+            step='0.01' 
+          />
+
+          <q-select
+            filled
+            bottom-slots
+            v-model='formData.salesStatus'
+            :options='salesStatusList'
+            label='Select Payment Type'  
+            :dense='dense'  
+          /> 
+
+
+          <q-input type="hidden" v-model='subscriberData.id' />                               
+          <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.fullName'
             @keyup='handleInput'
             @keydown.enter='handleEnter'
-            placeholder='Search for PBO'
+            placeholder='Search for Subscriber'
             :dense='dense'
           />
           <q-list v-if='showSuggestions && filteredSuggestions.length > 0'>
             <q-item
               clickable
               v-for='item in filteredSuggestions'
-              :key='item.email'
-              @click='selectRecord(item.email)'
+              :key='item.id'
+              @click='selectRecord(item)'
             >
               <q-item-section>{{ item.name }}</q-item-section>
               <q-item-section side>
@@ -42,29 +87,82 @@
               </q-item-section>
             </q-item>
           </q-list>
-          <q-select
+
+           <q-input
             filled
             bottom-slots
-            v-model='formData.productType'
-            :options='productTypes'
-            label='Select Product Type'
+            v-model='subscriberData.lastName'
+            label='Last Name' 
+            :dense='dense'
+            :rules='[requiredRule]' 
+          />
+            <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.firstName'
+            label='First Name' 
+            :dense='dense'
+            :rules='[requiredRule]' 
+          />
+           <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.middleName'
+            label='Middle Name' 
             :dense='dense'
           />
+           <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.gender'
+            :options='genderList'
+            label='Select Gender'  
+            :dense='dense'  
+          /> 
           <q-input
             filled
             bottom-slots
-            v-model='formData.amount'
-            label='Enter Amount'
-            type='number'
-            step='0.01'
+            v-model='subscriberData.phoneNumber'
+            label='Subscriber Phone Number' 
+            :dense='dense'
+            :rules='[requiredRule]' 
           />
           <q-input
             filled
             bottom-slots
-            v-model='formData.description'
-            label='Description'
+            v-model='subscriberData.email'
+            label='Subscriber Email'
+            :readonly='isReadonly'
+            :dense='dense'
+            :rules='[requiredRule]' 
           />
+          <div class='q-pa-md'> 
+          <DatePicker v-model='subscriberData.dateOfBirth' label='Date of Birth' @setDate='setDateOfBirth'  
+           ref='birthDate' />
+          </div>
+           
+          
+           
+          <div class='row'>
+            <div class='col-8'>
+                <q-file
+                  bottom-slots
+                  filled
+                  v-model='subscriberData.imageByte'
+                  @update:model-value='onFileChange'
+                  label='User Image'
+                >
+                  <template v-slot:append>
+                    <q-icon name='attachment' />
+                  </template>
+                </q-file>
+              </div>
+              <div v-if='imageFile' class='col-4' style='display: flex; justify-content: flex-end'>               
+                  <img :src='imageFile' alt='Preview' style='max-width: 100px' width='150px'  height='100px' />
 
+          </div>
+        </div>
+           
           <q-file
             bottom-slots
             filled
@@ -121,12 +219,20 @@
 
 <script>
 import { LocalStorage, SessionStorage } from 'quasar';
-import {  ref } from 'vue';
+import { ref, computed } from 'vue'; 
 import axios from 'axios';
-import path from 'src/router/urlpath';
-import debug from 'src/router/debugger';
+import path from 'src/router/urlpath'; 
+import { useI18n } from 'vue-i18n'
+import HeaderPage from 'src/components/HeaderPage.vue';   
+import debug from 'src/router/debugger'; 
+import DatePicker from 'src/components/DatePicker.vue';  
 
 export default {
+    components: {  
+    HeaderPage,  
+    debug,
+    DatePicker,
+  },   
   name: 'SalesTransactionFormDialog',
   props: {
     onClick: {
@@ -155,6 +261,13 @@ export default {
     },
   },
   data() {
+
+     const { t } = useI18n() 
+    const pageName = computed(()=> t('salestransaction.pagename'))
+    const hint = computed(()=> t('salestransaction.hint'))
+    const headers = SessionStorage.getItem('headers'); 
+    const userEmail = LocalStorage.getItem('userEmail');
+
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -164,13 +277,14 @@ export default {
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + 'px';
-    const dialogHeight = controlHeight + 'px';
-
-    const profile = LocalStorage.getItem('turnelParams');
-    const headers = SessionStorage.getItem('headers');
-    const formData = ref({
-      client: '',
-      organisation: '',
+    const dialogHeight = controlHeight + 'px';  
+    const  subscriberData = ref({
+        id:"",
+        lastName : "",
+        firstName : "",
+        middleName:""
+      });
+    const formData = ref({ 
       createdBy: '',
       salesDate: new Date(),
     });
@@ -183,11 +297,11 @@ export default {
 
     return {
       formData,
+      subscriberData,
       showDialog,
       form,
       dialogWidth,
-      dialogHeight,
-      profile,
+      dialogHeight, 
       headers,
       dense: true,
       salesStatusList: [],
@@ -195,31 +309,120 @@ export default {
       suggestions: [],
       filteredSuggestions: [],
       showSuggestions: false,
+      userEmail,
+      clients :[],
+      productList : [],
+      pageName,
+      hint,      
+      allClients:[],
+      dense: true,
+      salesStatusList:[],
     };
   },
   methods: {
+
+      filterAffilates(val, update) {
+        console.log('>>>>val>>>>>>',val)
+      if (val === '') {
+        update(() => {
+          this.clients = this.allClients;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.clients = this.allClients.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    }, 
+
+    loadUserClients() {
+       const requestParam = {
+          params: {
+            isAnAffilate: true,
+            status : "A"
+          },
+        };
+      try { 
+        axios
+          .get(path.CLIENT_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            
+            console.log(response.data.data)
+            this.clients = response.data.data.map((option) => ({
+              label: option.name,
+              value: option.code,
+            })); 
+
+            this.allClients = this.clients
+          })
+          .catch((error) => {
+            console.error('Error fetching options:', error);
+          });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    },
+    handleClientChange(selectedItem) {
+      try { 
+        const requestParam = {
+          params: {
+            client: selectedItem.value
+          },
+        };
+        axios
+          .get(path.PRODUCTDEF_SEARCH, requestParam, this.headers)
+          .then((response) => {
+            console.log(
+              'PRODUCT dEFINITIN Response >>>>>>>>>>>>',
+              response.data.data
+            );
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            this.productList = response.data.data.map((option) => ({
+              label: option.name,
+              value: option.code,
+              amount : option.amount,
+            }));
+            console.log('this.productList >>>>>>>>>>>>', this.productList);
+          })
+          .catch((error) => {
+            console.error('Error fetching options:', error);
+          });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+      }
+    },
+
+    handleProductChange(selectedItem){
+      console.log(">>>>>>>product Item >>>>>>>>>", selectedItem)
+      this.formData.amount = selectedItem.amount
+
+    },
     handleInput() {
-      if (this.formData.salerId === '' || this.formData.salerId.length < 4) {
+      if (this.subscriberData.fullName === '' || this.subscriberData.fullName.length < 4) {
         this.filteredSuggestions = [];
         this.showSuggestions = false;
       } else {
         const filter = {
           params: {
-            term: this.formData.salerId,
+            term: this.subscriberData.fullName,
+            email : this.userEmail
           },
         };
         axios
-          .get(path.USER_SEARCH_AUTOCOMPLETER, filter, this.headers)
+          .get(path.SUBSCRIBER_AUTOCOMPLETER, filter, this.headers)
           .then((response) => {
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             debug(response.data.data);
             this.filteredSuggestions = response.data.data.map((option) => ({
               name:
-                option.last_name +
+                option.lastName +
                 ' ' +
-                option.first_name +
+                option.firstName +
                 ' ' +
-                option.middle_name,
+                option.middleName,
               email: option.email,
               image: option.imageUrl,
             }));
@@ -240,15 +443,12 @@ export default {
     },
     selectRecord(value) {
       this.formData.salerId = value;
-      this.showSuggestions = false;
-      // Optionally, emit an event or perform other actions when a suggestion is selected
+      this.showSuggestions = false; 
+      
     },
     saveRecord() {
       //this.onClick(formData.value);
-      let productType = this.formData.productType.value;
-      this.formData.client = this.profile.client;
-      this.formData.organisation = this.profile.organisation;
-      this.formData.createdBy = this.profile.email;
+      let productType = this.formData.productType.value;  
       this.formData.productType = productType;
       this.formData.paymentStatus = this.formData.paymentStatus.value;
       this.formData.salesStatus = this.formData.salesStatus.value;
@@ -260,6 +460,20 @@ export default {
       this.$emit('formDataSubmitted', requestData);
       this.showDialog = true;
     },
+    loadSaleStatus(){
+       axios
+      .get(path.SALESSTATUS_SEARCH)
+      .then((response) => { 
+        console.log(">>>>>sales status response>>>>>>>",response.data.data)
+        this.salesStatusList = response.data.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        })); 
+      })
+      .catch((error) => {
+        console.error('Error fetching options:', error);
+      });
+    }
   },
   beforeCreate() {
     debug('beforeCreate');
@@ -273,52 +487,26 @@ export default {
   mounted() {  
     const requestParams = {
       params: {
-        client: this.profile.client,
-        organisation: this.profile.organisation, 
+        
+        email: this.userEmail, 
       },
     };
 
     axios
-      .get(path.PRODUCTDEF_SEARCH, requestParams, this.headers)
-      .then((response) => {
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.productTypes = response.data.data.map((option) => ({
+      .get(path.GENDER_SEARCH_ALL)
+      .then((response) => { 
+        this.genderList = response.data.map((option) => ({
           label: option.name,
-          value: option.id,
-        }));
+          value: option.code,
+        })); 
       })
       .catch((error) => {
         console.error('Error fetching options:', error);
       });
 
-    axios
-      .get(path.PAYMENTSTATUS_SEARCH_ALL, requestParams, this.headers)
-      .then((response) => {
-        debug('paymentStatusList Response >>>>>>>>>>>>', response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.paymentStatusList = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        debug('this.paymentStatusList >>>>>>>>>>>>', this.salesStatusList);
-      })
-      .catch((error) => {
-        console.error('Error fetching options:', error);
-      });
-    axios
-      .get(path.SALESSTATUS_SEARCH_ALL, requestParams, this.headers)
-      .then((response) => {
-        debug('salesStatusList Response >>>>>>>>>>>>', response.data);
-        // Assuming the response data is an array of objects with 'value' and 'label' properties
-        this.salesStatusList = response.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        }));
-        debug('this.salesStatusList >>>>>>>>>>>>', this.salesStatusList);
-      })
-      .catch((error) => {
-        console.error('Error fetching options:', error);
-      });
+      this.loadUserClients();
+      this.loadSaleStatus();
+
   },
   unmounted() {
     debug('Calling unmounted>>>>>>>>>>');
@@ -332,9 +520,7 @@ export default {
       try {
         const requestParams = {
           params: {
-            code: this.searchValue,
-            client: this.profile.client,
-            organisation: this.profile.organisation,
+            code: this.searchValue, 
           },
         };
         const promise = axios.get(this.urlLink, requestParams, this.headers);

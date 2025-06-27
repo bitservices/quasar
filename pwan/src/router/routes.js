@@ -371,7 +371,29 @@ const routes = [
         path: '/agencywebsite',
         component: () => import('src/pages/WebsiteSetup.vue'),
       }, 
- 
+
+      {
+        path: '/donaionstatus',
+        component: () => import('src/pages/DonationStatus.vue'),
+      },  
+
+      {
+        path: '/donationtype',
+        component: () => import('src/pages/DonationType.vue'),
+      },  
+      {
+        path: '/contactconfigtype',
+        component: () => import('src/pages/ContactConfigurationType.vue'),
+      },  
+
+       {
+        path: '/contactconfigsettings',
+        component: () => import('src/pages/ContactConfigurationSettings.vue'),
+      },  
+      {
+        path: '/donationrpt',
+        component: () => import('src/pages/DonationReport.vue'),
+      },
  
       
     ],
@@ -394,6 +416,7 @@ const routes = [
       { path: '/forgot-password', component: () => import('src/pages/ForgotPassword.vue') }, 
       { path: '/passwordchange', component: () => import('src/pages/PasswordChange.vue') }, 
       { path: '/registrationcompletion', component: () => import('src/pages/RegistrationCompletion.vue') }, 
+      { path: '/donator', component: () => import('src/pages/RegisterDonator.vue') }, 
       
        
 

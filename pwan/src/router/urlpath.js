@@ -1,13 +1,12 @@
 
 
 
- //const BASEPATH = 'http://localhost:8000'; 
-const BASEPATH = 'https://pwan.traisoft.com';  
+const BASEPATH = 'http://localhost:8000'; 
+//const BASEPATH = 'https://pwan.traisoft.com';  
 
-
-// const QUASR_PATH =  'http://localhost';
-// const QUASR_PATH =  'http://localhost';
-const QUASR_PATH =  'https://propertyconnect.traisoft.com';
+ 
+const QUASR_PATH =  'http://localhost';
+//const QUASR_PATH =  'https://propertyconnect.traisoft.com';
 
 const APP_PATH = BASEPATH + '/api/pwanproperties/'; 
 const path = {
@@ -73,6 +72,7 @@ const path = {
   ACTIVE_ORG_USER_SEARCH: APP_PATH + 'orguser/findactiveorganisationuser/',
   ORG_USER_SEARCH: APP_PATH + 'orguser/search/',
   ORG_USER_REPORT: APP_PATH + 'report/orguserreport/',
+  DONATION_REPORT: APP_PATH + 'report/donationreport/',
 
   USER_PROFILES: APP_PATH + 'user/profiles/',
 
@@ -451,7 +451,40 @@ USER_MESSAGINGCHANNEL_REMOVE: APP_PATH + 'usermessagingchannel/remove/',
 
 
 
-  
+
+DONATIONSTATUS_CREATE: APP_PATH + 'donationstatus/create/', 
+DONATIONSTATUS_SEARCH: APP_PATH + 'donationstatus/search/', 
+DONATIONSTATUS_UPDATE: APP_PATH + 'donationstatus/update/',  
+DONATIONSTATUS_REMOVE: APP_PATH + 'donationstatus/remove/',
+
+
+DONATIONTYPE_CREATE: APP_PATH + 'donationtype/create/', 
+DONATIONTYPE_SEARCH: APP_PATH + 'donationtype/search/', 
+DONATIONTYPE_UPDATE: APP_PATH + 'donationtype/update/',  
+DONATIONTYPE_REMOVE: APP_PATH + 'donationtype/remove/',
+
+
+DONATOR_CREATE: APP_PATH + 'donator/create/', 
+DONATOR_SEARCH: APP_PATH + 'donator/search/', 
+DONATOR_UPDATE: APP_PATH + 'donator/update/',  
+DONATOR_REMOVE: APP_PATH + 'donator/remove/',
+DONATOR_AUTOCOMPLETER_SEARCH: APP_PATH + 'donator/autocomplete/',
+
+
+CONTACT_CONFIG_TYPE_CREATE: APP_PATH + 'contactconfigtype/create/', 
+CONTACT_CONFIG_TYPE_SEARCH: APP_PATH + 'contactconfigtype/search/', 
+CONTACT_CONFIG_TYPE_UPDATE: APP_PATH + 'contactconfigtype/update/',  
+CONTACT_CONFIG_TYPE_REMOVE: APP_PATH + 'contactconfigtype/remove/',
+
+
+CONTACTCONFIGSETTINGS_CREATE: APP_PATH + 'contactconfigsettings/create/', 
+CONTACTCONFIGSETTINGS_SEARCH: APP_PATH + 'contactconfigsettings/search/', 
+CONTACTCONFIGSETTINGS_UPDATE: APP_PATH + 'contactconfigsettings/update/', 
+
+
+
+SUBSCRIBER_AUTOCOMPLETER: APP_PATH + 'subscriber/autocomplete/', 
+
 
   
 

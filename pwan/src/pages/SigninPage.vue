@@ -68,7 +68,9 @@
       
       <q-card-actions>
         <q-btn flat label='Forgot Password?' @click='navigateToForgotPassword' />
-        <q-btn flat label='Register' @click='navigateToRegister' />
+        <q-btn flat label='Register' @click='navigateToRegister' /> 
+        <q-btn flat label='Register Donator' @click='registerDonator' />
+        
       </q-card-actions>
     </q-card>
   </q-page>
@@ -190,6 +192,12 @@ export default {
       console.log('Navigate to Register Page')
       this.router.push({ path: '/register' });
     },
+
+  registerDonator() {
+      console.log('Navigate to Register Donator')
+      this.router.push({ path: '/donator' });
+    },
+    
      
     authenticateUser(){ 
         try {

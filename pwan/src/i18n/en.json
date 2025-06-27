@@ -197,7 +197,24 @@
 "websitesetup":{
   "pagename": "Real Estate Website Setup",
   "hint":"This page allows users to set up or renew their real estate website, where they can showcase and market their properties."   
-}
+},
+ "donator":{
+        "pagename": "Donator",
+        "hint":"Fill in the form and Click on create or Update button, to create or update a  Donator. A Donator must have one or more one donating Item"
+    },
+
+    "contactconfigsetting":{
+        "pagename": "Contact Configuration Settings",
+        "hint":"This Page is used by an Organisation to setup the different Incremental format of different Contact Types"
+    },
+    "salestransaction":{
+      "pagename": "Sales Transaction",
+      "hint":"This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
+    },
+    "donationport":{
+        "pagename": "Donation Report",
+        "hint":"Donation Report Page is used by an Admin User to search for different donation criteria such as pledged, transfered etc and different payment types such those that did a particular donation"
+    }
 
 
 

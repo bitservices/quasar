@@ -5,15 +5,16 @@
         class='my-sticky-header-table'
         flat
         bordered
-        title='Sales Trancaction'
+        title='Status'
         :rows='rows'
         :columns='columns'
         row-key='name'
+        :selected-rows-label='getSelectedString'
         selection='multiple'
         v-model:selected='selected'
       >
         <template v-slot:top>
-          <q-label>Sales Transaction</q-label>
+          <q-label>Status</q-label>
           <q-space />
           <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
           <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
@@ -24,11 +25,11 @@
             size='sm'
             @click='viewItem'
           />
-          <SalesTransactionFormDialog
+          <StandingDataFormDialog
             v-model='showFormDialog'
             :onClick='saveRecord'
             @formDataSubmitted='saveRecord'
-            label='Sales Trancaction'
+            label='Donation Status'
             :searchValue='searchValue'
             :action='action'
             :actionLabel='actionLabel'
@@ -80,71 +81,45 @@
           </q-btn>
         </template>
       </q-table>
-      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { SessionStorage,  LocalStorage } from 'quasar';
+import { SessionStorage } from 'quasar';
 import axios from 'axios';
 import { ref } from 'vue';
-import SalesTransactionFormDialog from 'src/components/SalesTransactionFormDialog.vue';
+import StandingDataFormDialog from 'src/components/StandingDataFormDialog.vue';
 import ResponseDialog from 'src/components/ResponseDialog.vue';
-import Done from 'src/components/Done.vue';
 import path from 'src/router/urlpath';
-import debug from 'src/router/debugger';
 
 export default {
   components: {
-    SalesTransactionFormDialog,
+    StandingDataFormDialog,
     ResponseDialog,
-    Done,
   },
   setup() {
-    let headers = SessionStorage.getItem('headers');
+    const headers = SessionStorage.getItem('headers');
     const columns = [
       {
-        name: 'subscriber',
+        name: 'code',
         required: false,
-        label: 'Client Name',
+        label: 'Code',
         align: 'left',
-        field: (row) => row.subscriber.name,
+        field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: 'amount',
+        name: 'name',
         align: 'center',
-        label: 'Amount',
-        field: (row) => row.amount,
+        label: 'Name',
+        field: (row) => row.name,
         sortable: true,
       },
-      {
-        name: 'Affillate',
-        align: 'center',
-        label: 'Affilate/Company',
-        field: (row) => row.client.name,
-        sortable: true,
-      },
-      {
-        name: 'Status',
-        align: 'center',
-        label: 'Sales Status',
-        field: (row) => row.salesStatus.name,
-        sortable: true,
-      },
-      {
-        name: 'date',
-        align: 'center',
-        label: 'Date',
-        field: (row) => row.salesDate,
-        sortable: true,
-      },
-    ];
-    
-    
-    const urlLink = ref(path.SALESTRANS_SEARCH);
+    ]; 
+    const urlLink = ref(path.DONATIONSTATUS_SEARCH
+    );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref('');
@@ -152,8 +127,7 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref('Submit');
-    const medium_dialog = ref(false); 
-    const userEmail = LocalStorage.getItem('userEmail');
+    const medium_dialog = ref(false);
     const childRef = ref({
       label: '',
       message: '',
@@ -163,25 +137,15 @@ export default {
       data: {},
     });
 
-    
     const fetchData = async () => {
-      try {
-         
-    const requestParams = {
-      params: { 
-        email: userEmail,
-      },
-    }; 
-    console.log('requestParams>>>>>>>>>>>>',requestParams)
-        const response = await axios.get(
-          path.SALESTRANS_SEARCH,
-          requestParams,
+      try { 
+        const response = await axios.get(path.DONATIONSTATUS_SEARCH,
           headers
         );
         if (response.data) {
-          console.log('response>>>>>>', response.data.data);
+          console.log(">>>>>>response.data>>>>>",response.data)
           rows.value = response.data.data;
-          selected.value = [];
+          selected.value = []; 
         }
       } catch (error) {
         console.error('Error submitting form:', error);
@@ -196,18 +160,15 @@ export default {
     };
     const createRecord = (record) => {
       try {
-        headers['Content-Type'] = 'multipart/form-data';
-        debug('>>>>>>>>>>>header>>>>>>>>>', headers);
-
-        const promise = axios.post(path.SALESTRANS_CREATE, record, headers);
+        const promise = axios.post(path.DONATIONSTATUS_CREATE,
+          record,
+          headers
+        );
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log('>>>>>>>>>result>>>>>>', result);
-            if (result.success) {
-              fetchData();
-            }
+            const result = response.data; 
+            fetchData(); 
 
             childRef.value = {
               message: result.message,
@@ -236,9 +197,11 @@ export default {
     const updateRecord = (record) => {
       try {
         console.log('calling Update Record from Child Component', record);
-        headers['Content-Type'] = 'multipart/form-data';
-        debug('>>>>>>>>>>>header>>>>>>>>>', headers);
-        const promise = axios.put(path.SALESTRANS_UPDATE, record, headers);
+ 
+        const promise = axios.put(path.DONATIONSTATUS_UPDATE, 
+          record,
+          headers
+        );
         promise
           .then((response) => {
             // Extract data from the response
@@ -287,9 +250,8 @@ export default {
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
+        console.log("selected.value[0]['code']>>>>>>",selected.value[0]['code'])
         searchValue.value = selected.value[0]['code'];
-        console.log('searchValue >>>>>', searchValue.value);
-
         action.value = 'edit';
         actionLabel.value = 'Update';
       }
@@ -305,8 +267,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          path.SALESTRANS_REMOVE,
+        const response = await axios.post(path.DONATIONSTATUS_REMOVE,
           data,
           headers
         );
@@ -327,7 +288,7 @@ export default {
       editItem,
       viewItem,
       deleteItem,
-      showDialog,  
+      showDialog,
       urlLink,
       actionLabel,
       searchValue,
@@ -340,7 +301,6 @@ export default {
       medium_dialog,
       action,
       showFormDialog,
-      userEmail,
     };
   },
   beforeCreate() {

@@ -189,6 +189,30 @@ let defaultList = [
         link: '/sendmsg',
       },
       
+      {
+        title: 'Donation Status', 
+        icon: 'key',
+        link: '/donaionstatus',
+      },
+      
+       {
+        title: 'Donation Type', 
+        icon: 'key',
+        link: '/donationtype',
+      },
+
+      {
+        title: 'Contact Config Type', 
+        icon: 'key',
+        link: '/contactconfigtype',
+      },
+
+       {
+        title: 'Contact Config Setting', 
+        icon: 'key',
+        link: '/contactconfigsettings',
+      },
+      
        /*
       {
         title: ' User Dynamic Authentication', 
