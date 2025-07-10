@@ -8,69 +8,114 @@
             />
         </q-card-section>
       </q-card>
-    <q-card
-      class="card-flex-display" 
-    >  
-      <q-card-section>
-        <q-form>
-          <q-select
-            filled
-            bottom-slots
-            v-model="formData.donationStatus"
-            :options="donationStatusList"
-            label="Select Payment Mode"  
-            :dense="dense"
-          />
-           <q-select
-            filled
-            bottom-slots
-            v-model="formData.donationType"
-            :options="donationTypeList"
-            label="Select Type of Donation"  
-            :dense="dense"
-          />
-         </q-form>
-      </q-card-section>
-      <q-card-section>
-        <q-card-actions align="center">
-          <q-btn
-            rounded
-            size="md"
-            color="primary"
-            label="Search"
-            @click="searchDonationData"
-            v-close-popup
-          />
-          <q-btn
-            label="Download"
-            color="secondary"
-            @click="downloadReport"
-            size="md"
-            rounded
-            v-close-popup
-          />
-          <Done />
-        </q-card-actions>
-      </q-card-section>
-    </q-card>
-    <div class="q-pa-md">
-      <q-table
-        class="my-sticky-header-table"
-        flat
-        bordered
-        title="Donation Details"
-        :rows="rows"
-        :columns="columns"
-        row-key="id"
-        v-model:selected="selected"
-      > 
-        <template v-slot:top>
-          <q-label>Donation Report</q-label>
-          <q-space /> 
-        </template> 
-      </q-table> 
-       <Done />
-    </div>
+   <q-toggle
+              v-model='toggleValue'
+              :label='toggleLabel'
+              @update:model-value='onToggleChange'
+            /> 
+      <q-card
+        class="card-flex-display" 
+      >  
+        <q-card-section>
+          <q-form>             
+              <q-select
+                filled
+                bottom-slots
+                v-model="formData.donationStatus"
+                :options="donationStatusList"
+                label="Select Payment Mode"  
+                :dense="dense"
+              />
+              <q-select
+                filled
+                bottom-slots
+                v-model="formData.donationType"
+                :options="donationTypeList"
+                label="Select Type of Donation"  
+                :dense="dense"
+              />
+            <div v-if='toggleValue'> 
+               <div class='row'>
+                  <div class='col-8'></div> 
+                  <div  class='col-4' style='display: flex; justify-content: flex-end'>
+                    <q-badge rounded :label='`Unit(s):   `+requiredUnit' class='pwan-btton text-h6' />
+                  </div>
+                </div> 
+              <q-input 
+                filled
+                bottom-slots
+                v-model='formData.message'
+                label='message'
+                type='textarea'
+                rows='4'
+                maxlength='1000'
+                @keypress='handleeNessageChange' 
+                @change="handleeNessageChange"
+                counter 
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+        <q-card-section>
+          <q-card-actions align="center">
+            <div v-if='!toggleValue'>  
+              <q-btn
+                rounded
+                size="md"
+                color="primary"
+                label="Search"
+                @click="searchDonationData"
+                v-close-popup
+              />
+              <q-btn
+                label="Download"
+                color="secondary"
+                @click="downloadReport"
+                size="md"
+                rounded
+                v-close-popup
+              /> 
+            </div>
+             <div v-else>  
+              <q-btn
+                label="Send Message"
+                color="primary"
+                @click="sendSMS" 
+                size="md"
+                rounded
+                v-close-popup
+              /> 
+            </div> 
+            <Done />           
+          </q-card-actions>
+        </q-card-section>
+         <ResponseDialog
+            v-model='showMessageDialog'
+            :cardClass='childRef.cardClass'
+            :textClass='childRef.textClass'
+            :label='childRef.label'
+            :message='childRef.message'
+            :buttonClass='childRef.buttonClass'
+          />  
+      </q-card>
+      <div class="q-pa-md">
+        <q-table
+          class="my-sticky-header-table"
+          flat
+          bordered
+          title="Donation Details"
+          :rows="rows"
+          :columns="columns"
+          row-key="id"
+          v-model:selected="selected"
+        > 
+          <template v-slot:top>
+            <q-label>Donation Report</q-label>
+            <q-space /> 
+          </template> 
+        </q-table>  
+        <Done />
+      </div>  
   </q-page>
 </template>
 
@@ -86,12 +131,14 @@ import DatePicker from 'src/components/DatePicker.vue';
 import Done from 'src/components/Done.vue'; 
 import { Filesystem, Directory, Encoding } from "@capacitor/filesystem";  
 import { Capacitor } from "@capacitor/core"; 
-import { Browser } from "@capacitor/browser";
+import { Browser } from "@capacitor/browser"; 
+import ResponseDialog from 'src/components/ResponseDialog.vue';
 export default {
   components: { 
     HeaderPage, 
     DatePicker,
     Done,
+    ResponseDialog,
   },
    
   data() {
@@ -151,6 +198,14 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const formData = ref({});
+    const childRef = ref({
+      label: '',
+      message: '',
+      textClass: '',
+      cardClass: '',
+      buttonClass: '',
+      data: {},
+    });
 
     return {  
       selected,
@@ -164,10 +219,37 @@ export default {
       donationTypeList : [],
       pageName,
       hint,
+      toggleValue: false,
+      toggleLabel: "Donation Report",
+      requiredUnit:1,
+      showSpinner:false,
+      showMessageDialog:false,
+      childRef,
+
     };
   },
-  methods: {
-     
+  methods: { 
+    
+    resolveRequiredUnit(){ 
+       const msgLen =  this.formData.message == null ? 0 : this.formData.message.length;  
+        if(msgLen > 160){
+          this.requiredUnit = Math.ceil(msgLen/160) 
+        }else{
+           this.requiredUnit = 1
+        }
+    },
+    handleeNessageChange(){ 
+        this.resolveRequiredUnit()
+
+    },
+    onToggleChange(value){ 
+      if(value){
+       
+         this.toggleLabel = 'Send SMS'
+      }else{ 
+         this.toggleLabel = 'Donation Report'
+      } 
+    },
     searchDonationData() {
          const requestParams = {
           params: { 
@@ -176,8 +258,7 @@ export default {
             order_by : 'full_name' 
           },
         };
-        
-        console.log('requestParams>>>>>>>>',requestParams)
+         
          if(this.formData.donationStatus != null && this.formData.donationStatus.value != null &&  this.formData.donationStatus.value != ''){
            requestParams['params']['status'] = this.formData.donationStatus.value
         }
@@ -218,16 +299,84 @@ export default {
         console.error('Error submitting form:', error);
       }
     }, 
+  async sendSMS(){     
+     
+      this.showSpinner= true   
+      const requestParams = {
+          params: { 
+            client: this.profile.client,
+            organisation: this.profile.organisation, 
+            message : this.formData.message,        
+            order_by : 'full_name' ,
+            requiredUnit: this.requiredUnit,
+          },
+        };
+        
+         if(this.formData.donationStatus != null && this.formData.donationStatus.value != null &&  this.formData.donationStatus.value != ''){
+           requestParams['params']['status'] = this.formData.donationStatus.value
+        }
 
-async requestFilesystemPermission() {
+         if(this.formData.donationType != null && this.formData.donationType.value != null &&  this.formData.donationType.value != ''){
+           requestParams['params']['donationType'] = this.formData.donationType.value
+        }
+        
+      try { 
+        const promise = axios.get(
+          path.DONATOR_SEND_SMS,
+          requestParams,
+          this.headers
+        ); 
+        promise
+          .then((response) => {
+            // Extract data from the response              
+            const result = response.data;
+            console.log(">>>>>>result>>>>>>",result)
+             if(result.success){
+                  this.childRef = {
+                  message: result.message,
+                    label: 'Success',
+                    cardClass: 'bg-positive text-white',
+                    textClass: 'q-pt-none',
+                    buttonClass: 'bg-white text-teal',
+                  };
+              }else{
+                  this.childRef = {
+                  message: result.message,
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                }
+              }
+              
+            this.showSpinner = false;  
+            this.showMessageDialog = true;
+          })
+          .catch((error) => {
+             
+             this.childRef = {
+                  message: error.message,
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                }
+          });
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        this.childRef = {
+                  message: error.message,
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                }
+      }
+      
+        this.showSpinner = false;  
+        this.showMessageDialog = true;
+  },
 
-console.log(">>>>>>inside requestFilesystemPermission>>>>>>",Capacitor.getPlatform())
-  if (Capacitor.getPlatform() === 'android') {
-    const permissionStatus = await Filesystem.requestPermissions();
-    console.log('Filesystem permission status:', permissionStatus);
-  }
-}, 
- 
 async downloadReport() {
   console.log(">>>>>>calling download file 22222 2222>>>>>>>>>>>")  
   try {

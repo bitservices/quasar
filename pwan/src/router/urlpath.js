@@ -301,6 +301,19 @@ const path = {
   MARITALSTATUS_DELETE: APP_PATH + 'maritalstatus/delete/',  
   MARITALSTATUS_REMOVE: APP_PATH + 'maritalstatus/remove/',
 
+  OCCUPATION_CREATE: APP_PATH + 'occupation/create/', 
+  OCCUPATION_SEARCH: APP_PATH + 'occupation/search/', 
+  OCCUPATION_UPDATE: APP_PATH + 'occupation/update/', 
+  OCCUPATION_DELETE: APP_PATH + 'occupation/delete/',  
+  OCCUPATION_REMOVE: APP_PATH + 'occupation/remove/',
+
+
+RELATIONSHIPTYPE_CREATE: APP_PATH + 'relationshiptype/create/', 
+RELATIONSHIPTYPE_SEARCH: APP_PATH + 'relationshiptype/search/', 
+RELATIONSHIPTYPE_UPDATE: APP_PATH + 'relationshiptype/update/', 
+RELATIONSHIPTYPE_DELETE: APP_PATH + 'relationshiptype/delete/',  
+RELATIONSHIPTYPE_REMOVE: APP_PATH + 'relationshiptype/remove/',
+
   
   MEMBERSHIP_TYPE_CREATE: APP_PATH + 'membershiptype/create/', 
   MEMBERSHIP_TYPE_SEARCH: APP_PATH + 'membershiptype/search/', 
@@ -469,6 +482,7 @@ DONATOR_SEARCH: APP_PATH + 'donator/search/',
 DONATOR_UPDATE: APP_PATH + 'donator/update/',  
 DONATOR_REMOVE: APP_PATH + 'donator/remove/',
 DONATOR_AUTOCOMPLETER_SEARCH: APP_PATH + 'donator/autocomplete/',
+DONATOR_SEND_SMS: APP_PATH + 'donator/sendsms/',
 
 
 CONTACT_CONFIG_TYPE_CREATE: APP_PATH + 'contactconfigtype/create/', 
@@ -484,6 +498,46 @@ CONTACTCONFIGSETTINGS_UPDATE: APP_PATH + 'contactconfigsettings/update/',
 
 
 SUBSCRIBER_AUTOCOMPLETER: APP_PATH + 'subscriber/autocomplete/', 
+SUBSCRIBER_CREATE: APP_PATH + 'subscriber/create/', 
+SUBSCRIBER_SEARCH: APP_PATH + 'subscriber/search/', 
+SUBSCRIBER_UPDATE: APP_PATH + 'subscriber/update/', 
+
+
+NEXTOFKIN_AUTOCOMPLETER: APP_PATH + 'nextofkin/autocomplete/', 
+NEXTOFKIN_CREATE: APP_PATH + 'nextofkin/create/', 
+NEXTOFKIN_SEARCH: APP_PATH + 'nextofkin/search/', 
+NEXTOFKIN_UPDATE: APP_PATH + 'nextofkin/update/', 
+
+
+SUBSCRIPTION_CREATE: APP_PATH + 'subscription/create/',
+SUBSCRIPTION_UPDATE: APP_PATH + 'subscription/update/',
+SUBSCRIPTION_SEARCH: APP_PATH + 'subscription/search/',
+SUBSCRIPTION_REMOVE: APP_PATH + 'subscription/remove/',
+SUBSCRIPTION_ADDPAYMENT: APP_PATH + 'subscription/addpayment/',
+SUBSCRIPTION_PENDING: APP_PATH + 'subscription/getpendingpayment/',
+
+
+SUBSCRIPTION_PMT_CREATE: APP_PATH + 'subscriptionpayment/create/',
+SUBSCRIPTION_PMT_UPDATE: APP_PATH + 'subscriptionpayment/update/',
+SUBSCRIPTION_PMT_SEARCH: APP_PATH + 'subscriptionpayment/search/',
+SUBSCRIPTION_PMT_REMOVE: APP_PATH + 'subscriptionpayment/remove/',
+SUBSCRIPTION_PMT_VIEW : APP_PATH + 'subscriptionpayment/view/',
+
+SUBSCRIPTION_PMT_APPROVE : APP_PATH + 'subscriptionpayment/approve/',
+SUBSCRIPTION_PMT_REJECT : APP_PATH + 'subscriptionpayment/reject/',
+
+
+CLIENTSMTPCONFIG_CREATE: APP_PATH + 'clientsmtpconfig/create/', 
+CLIENTSMTPCONFIG_SEARCH: APP_PATH + 'clientsmtpconfig/search/', 
+CLIENTSMTPCONFIG_UPDATE: APP_PATH + 'clientsmtpconfig/update/', 
+CLIENTSMTPCONFIG_DELETE: APP_PATH + 'clientsmtpconfig/delete/',  
+CLIENTSMTPCONFIG_REMOVE: APP_PATH + 'clientsmtpconfig/remove/',
+
+
+
+
+
+
 
 
   

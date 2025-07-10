@@ -37,10 +37,20 @@ export const validateUsername = (value) => {
     return value.length > 0 || 'Phone Number is required';
   }; 
   
+    export const validateInputField =  (value ="") => {
+    return (typeof value !== 'undefined' && value.length > 0) || 'This Filed is required';
+  }; 
+
   export const inputFieldRequired =  (value) => {
-    return value.length > 0 || 'This field is required';
+   if(value == "" || String(value).trim() == "") return 'This Field  is required'; 
+  return true
   };
 
+export const numberInputFieldRequired =  (value) => { 
+   if(value == "" || String(value).trim() == "") return 'this Field  is required';
+   if(value < 0) return 'Field must not be less than zero';
+    return true
+  };
 
   export const isRequired =  (value) => {
     return value || 'This field is required';

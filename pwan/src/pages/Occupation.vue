@@ -5,22 +5,30 @@
         class='my-sticky-header-table'
         flat
         bordered
-        title='Sales Trancaction'
+        title='Occupation'
         :rows='rows'
         :columns='columns'
-        row-key='id'
-        selection='single'
+        row-key='name' 
+        selection='multiple'
         v-model:selected='selected'
       >
         <template v-slot:top>
-          <q-label>Subscription</q-label>
+          <q-label>Ocuppation</q-label>
           <q-space />
-          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />  
-          <q-btn rounded color='blue'  label='Add Payment' size='sm' @click='editItem' /> 
-          <SalesTransactionFormDialog
-            v-model='showFormDialog' 
+          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
+          <q-btn
+            rounded
+            color='info'
+            icon='visibility'
+            size='sm'
+            @click='viewItem'
+          />
+          <StandingDataFormDialog
+            v-model='showFormDialog'
+            :onClick='saveRecord'
             @formDataSubmitted='saveRecord'
-            label='Subscription'
+            label='Occupation'
             :searchValue='searchValue'
             :action='action'
             :actionLabel='actionLabel'
@@ -34,107 +42,86 @@
             :message='childRef.message'
             :buttonClass='childRef.buttonClass'
           />
-          
+          <q-btn
+            rounded
+            color='red'
+            icon='delete'
+            size='sm'
+            @click='showDialog'
+          >
+            <q-dialog v-model='medium_dialog'>
+              <q-card style='width: 700px' class='bg-info text-white'>
+                <q-card-section>
+                  <div class='text-h6'>Delete Item(s)</div>
+                </q-card-section>
+
+                <q-card-section class='q-pt-none'>
+                  Are you sure you want to delete selected item(s)
+                </q-card-section>
+                <q-card-actions align='center' class='bg-white text-teal'>
+                  <q-btn
+                    @click='deleteItem'
+                    flat
+                    label='Yes'
+                    v-close-popup
+                    class='bg-negative text-white'
+                    rounded
+                  />
+                  <q-btn
+                    flat
+                    label='No'
+                    class='bg-secondary text-white'
+                    v-close-popup
+                    rounded
+                  />
+                </q-card-actions>
+              </q-card>
+            </q-dialog>
+          </q-btn>
         </template>
-      </q-table> 
+      </q-table>
       <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { SessionStorage,  LocalStorage } from 'quasar';
+import { SessionStorage } from 'quasar';
 import axios from 'axios';
 import { ref } from 'vue';
-import SalesTransactionFormDialog from 'src/components/SalesTransactionFormDialog.vue';
+import StandingDataFormDialog from 'src/components/StandingDataFormDialog.vue';
 import ResponseDialog from 'src/components/ResponseDialog.vue';
 import Done from 'src/components/Done.vue';
 import path from 'src/router/urlpath';
-import debug from 'src/router/debugger'; 
-import { format } from 'date-fns'; 
-
 
 export default {
   components: {
-    SalesTransactionFormDialog,
+    StandingDataFormDialog,
     ResponseDialog,
     Done,
   },
   setup() {
-    let headers = SessionStorage.getItem('headers');
-    console.log(">>>>headers 1111>>>>",headers)
+    const headers = SessionStorage.getItem('headers');
     const columns = [
       {
-        name: 'subscriber',
+        name: 'code',
         required: false,
-        label: 'Subscriber Name',
+        label: 'Code',
         align: 'left',
-        field: (row) => row.subscriber.lastName + " " +row.subscriber.firstName+ " " +row.subscriber.middleName,
+        field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: 'product',
+        name: 'name',
         align: 'center',
-        label: 'Product',
-        field: (row) => row.subscribedProduct.name,
-        sortable: true,
-      },
-       {
-        name: 'amount',
-        align: 'center',
-        label: 'Product Amount',
-        field: (row) =>
-          new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(row.subscribedProduct.amount),
-        sortable: true,
-      },
-      {
-        name: 'quantity',
-        align: 'center',
-        label: 'Quantity',
-        field: (row) => row.quantity,
-        sortable: true,
-      },
-      {
-        name: 'amount',
-        align: 'center',
-        label: 'Amount',
-        field: (row) =>
-          new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(row.totalAmount),
-        sortable: true,
-      },
-       
-      {
-        name: 'Affillate',
-        align: 'center',
-        label: 'Affilate/Company',
-        field: (row) => row.client.name,
-        sortable: true,
-      },
-      {
-        name: 'paymentStatus',
-        align: 'center',
-        label: 'Status',
-        field: (row) => row.paymentStatus.name,
-        sortable: true,
-      },
-      {
-        name: 'subscriptionDate',
-        align: 'center',
-        label: 'Subscription DAte',
-        field: (row) => format(row.subscriptionDate, 'yyyy-MM-dd'),
+        label: 'Name',
+        field: (row) => row.name,
         sortable: true,
       },
     ];
-    
-    
-    const urlLink = ref(path.SUBSCRIPTION_SEARCH);
+    const urlLink = ref(path.OCCUPATION_SEARCH
+    );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref('');
@@ -142,8 +129,7 @@ export default {
     const rows = ref([]);
     const selected = ref([]);
     const actionLabel = ref('Submit');
-    const medium_dialog = ref(false); 
-    const userEmail = LocalStorage.getItem('userEmail');   
+    const medium_dialog = ref(false);
     const childRef = ref({
       label: '',
       message: '',
@@ -153,33 +139,20 @@ export default {
       data: {},
     });
 
-    
     const fetchData = async () => {
-      try {
-         
-    const requestParams = {
-      params: { 
-        realtor: userEmail,
-        order_by : "-subscriptionDate", 
-      },
-    }; 
-    console.log('requestParams>>>>>>>>>>>>',requestParams)
-        const response = await axios.get(
-          path.SUBSCRIPTION_SEARCH,
-          requestParams,
+      try { 
+        const response = await axios.get(path.OCCUPATION_SEARCH,
           headers
-        );
+        ); 
         if (response.data) {
-          console.log('response>>>>>>', response.data.data);
           rows.value = response.data.data;
-          selected.value = [];
+          selected.value = []; 
         }
       } catch (error) {
         console.error('Error submitting form:', error);
       }
     };
     const saveRecord = (record) => {
-      console.log(">>>>action.value>>>>>",action.value)
       if (action.value == 'add') {
         createRecord(record);
       } else if (action.value == 'edit') {
@@ -187,22 +160,16 @@ export default {
       }
     };
     const createRecord = (record) => {
+      record.status = {code: "A", name:"Active"} ;
       try {
-        headers['Content-Type'] = 'multipart/form-data';
-        debug('>>>>>>>>>>>header>>>>>>>>>', headers);
-        const requestData = new FormData();
-          for (let key in record) {  
-            requestData.append(key, record[key]);
-          }
-
-          
-          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData)
-        const promise = axios.post(path.SUBSCRIPTION_CREATE, requestData, headers);
+        const promise = axios.post(path.OCCUPATION_CREATE,
+          record,
+          headers
+        );
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log('>>>>>>>>>result>>>>>>', result);
             if (result.success) {
               fetchData();
             }
@@ -232,17 +199,14 @@ export default {
       }
     };
     const updateRecord = (record) => {
-      try { 
-        console.log(">>>>headers>>>>>",headers)
-        headers['Content-Type'] = 'multipart/form-data'; 
-        console.log(">>>>>submitted record>>>>>>>>>>",record)
-        const requestData = new FormData();
-          for (let key in record) {  
-            requestData.append(key, record[key]);
-          }
-
-          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData)
-        const promise = axios.post(path.SUBSCRIPTION_ADDPAYMENT, requestData, headers);
+      try {
+        console.log('calling Update Record from Child Component', record);
+        record.status = record.status.value;
+          console.log('calling 1111111111', record);
+        const promise = axios.put(path.OCCUPATION_UPDATE,
+          record,
+          headers
+        );
         promise
           .then((response) => {
             // Extract data from the response
@@ -286,17 +250,14 @@ export default {
     const addItem = () => {
       showFormDialog.value = true;
       action.value = 'add';
-      actionLabel.value = 'Submit Subscription';
+      actionLabel.value = 'Submit';
     };
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
-        console.log(">>>>selected>>>>>>",selected[0])
-        searchValue.value = selected.value[0]['id'];
-        console.log('searchValue >>>>>', searchValue.value);
-
+        searchValue.value = selected.value[0]['code'];
         action.value = 'edit';
-        actionLabel.value = 'Add Payment';
+        actionLabel.value = 'Update';
       }
     };
     const viewItem = () => {
@@ -310,8 +271,7 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(
-          path.SALESTRANS_REMOVE,
+        const response = await axios.post(path.OCCUPATION_REMOVE,
           data,
           headers
         );
@@ -332,7 +292,7 @@ export default {
       editItem,
       viewItem,
       deleteItem,
-      showDialog,  
+      showDialog,
       urlLink,
       actionLabel,
       searchValue,
@@ -345,7 +305,6 @@ export default {
       medium_dialog,
       action,
       showFormDialog,
-      userEmail,
     };
   },
   beforeCreate() {

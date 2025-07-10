@@ -12,107 +12,194 @@
           </q-card-section> 
 
       <q-card-section>
-          <q-form @submit.prevent='saveRecord' ref='subscriptionForm'> 
-          <div class="page-container">
-            <q-select
-            filled
-            bottom-slots
-            v-model='formData.client'
-            :options='clients'
-            label='Affilate/Client'  
-            :dense='dense'
-            use-input
-            input-debounce='200'
-            clearable
-            @filter='filterAffilates'
-            @update:model-value='handleClientChange'
-            :readonly='isReadonly'
-            :rules='[requiredRule]'
-          />
-
-           <q-select
-            filled
-            bottom-slots
-            v-model="formData.subscribedProduct"
-            :options="productList"
-            label="Select Products" 
-            :dense="dense" 
-            map-options 
-            use-input 
-            stack-label
-            class="q-mb-md"
-            @update:model-value='handleProductChange'
-            :readonly='isReadonly'
-            :rules='[requiredRule]'
-           /> 
-          
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.amount'
-            label='Enter Subscribed Amount'
-            type='text'
-            step='0.01' 
-            @blur="formatAmount" 
-            @change="formatAmount"  
-            @keypress="onlyNumberKey"
-
-          />
-
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.salesStatus'
-            :options='salesStatusList'
-            label='Select Payment Plans'  
-            :dense='dense'  
-            :readonly='isReadonly'
-            :rules='[requiredRule]'
-          /> 
+        <q-form>  
+          <div class="page-container"> 
            <q-input
             filled
             bottom-slots
-            v-model='formData.quantity'
-            label='Enter Quantity'
-            type='number'
-            :readonly='isReadonly'
-            :rules='[numberFieldRequired]'
+            v-model='subscriberData.lastName'
+            label='Last Name' 
+            :dense='dense'
+            :rules='[requiredRule]' 
           />
-          <div class='q-pa-md'> 
-          <DatePicker v-model='formData.subscriptionDate' label='SubScription Date' @setDate='setSubscriptionDate'  
-           ref='subscriptionDate' />
-          </div>   
-           <q-file
-            bottom-slots
+            <q-input
             filled
-            v-model='formData.paymentEvidence'
-            label='Payment Evidence'   
-          >
-            <template v-slot:append>
-              <q-icon name='attachment' />
-            </template>
-          </q-file>
- 
-          <q-input type="hidden" v-model='subscriberData.id' />                               
+            bottom-slots
+            v-model='subscriberData.firstName'
+            label='First Name' 
+            :dense='dense'
+            :rules='[requiredRule]' 
+          />
+           <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.middleName'
+            label='Middle Name' 
+            :dense='dense'
+          />
+           <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.gender'
+            :options='genderList'
+            label='Select Gender'  
+            :dense='dense'  
+          /> 
           <q-input
             filled
             bottom-slots
-            v-model='subscriberData.fullName'
+            v-model='subscriberData.phoneNumber'
+            label='Subscriber Phone Number' 
+            :dense='dense'
+            :rules='[requiredRule]' 
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.emailAddress'
+            label='Subscriber Email'
+            :readonly='isReadonly'
+            :dense='dense'
+            :rules='[requiredRule]' 
+          />
+          <div class='q-pa-md'> 
+          <DatePicker v-model='subscriberData.dateOfBirth' label='Date of Birth' @setDate='setDateOfBirth'  
+           ref='subscriberBirthDate' />
+          </div>  
+           
+          <div class='row'>
+            <div class='col-8'>
+                <q-file
+                  bottom-slots
+                  filled
+                  v-model='subscriberData.imageByte'
+                  @update:model-value='onFileChange'
+                  label='User Image'
+                >
+                  <template v-slot:append>
+                    <q-icon name='attachment' />
+                  </template>
+                </q-file>
+              </div>
+              <div v-if='imageFile' class='col-4' style='display: flex; justify-content: flex-end'>               
+                  <img :src='imageFile' alt='Preview' style='max-width: 100px' width='150px'  height='100px' />
+
+          </div>
+        </div>
+           
+
+           <div class='row'>
+            <div class='col-8'>
+                <q-file
+                  bottom-slots
+                  filled
+                  v-model='subscriberData.signature' 
+                  label='Subscrimer signature'
+                >
+                  <template v-slot:append>
+                    <q-icon name='attachment' />
+                  </template>
+                </q-file>
+              </div>
+              <div v-if='signature' class='col-4' style='display: flex; justify-content: flex-end'>               
+                  <img :src='signature' alt='Preview' style='max-width: 100px' width='150px'  height='100px' />
+
+          </div>
+        </div> 
+          <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.maritalStatus'
+            :options='maritalStatusList'
+            label='Select Marital Status'
+            :dense='dense'
+          /> 
+           <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.occupation'
+            :options='occupationList'
+            label='Select Occupation'
+            :dense='dense'
+          />
+
+          <q-input 
+                filled
+                bottom-slots
+                v-model='subscriberData.address'
+                label='Street'
+                type='textarea'
+                rows='2'
+                maxlength='1000'  
+              />
+          
+           <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.country'
+            :options='countries'
+            label='Select Country'
+            @update:model-value='handleCountryUpdate' 
+            :dense='dense'
+            :rules='[requiredRule]'
+            use-input
+            input-debounce='200'
+            clearable
+            @filter='filterCountries'
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.state'
+            :options='stateList'
+            label='Select State'
+            @update:model-value='handleStateUpdate'
+            :dense='dense'
+            :rules='[requiredRule]'
+            use-input
+            input-debounce='200'
+            clearable
+            @filter='filterStates'
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.county'
+            :options='counties'
+            label='Select County'
+            :dense='dense'
+            :rules='[requiredRule]'
+            use-input
+            input-debounce='200'
+            clearable
+            @filter='filterCounties'
+          />  
+          <q-input type="hidden" v-model='nextOfKinData.id' />                               
+          <q-input
+            filled
+            bottom-slots
+            v-model='subscriberData.nextOfKinFullName'
             @keyup='handleInput'
             @keydown.enter='handleEnter'
-            placeholder='Search for Subscriber'
+            placeholder='Search for Next of Kin'
             :dense='dense'
-             :readonly='isReadonly'
-             :rules='[inputRequiredRule]'
           >
           <template v-slot:append>
                 <q-icon
                   name= "create"
                   class='cursor-pointer'
-                  @click='createSubscriber'
+                  @click='createNextOfKin'
                 />
               </template>
-          </q-input>
+          </q-input> 
+            <q-select
+            filled
+            bottom-slots
+            v-model='subscriberData.relationShipType'
+            :options='relationshipList'
+            label='Select RelationShip Type'
+            :dense='dense'
+          />
           <q-list v-if='showSuggestions && filteredSuggestions.length > 0'>
             <q-item
               clickable
@@ -128,46 +215,46 @@
                 </q-item-label>
               </q-item-section>
             </q-item>
-          </q-list> 
-        </div>
-       <SubscriberDialog
-            v-model='showSubscriberFormDialog' 
-            @formDataSubmitted='saveSubScriber'
-            label='Subscriber' 
-            :searchValue='subscribersearchValue'
-            :action='subscriberAction' 
-            :urlLink='subscriberurlLink'
+          </q-list>  
+        </div>  
+         <NextOfKinDialog
+            v-model='showNextofKinFormDialog' 
+            @formDataSubmitted='saveNextOfKin'
+            label='Next Of Kin' 
+            :searchValue='nextOfKinSearchValue'
+            :action='nextOfKinAction' 
+            :urlLink='nextOfKinurlLink'
 
-          /> 
-       <ResponseDialog
+          />
+          <ResponseDialog
             v-model='showMessageDialog'
             :cardClass='childRef.cardClass'
             :textClass='childRef.textClass'
             :label='childRef.label'
             :message='childRef.message'
             :buttonClass='childRef.buttonClass'
-          /> 
-           <q-card-actions align='center'>
-          <q-btn
-            id = "closeBtn"
-            rounded
-            size='md'
-            color='primary'
-            label='Cancel'
-            v-close-popup
           />
-          <q-btn
-            :label='actionLabel'
-            color='secondary'
-            type='submit'
-            size='md'
-            rounded 
-            :disable="isDisabled"
+        
+         <q-card-actions align='center'>
+            <q-btn
+            id = "closeSubscriberForm"
+              rounded
+              size='md'
+              color='primary'
+              label='Cancel'
+              v-close-popup
+            />
+            <q-btn
+              label='Create Subscriber'
+              color='secondary'
+              @click='saveSubScriber'
+              size='md'
+              rounded 
+             :disable="isDisabled"
           />
         </q-card-actions>
         </q-form>
-      </q-card-section>
-       
+      </q-card-section> 
     </q-card>
   </q-dialog>
 </template>
@@ -180,21 +267,17 @@ import path from 'src/router/urlpath';
 import { useI18n } from 'vue-i18n'
 import HeaderPage from 'src/components/HeaderPage.vue';   
 import debug from 'src/router/debugger'; 
-import DatePicker from 'src/components/DatePicker.vue';   
-import SubscriberDialog from 'src/components/SubscriberDialog.vue'; 
-import ResponseDialog from 'src/components/ResponseDialog.vue'; 
-import { isRequired,inputFieldRequired,numberInputFieldRequired } from 'src/validation/validation';
-
+import DatePicker from 'src/components/DatePicker.vue';  
+import NextOfKinDialog from 'src/components/NextOfKinDialog.vue'; 
 
 export default {
     components: {  
     HeaderPage,  
     debug,
-    DatePicker, 
-    SubscriberDialog,
-    ResponseDialog,
+    DatePicker,
+    NextOfKinDialog,
   },   
-  name: 'SalesTransactionFormDialog',
+  name: 'SubscriberDialog',
   props: {
      
     label: {
@@ -220,9 +303,10 @@ export default {
   },
   data() {
 
-     const { t } = useI18n() 
-    const pageName = computed(()=> t('subscription.pagename'))
-    const hint = computed(()=> t('subscription.hint'))
+     
+       const { t } = useI18n() 
+    const pageName = computed(()=> t('subscriber.pagename'))
+    const hint = computed(()=> t('subscriber.hint'))
     const headers = SessionStorage.getItem('headers'); 
     const userEmail = LocalStorage.getItem('userEmail');
 
@@ -236,16 +320,15 @@ export default {
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
     const dialogWidth = controlWidth + 'px';
     const dialogHeight = controlHeight + 'px';  
-
-     const subscribersearchValue = ref('')
-    const subscriberAction = ref('')
-    const subscriberurlLink = ref(path.SUBSCRIBER_SEARCH)
-
+    const nextOfKinSearchValue = ref('');
+    const nextOfKinAction = ref('');
+    const nextOfKinurlLink = ref(path.NEXTOFKIN_SEARCH);
     const  subscriberData = ref({
         id:"",
         lastName : "",
         firstName : "",
-        middleName:""
+        middleName:"",
+        createdBy:this.userEmail,
       });
 
     const  nextOfKinData = ref({
@@ -253,17 +336,14 @@ export default {
         lastName : "",
         firstName : "",
         middleName:""
-      });    const formData = ref({ 
-      createdBy: '',
-      salesDate: new Date(),
-    });
+      });    
     const form = ref({
       label: '',
       width: '10px',
       height: '10px',
     });
     const showDialog = ref(false);
-     const childRef = ref({
+    const childRef = ref({
       label: '',
       message: '',
       textClass: '',
@@ -272,19 +352,15 @@ export default {
       data: {},
     });
 
-
     return {
-      formData,
-      subscriberData,
+      subscriberData, 
+      nextOfKinData,
       showDialog,
-      showSpinner:false,
       form,
       dialogWidth,
       dialogHeight, 
       headers,
-      dense: true,
-      salesStatusList: [],
-      paymentStatusList: [],
+      dense: true, 
       suggestions: [],
       filteredSuggestions: [],
       showSuggestions: false,
@@ -293,82 +369,39 @@ export default {
       productList : [],
       pageName,
       hint,      
-      allClients:[],
-      dense: true,
+      allClients:[], 
       maritalStatusList :[],
       occupationList : [],
+      relationshipList:[],
        countries: [],
       allCountries:[],
       stateList: [],
       allStates :[],
       counties: [],
-      allCounties : [],
-      signature: null,
-      imageFile : null,  
-      showFormDialog:false, 
+      allCounties : [], 
+      imageFile : null,
+      signature : null,
+      showNextofKinFormDialog:false, 
       showMessageDialog:false,
       childRef, 
-      isReadonly: false,
-      balanceAmount: 0.00,
-      isDisabled:false,
-      requiredRule: value => isRequired(value), 
-      inputRequiredRule: value => inputFieldRequired(value),
-      numberFieldRequired : value => numberInputFieldRequired(value),  
-      subscribersearchValue,
-      subscriberAction ,
-      subscriberurlLink,
-      showSubscriberFormDialog:false,
-      
+      isDisabled : false,
+      nextOfKinSearchValue,
+      nextOfKinAction,
+      nextOfKinurlLink,
     };
   },
-  methods: {
-    onlyNumberKey(e) {
-    const charCode = e.which ? e.which : e.keyCode;
-    // Allow only 0-9 and dot (.)
-    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
-      e.preventDefault();
-    }
-  },
-    formatAmount() {
-      console.log(">>>>>>>>this.formData.amount>>>>>>>",this.formData.amount)
-      
-      const amount = this.formData.amount 
-      console.log(">>>>>>>>amount>>>>>>>",amount)
-      let cleanAmount = this.formData.amount
-      try{
-        cleanAmount = amount.replace(/,/g, '');  
-      console.log(">>>>>>>>cleanAmount>>>>>>>",cleanAmount)
-      }catch(e){
-        console.log("Error >>>>>",e) 
-      }
+methods: {
+      handleCountryUpdate(value){
+        this.subscriberData.county={value:"",label:""}
+        this.subscriberData.state={value:"",label:""}
+        this.handleCountryChange(value)
 
-      console.log(">>>>>>>>this.balanceAmount>>>>>>>",this.balanceAmount)
-      if(parseFloat(cleanAmount) > this.balanceAmount){
+      },
+      handleStateUpdate(value){
+        
+        this.subscriberData.county={value:"",label:""}
+         this.handleStateChange(value)
 
-        this.formData.amount = this.balanceAmount
-      }
-      if (this.formData.amount) {
-        let value = parseFloat(this.formData.amount.toString().replace(/,/g, ''))
-        this.formData.amount = value.toLocaleString('en-US', {minimumFractionDigits: 2})
-      }
-    },
-      saveRecord(){ 
-      console.log(">>>>>inside save record >>>>>>>>>>")
-     if (this.$refs.subscriptionForm.validate()) 
-     {
-          this.showSpinner = true;   
-          this.formData.client = this.formData.client.value
-          this.formData.subscribedProduct = this.formData.subscribedProduct.value
-          this.formData.paymentPlan = this.formData.salesStatus.value
-          this.formData.subscriber = this.subscriberData.id
-          this.formData.createdBy = this.userEmail 
-          this.formData.realtor = this.userEmail 
-          this.formData.amount = this.formData.amount.replace(/,/g, '') 
-          this.$emit('formDataSubmitted', this.formData);  
-          document.getElementById('closeBtn').click();
-          this.showDialog = true; 
-          this.showSpinner = false; 
-      }
       },
       filterAffilates(val, update) {
         console.log('>>>>val>>>>>>',val)
@@ -481,7 +514,7 @@ export default {
             // Assuming the response data is an array of objects with 'value' and 'label' properties
             this.productList = response.data.data.map((option) => ({
               label: option.name,
-              value: option.id,
+              value: option.code,
               amount : option.amount,
             }));
             console.log('this.productList >>>>>>>>>>>>', this.productList);
@@ -496,28 +529,24 @@ export default {
 
     handleProductChange(selectedItem){
       console.log(">>>>>>>product Item >>>>>>>>>", selectedItem)
-      this.formData.amount = selectedItem.amount;
-      this.balanceAmount = selectedItem.amount;
-      this.formatAmount()
+      this.subscriberData.amount = selectedItem.amount
 
     },
     handleInput() {
-      console.log(">>>>>calling auto completer>>>>>>>>")
       this.filteredSuggestions = [];
-      if (this.subscriberData.fullName === '' || this.subscriberData.fullName.length < 4) {
+      if (this.subscriberData.nextOfKinFullName === '' || this.subscriberData.nextOfKinFullName.length < 4) { 
         this.showSuggestions = false;
       } else {
         const filter = {
           params: {
-            term: this.subscriberData.fullName,
+            term: this.subscriberData.nextOfKinFullName,
             email : this.userEmail
           },
         };
         axios
-          .get(path.SUBSCRIBER_AUTOCOMPLETER, filter, this.headers)
+          .get(path.NEXTOFKIN_AUTOCOMPLETER, filter, this.headers)
           .then((response) => {
-            // Assuming the response data is an array of objects with 'value' and 'label' properties
-            console.log("search of Subscriber", response.data.data);
+            console.log(">>>>>>>>>response.data.data>>>>>>>",response.data.data)
             this.filteredSuggestions = response.data.data.map((option) => ({
               name:
                 option.lastName +
@@ -525,9 +554,10 @@ export default {
                 option.firstName +
                 ' ' +
                 option.middleName,
-              email: option.email,
+              email: option.emailAddress,
+              id: option.id,
               image: option.imageUrl,
-              id : option.id,
+
             }));
           })
           .catch((error) => {
@@ -545,12 +575,13 @@ export default {
       }
     },
     selectRecord(value) {
-      this.subscriberData.fullName = value.name;
-      this.subscriberData.id = value.id;
+      console.log(">>>>>>>value>>>>>>>",value)
+      this.subscriberData.nextOfKinFullName = value.name;
+      this.nextOfKinData.id = value.id;
       this.showSuggestions = false; 
       
     },
-   saveSubScriber(record){
+    saveNextOfKin(record){
        console.log(">>>>>>saving Next of Kin>>>>>>>")
         try { 
 
@@ -558,38 +589,39 @@ export default {
           for (let key in record) {  
             requestData.append(key, record[key]);
           }
-
-        const promise = axios.post(path.SUBSCRIBER_CREATE, requestData, this.headers);
+        const promise = axios.post(path.NEXTOFKIN_CREATE, requestData, this.headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
-            console.log('>>>>>>>>>result>>>>>>', result);
+            console.log('>>>>>>>>>result>>>>>>', result, ">>>result.success>>>>>>",result.success);
             if (result.success) { 
               
-              this.subscriberData.id = result.data.id
-              this.subscriberData.fullName= result.data.lastName + " "+ result.data.firstName + " "+result.data.middleName
-
-              this.childRef = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
+              this.nextOfKinData.id = result.data.id
+              this.subscriberData.nextOfKinFullName= result.data.lastName + " "+ result.data.firstName + " "+result.data.middleName
+              
+                this.childRef = {
+                message: result.message,
+                label: 'Success',
+                cardClass: 'bg-positive text-white',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
+              };
+              this.showMessageDialog= true;
               
             }else{
 
-              this.childRef = {
-              message: result.message,
-              label: 'Error',
-              cardClass: 'bg-negative text-white error',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
+                this.childRef = {
+                message: result.message,
+                label: 'Error',
+                cardClass: 'bg-negative text-white error',
+                textClass: 'q-pt-none',
+                buttonClass: 'bg-white text-teal',
+              };
+              this.showMessageDialog= true;
 
             } 
-            this.showMessageDialog= true;
+            
             // You can access properties of the response data as needed
           })
           .catch((error) => {
@@ -606,21 +638,22 @@ export default {
         console.error('Error:', error);
       }
     },
-    loadSaleStatus(){
-       axios
-      .get(path.SALESSTATUS_SEARCH)
-      .then((response) => { 
-        console.log(">>>>>sales status response>>>>>>>",response.data.data)
-        this.salesStatusList = response.data.data.map((option) => ({
-          label: option.name,
-          value: option.code,
-        })); 
-      })
-      .catch((error) => {
-        console.error('Error fetching options:', error);
-      });
+    saveSubScriber() {   
+      this.subscriberData.country = this.subscriberData.country.value
+      this.subscriberData.state = this.subscriberData.state.value
+      this.subscriberData.county = this.subscriberData.county.value
+      this.subscriberData.gender = this.subscriberData.gender.value
+      this.subscriberData.maritalStatus = this.subscriberData.maritalStatus.value
+      this.subscriberData.occupation = this.subscriberData.occupation.value
+      this.subscriberData.relationShipType = this.subscriberData.relationShipType.value
+      this.subscriberData.nextOfKin = this.nextOfKinData.id
+      this.subscriberData.createdBy = this.userEmail
+      console.log(">>>>>>this.subscriberData>>>>>>",this.subscriberData) 
+      this.$emit('formDataSubmitted', this.subscriberData);
+      document.getElementById('closeSubscriberForm').click();
+      this.showDialog = true; 
     },
-
+    
     loadMaritalStatus(){
        axios
       .get(path.MARITALSTATUS_SEARCH)
@@ -649,7 +682,24 @@ export default {
         console.error('Error fetching options:', error);
       });
     },
-    handleCountryChange(selectedItem) {
+
+    loadRelationShipTypes(){
+       axios
+      .get(path.RELATIONSHIPTYPE_SEARCH)
+      .then((response) => { 
+        console.log(">>>>>sales occupationList response>>>>>>>",response.data.data)
+        this.relationshipList = response.data.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        })); 
+      })
+      .catch((error) => {
+        console.error('Error fetching options:', error);
+      });
+    },
+
+    handleCountryChange(selectedItem) { 
+      
       const requestParams = {
         params: {
           countryCode: selectedItem.value,
@@ -664,23 +714,24 @@ export default {
             value: option.code,
           }));
            this.allStates = this.stateList;
-          console.log('this.state List >>>>>>>>>>>>', this.stateList);
+          console.log('this.handleCountryChange List >>>>>>>>>>>>', this.stateList);
         })
         .catch((error) => {
           console.error('Error fetching options:', error);
         });
     },
-    handleStateChange(selectedItem) {
+    handleStateChange(selectedItem) { 
       const requestParams = {
         params: {
-          countryCode: this.formData.country.value,
+          countryCode: this.subscriberData.country.value,
           stateCode: selectedItem.value,
         },
       };
+      console.log(">>>>handleStateChange requestParams>>>>>",requestParams)
       axios
         .get(path.COUNTY_SEARCH, requestParams, this.headers)
         .then((response) => { 
-          console.log('>>>response.data>>>',response.data)
+          console.log('>>>response state data.data>>>',response.data)
           this.counties = response.data.map((option) => ({
             label: option.name,
             value: option.code,
@@ -691,22 +742,19 @@ export default {
           console.log(error)
         });
     },
-    setSubscriptionDate(value){
-      this.formData.subscriptionDate = value;
-    }, 
-   
-    createSubscriber(){
-      
-      console.log(">>>>>>>>>>>>About to create Subscriber>>>>>>>>>>>",this.subscriberData.id)
-      
-      if(this.subscriberData.id != "" && this.subscriberData.id != null && this.subscriberData.id != undefined ){
+ 
+    createNextOfKin(){
+      console.log(">>>>>>>>>>>>About to next of Kin>>>>>>>>>>>") 
+      if(this.nextOfKinData.id != "" && this.nextOfKinData.id != null && this.nextOfKinData.id != undefined){
         console.log("setting the searchValue and action of subscruiber>>>>>>>>")
-        this.subscribersearchValue = this.subscriberData.id
-        this.subscriberAction = "view"
+        this.nextOfKinSearchValue = this.nextOfKinData.id
+        this.nextOfKinAction = "view"
       }
-      this.showSubscriberFormDialog = true
-      console.log(">>>>>>this.showFormDialog>>>>>>>",this.showFormDialog)
+      this.showNextofKinFormDialog = true
     },
+      setDateOfBirth(value){
+      this.subscriberData.dateOfBirth = value;
+    }, 
     
   },
   beforeCreate() {
@@ -718,14 +766,19 @@ export default {
   beforeMount() {
     console.log('before Mount');
   },
-  mounted() {  
-    this.isReadonly = false
+   mounted() {  
+    this.subscriberData = { 
+        lastName : "",
+        createdBy: this.userEmail,
+      }
+    this.isDisabled = false;
     const requestParams = {
       params: {
         
         email: this.userEmail, 
       },
-    };
+      
+    }; 
 
     axios
       .get(path.COUNTRY_ALL)
@@ -752,22 +805,21 @@ export default {
       .catch((error) => {
         console.error('Error fetching options:', error);
       });
-
-      this.loadUserClients();
-      this.loadSaleStatus();
+ 
       this.loadMaritalStatus();
       this.loadOccupation()
+      this.loadRelationShipTypes()
 
   },
-  unmounted() {
-    debug('Calling unmounted>>>>>>>>>>');
-    this.formData = { code: '', name: '' };
+  unmounted() { 
   },
   updated() {
+    console.log(">>>>>>update Subscriber this.action>>>>>>>>",this.action,this.searchValue,this.urlLink)
     this.form.label = this.label;
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
     if (this.action == 'edit' || this.action == 'view') {
+      if(this.action == 'view')  this.isDisabled = true;
       try {
         const requestParams = {
           params: {
@@ -778,27 +830,33 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response
-            console.log("response data >>>>>",response.data)
             const result = response.data;
+            console.log("Subscriber data retrieved >>>>>>>",result.data[0])
             if (result.success) {
-              console.log(">>>>>result.data[0]>>>>>",result.data[0])
-               this.balanceAmount =  parseFloat(result.data[0].subscribedProduct.amount) - parseFloat(result.data[0].totalAmount)
-              console.log("Balance amount >>>>>>",this.balanceAmount)
-              
-              this.formData = result.data[0];
-              this.formData.client = {value: result.data[0].client.code, label:result.data[0].client.name}
-              this.formData.subscribedProduct = {label :result.data[0].subscribedProduct.name, value:result.data[0].subscribedProduct.id }
-              this.subscriberData.id = result.data[0].subscriber.id
-              this.subscriberData.fullName = result.data[0].subscriber.lastName + " "+result.data[0].subscriber.firstName + " "+result.data[0].subscriber.middleName
-              this.formData.salesStatus = {value: result.data[0].paymentPlans.code, label : result.data[0].paymentPlans.name}
-              this.formData.amount = this.balanceAmount 
-              if(this.balanceAmount <= 0){
-                this.isDisabled = true
-                this.formData.amount = 0.00
-              }
-              this.formatAmount()
-              this.isReadonly = true
-            }
+              this.subscriberData = result.data[0]; 
+              this.subscriberData.gender =  {value: result.data[0].gender.code, label: result.data[0].gender.name}
+              this.subscriberData.maritalStatus =  {value: result.data[0].maritalStatus.code, label: result.data[0].maritalStatus.name}
+               this.subscriberData.occupation =  {value: result.data[0].occupation.code, label: result.data[0].occupation.name}
+              this.subscriberData.country =  {value: result.data[0].country.code, label: result.data[0].country.name}
+              this.subscriberData.relationShipType =  {value: result.data[0].relationshipType.code, label: result.data[0].relationshipType.name}
+              this.nextOfKinData.id = result.data[0].nextOfKin.id
+              this.subscriberData.nextOfKinFullName = result.data[0].nextOfKin.lastName + " "+result.data[0].nextOfKin.firstName + " "+result.data[0].nextOfKin.middleName 
+              this.$refs.subscriberBirthDate.onChangeDate(result.data[0].dateOfBirth)
+             
+             this.subscriberData.state = {
+                value: result.data[0].state.code,
+                label: result.data[0].state.name,
+              };
+               this.subscriberData.county = {
+                value: result.data[0].county.code,
+                label: result.data[0].county.name,
+              }; 
+               
+              this.handleCountryChange(this.subscriberData.country) 
+              this.handleStateChange(this.subscriberData.state) 
+              this.imageFile = 'data:image/jpeg;base64,' + result.data[0].imageUrl; 
+              this.signature = 'data:image/jpeg;base64,' + result.data[0].signature; 
+          }
           })
           .catch((error) => {
             debug(error);
@@ -807,7 +865,7 @@ export default {
         console.error('Error:', error);
       }
     } else {
-      this.formData = { 
+      this.subscriberData = { 
         createdBy: this.userEmail,
       };
     }

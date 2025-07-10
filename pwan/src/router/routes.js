@@ -25,6 +25,15 @@ const routes = [
         path: '/maritalstatus',
         component: () => import('src/pages/MaritalStatus.vue'),
       },
+       {
+        path: '/occupation',
+        component: () => import('src/pages/Occupation.vue'),
+      },
+       {
+        path: '/relationshiptype',
+        component: () => import('src/pages/RelationshipType.vue'),
+      },
+
       {
         path: '/paymentstatus',
         component: () => import('src/pages/PaymentStatus.vue'),
@@ -94,6 +103,10 @@ const routes = [
         path: '/sales',
         component: () => import('src/pages/SalesTransactionPage.vue'),
       },
+        {
+        path: '/pendingsubscription',
+        component: () => import('src/pages/PendingSubscription.vue'),
+      },      
       {
         path: '/producttype',
         component: () => import('src/pages/ProductType.vue'),
@@ -393,6 +406,11 @@ const routes = [
       {
         path: '/donationrpt',
         component: () => import('src/pages/DonationReport.vue'),
+      }, 
+
+      {
+        path: '/clientsmtpconfig',
+        component: () => import('src/pages/ClientSmtpConfiguration.vue'),
       },
  
       

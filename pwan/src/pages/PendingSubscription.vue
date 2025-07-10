@@ -15,12 +15,12 @@
         <template v-slot:top>
           <q-label>Subscription</q-label>
           <q-space />
-          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />  
-          <q-btn rounded color='blue'  label='Add Payment' size='sm' @click='editItem' /> 
-          <SalesTransactionFormDialog
-            v-model='showFormDialog' 
+          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />   
+          <PendingSubscriptionFormDialog
+            v-model='showFormDialog'
+            :onClick='saveRecord'
             @formDataSubmitted='saveRecord'
-            label='Subscription'
+            label='Pending Subscription'
             :searchValue='searchValue'
             :action='action'
             :actionLabel='actionLabel'
@@ -46,7 +46,7 @@
 import { SessionStorage,  LocalStorage } from 'quasar';
 import axios from 'axios';
 import { ref } from 'vue';
-import SalesTransactionFormDialog from 'src/components/SalesTransactionFormDialog.vue';
+import PendingSubscriptionFormDialog from 'src/components/PendingSubscriptionFormDialog.vue';
 import ResponseDialog from 'src/components/ResponseDialog.vue';
 import Done from 'src/components/Done.vue';
 import path from 'src/router/urlpath';
@@ -56,48 +56,15 @@ import { format } from 'date-fns';
 
 export default {
   components: {
-    SalesTransactionFormDialog,
+    PendingSubscriptionFormDialog,
     ResponseDialog,
     Done,
   },
   setup() {
-    let headers = SessionStorage.getItem('headers');
-    console.log(">>>>headers 1111>>>>",headers)
+    let headers = SessionStorage.getItem('headers'); 
     const columns = [
-      {
-        name: 'subscriber',
-        required: false,
-        label: 'Subscriber Name',
-        align: 'left',
-        field: (row) => row.subscriber.lastName + " " +row.subscriber.firstName+ " " +row.subscriber.middleName,
-        format: (val) => `${val}`,
-        sortable: true,
-      },
-      {
-        name: 'product',
-        align: 'center',
-        label: 'Product',
-        field: (row) => row.subscribedProduct.name,
-        sortable: true,
-      },
-       {
-        name: 'amount',
-        align: 'center',
-        label: 'Product Amount',
-        field: (row) =>
-          new Intl.NumberFormat('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          }).format(row.subscribedProduct.amount),
-        sortable: true,
-      },
-      {
-        name: 'quantity',
-        align: 'center',
-        label: 'Quantity',
-        field: (row) => row.quantity,
-        sortable: true,
-      },
+      
+       
       {
         name: 'amount',
         align: 'center',
@@ -106,17 +73,11 @@ export default {
           new Intl.NumberFormat('en-US', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
-          }).format(row.totalAmount),
+          }).format(row.amount),
         sortable: true,
       },
        
-      {
-        name: 'Affillate',
-        align: 'center',
-        label: 'Affilate/Company',
-        field: (row) => row.client.name,
-        sortable: true,
-      },
+       
       {
         name: 'paymentStatus',
         align: 'center',
@@ -125,16 +86,16 @@ export default {
         sortable: true,
       },
       {
-        name: 'subscriptionDate',
+        name: 'paymentDate',
         align: 'center',
-        label: 'Subscription DAte',
-        field: (row) => format(row.subscriptionDate, 'yyyy-MM-dd'),
+        label: 'Payment Date',
+        field: (row) => format(row.paymentDate, 'yyyy-MM-dd'),
         sortable: true,
       },
     ];
     
     
-    const urlLink = ref(path.SUBSCRIPTION_SEARCH);
+    const urlLink = ref(path.SUBSCRIPTION_PMT_VIEW);
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
     const action = ref('');
@@ -143,7 +104,9 @@ export default {
     const selected = ref([]);
     const actionLabel = ref('Submit');
     const medium_dialog = ref(false); 
-    const userEmail = LocalStorage.getItem('userEmail');   
+    const userEmail = LocalStorage.getItem('userEmail');      
+    const profile = LocalStorage.getItem('turnelParams');  
+    console.log(">>>>>>>profile>>>>>>>>",profile);
     const childRef = ref({
       label: '',
       message: '',
@@ -158,19 +121,21 @@ export default {
       try {
          
     const requestParams = {
-      params: { 
-        realtor: userEmail,
-        order_by : "-subscriptionDate", 
+      params: {   
+        client : profile.client,
+        organisation : profile.organisation,
+        paymentStatus : "P",
+        order_by : "-paymentDate"
       },
     }; 
     console.log('requestParams>>>>>>>>>>>>',requestParams)
         const response = await axios.get(
-          path.SUBSCRIPTION_SEARCH,
+          path.SUBSCRIPTION_PMT_SEARCH,
           requestParams,
           headers
         );
         if (response.data) {
-          console.log('response>>>>>>', response.data.data);
+          console.log('pending response>>>>>>', response.data.data);
           rows.value = response.data.data;
           selected.value = [];
         }
@@ -179,41 +144,44 @@ export default {
       }
     };
     const saveRecord = (record) => {
-      console.log(">>>>action.value>>>>>",action.value)
-      if (action.value == 'add') {
-        createRecord(record);
-      } else if (action.value == 'edit') {
-        updateRecord(record);
+      console.log(">>>>action performed>>>>",record.action)
+      if (record.action == 'approve') {
+        approveRecord(record);
+      } else if (record.action == 'reject') {
+         rejectRecord(record);
       }
     };
-    const createRecord = (record) => {
+    const approveRecord = (record) => {
       try {
-        headers['Content-Type'] = 'multipart/form-data';
-        debug('>>>>>>>>>>>header>>>>>>>>>', headers);
-        const requestData = new FormData();
-          for (let key in record) {  
-            requestData.append(key, record[key]);
-          }
+        headers['Content-Type'] = 'multipart/form-data'; 
+        console.log(">>>>>>>>>>>>>Approve Record>>>>>>>>",record);
 
-          
-          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData)
-        const promise = axios.post(path.SUBSCRIPTION_CREATE, requestData, headers);
+        const promise = axios.post(path.SUBSCRIPTION_PMT_APPROVE, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
             console.log('>>>>>>>>>result>>>>>>', result);
             if (result.success) {
-              fetchData();
-            }
+               childRef.value = {
+                  message: result.message,
+                  label: 'Success',
+                  cardClass: 'bg-positive text-white',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                }; 
+            }else{
 
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
+               childRef.value = {
+                  message: result.message,
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                };
+
+            }
+             fetchData(); 
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
           })
@@ -231,34 +199,37 @@ export default {
         console.error('Error:', error);
       }
     };
-    const updateRecord = (record) => {
+    const rejectRecord = (record) => {
       try { 
         console.log(">>>>headers>>>>>",headers)
         headers['Content-Type'] = 'multipart/form-data'; 
         console.log(">>>>>submitted record>>>>>>>>>>",record)
-        const requestData = new FormData();
-          for (let key in record) {  
-            requestData.append(key, record[key]);
-          }
-
-          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData)
-        const promise = axios.post(path.SUBSCRIPTION_ADDPAYMENT, requestData, headers);
+        const promise = axios.post(path.SUBSCRIPTION_PMT_REJECT, record, headers);
         promise
           .then((response) => {
             // Extract data from the response
             const result = response.data;
             console.log(result);
-            if (result.success) {
-              fetchData();
-            }
+             if (result.success) {
+               childRef.value = {
+                  message: result.message,
+                  label: 'Success',
+                  cardClass: 'bg-positive text-white',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                }; 
+            }else{
 
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
+               childRef.value = {
+                  message: result.message,
+                  label: 'Error',
+                  cardClass: 'bg-negative text-white error',
+                  textClass: 'q-pt-none',
+                  buttonClass: 'bg-white text-teal',
+                };
+
+            }
+             fetchData(); 
             showMessageDialog.value = true;
             // You can access properties of the response data as needed
           })
@@ -282,12 +253,7 @@ export default {
       } else {
         medium_dialog.value = false;
       }
-    };
-    const addItem = () => {
-      showFormDialog.value = true;
-      action.value = 'add';
-      actionLabel.value = 'Submit Subscription';
-    };
+    }; 
     const editItem = () => {
       if (selected.value.length > 0) {
         showFormDialog.value = true;
@@ -299,39 +265,14 @@ export default {
         actionLabel.value = 'Add Payment';
       }
     };
-    const viewItem = () => {
-      if (selected.value.length > 0) {
-        showFormDialog.value = true;
-        searchValue.value = selected.value[0]['code'];
-        action.value = 'view';
-        actionLabel.value = 'Done';
-      }
-    };
-    const deleteItem = async () => {
-      try {
-        const data = selected.value;
-        const response = await axios.post(
-          path.SALESTRANS_REMOVE,
-          data,
-          headers
-        );
-        if (response.data.success) {
-          fetchData();
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
+    
 
     return {
       fetchData,
       saveRecord,
-      createRecord,
-      updateRecord,
-      addItem,
-      editItem,
-      viewItem,
-      deleteItem,
+      approveRecord,
+      rejectRecord, 
+      editItem,  
       showDialog,  
       urlLink,
       actionLabel,
@@ -346,6 +287,7 @@ export default {
       action,
       showFormDialog,
       userEmail,
+      profile,
     };
   },
   beforeCreate() {

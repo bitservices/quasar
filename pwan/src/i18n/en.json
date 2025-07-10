@@ -214,7 +214,24 @@
     "donationport":{
         "pagename": "Donation Report",
         "hint":"Donation Report Page is used by an Admin User to search for different donation criteria such as pledged, transfered etc and different payment types such those that did a particular donation"
+    },
+     "subscriber":{
+        "pagename": "SubScriber",
+        "hint":"SubScriber Page is used by an Realtor or User to Create the Client that is Subscribing for a Property"
+    },
+    "nextofkin":{
+        "pagename": "Next Of Kin",
+        "hint":"Next of Kin Page is used by an Realtor or User to attach or Create Subscriber's next of Kin"
+    },
+     "subscription":{
+      "pagename": "Subscription",
+      "hint":"This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
+    },
+     "smtpconfig":{
+      "pagename": "Client SMTP Configuration",
+      "hint":"This Page is used by a Client to setup her Email SMTP Messaging credentials"
     }
+    
 
 
 

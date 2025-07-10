@@ -212,6 +212,13 @@ let defaultList = [
         icon: 'key',
         link: '/contactconfigsettings',
       },
+
+      {
+        title: 'Pending Subscription', 
+        icon: 'key',
+        link: '/pendingsubscription',
+      },
+      
       
        /*
       {
