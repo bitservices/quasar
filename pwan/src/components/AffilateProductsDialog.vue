@@ -23,6 +23,7 @@
             clearable
             @filter='filterAffilates'
             @update:model-value='handleClientChange'
+            :readonly="isReadonly"
           />
 
            <q-select
@@ -134,6 +135,7 @@ export default {
       dialogHeight, 
       showSpinner: false,   
       inputFieldRule: value => inputFieldRequired(value), 
+      isReadonly:false
     };
   },
   methods: {
@@ -157,8 +159,7 @@ export default {
        if (this.$refs.affilateProductsForm.validate()) {
         this.showSpinner = true;   
         //this.onClick(formData.value);
-        
-        console.log(">>>>>>>>>>formData>>>>>>>",this.formData)
+         
         this.formData.client = this.formData.client.value;
         this.formData.user = this.userEmail
         this.formData.products = this.formData.products.map(item => item.value);
@@ -203,6 +204,7 @@ export default {
             client: selectedItem.value, 
           },
         };
+        console.log(">>>>requestParam>>>>>>",requestParam)
         axios
           .get(path.PRODUCTDEF_SEARCH, requestParam, this.headers)
           .then((response) => {
@@ -214,8 +216,7 @@ export default {
             this.productList = response.data.data.map((option) => ({
               label: option.name,
               value: option.id,
-            }));
-            console.log('this.productList >>>>>>>>>>>>', this.productList);
+            })); 
           })
           .catch((error) => {
             console.error('Error fetching options:', error);
@@ -249,27 +250,26 @@ export default {
     this.form.width = this.dialogWidth;
     this.form.height = this.dialogHeight;
     if (this.action == 'edit' || this.action == 'view') {
+      this.isReadonly=true
       try {
         const requestParams = {
           params: {
             id: this.searchValue,
           },
-        };
-        console.log(this.urlLink)
-        const promise = axios.get(this.urlLink, requestParams, headers);
-        console.log('>>>>>>>>>>promise>>>>>>>>', promise);
+        }; 
+        const promise = axios.get(this.urlLink, requestParams, headers); 
         promise
           .then((response) => {
             // Extract data from the response
-            const result = response.data;
-            console.log('>>>>>>>>result>>>>>>>', result.data);
+            const result = response.data; 
             if (result.success) {
-              this.formData = result.data[0];
-              this.handleClientChange(result.data[0].client)
-              this.formData.client = {
+               this.formData = result.data[0]; 
+               this.formData.client = {
                  label: result.data[0].client.name,
                  value: result.data[0].client.code,
-              }
+              } 
+              this.handleClientChange(this.formData.client)
+             
               this.formData.products = result.data[0].products.map((option) => ({ 
               value: option.id,
               label: option.name,

@@ -104,7 +104,7 @@ export default {
   },
   setup() {
     let headers = SessionStorage.getItem('headers');
-    const columns = [
+    const columns = [ 
       
       {
         name: 'name',
@@ -279,7 +279,9 @@ export default {
     const setEditItemValues= () => {
       if (selected.value.length > 0) { 
         showFormDialog.value = true;
+        console.log(">>>>>>selected>>>>>>>>>",selected)
         searchValue.value = selected.value[0]['id'];  
+        console.log(">>>>searchValue.value>>>>>>>>",searchValue.value)
         action.value = 'edit';
         actionLabel.value = 'Update'; 
       }

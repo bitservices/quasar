@@ -1,273 +1,359 @@
 <template>
-  <q-dialog v-model='showDialog' persistent width='1229px' height='600px'>
-    <q-card
-      class='card-flex-display'
-      :style='{ width: form.width, height: form.height }'
-    >
-       <q-card-section class='pwan-blue text-white'>
-            <HeaderPage  
-                :label='pageName'
-                :hint='hint'  
+  <q-page padding>
+    <HeaderPage :label="pageName" :hint="hint" />
+    <q-stepper v-model="step" flat animated>
+      <!-- Step 1 -->
+      <q-step
+        :name="1"
+        :title="$q.screen.lt.md ? '' : 'Product Type Definition Detail'"
+        icon="person"
+      >
+        <div v-if="$q.screen.lt.md">
+          <p>Product Type Definition Detail</p>
+          <hr />
+        </div>
+
+        <q-form @submit.prevent="validateInfo" ref="productInfoForm">
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.productType"
+            :options="productTypes"
+            label="Select Product Type"
+            :readonly="isReadonly"
+            :dense="dense"
+            :rules="[requiredRule]"
+          />
+
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.name"
+            label="Name"
+            :dense="dense"
+            :rules="[inputFieldRule]"
+          />
+
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.amount"
+            label="Enter Amount"
+            type="number"
+            step="0.01"
+            :rules="[inputFieldRule]"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.description"
+            label="Description"
+            type="textarea"
+            rows="2"
+            maxlength="200"
+            counter
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.landmark"
+            label="Landmark"
+            type="textarea"
+            rows="3"
+            maxlength="300"
+            counter
+          />
+          <q-checkbox
+            v-model="useStore.formData.allowedPartialPayment"
+            label="Allowed Parital Payment"
+            color="primary"
+          />
+          <q-checkbox
+            v-model="useStore.formData.allowedInspection"
+            label="Allowed Inspection"
+            color="secondary"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.inspectionTime"
+            type="time"
+            label="Inspection Time"
+            :dense="dense"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.productStatus"
+            :options="productStatusList"
+            label="Select Product Status"
+            :dense="dense"
+            :rules="[requiredRule]"
+          />
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.measurement"
+            label="Enter Measurement"
+            type="number"
+            :rules="[inputFieldRule]"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.dimension"
+            :options="dimensions"
+            label="Select Dimension"
+            :dense="dense"
+            :rules="[requiredRule]"
+          />
+          <q-stepper-navigation>
+            <div class="row justify-end q-gutter-sm">
+              <q-btn
+                size="md"
+                color="negative"
+                label="Cancel"
+                @click="cancel"
               />
-          </q-card-section>
-
-      <q-card-section>
-         <q-form @submit.prevent='saveRecord' ref='productTypeDefinitionForm'>
-          <div class='text-center'> 
-                <q-spinner v-if='showSpinner' color='primary' size='60px' />
-            </div> 
-          <div> 
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.productType'
-            :options='productTypes'
-            label='Select Product Type'
-            :readonly='isReadonly' 
-            :dense='dense'
-            :rules='[requiredRule]'
-          />
-
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.name'
-            label='Name'
-            :dense='dense'
-            :rules='[inputFieldRule]'
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.address'
-            label='Address'
-            :dense='dense'
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.amount'
-            label='Enter Amount'
-            type='number'
-            step='0.01'
-            :rules='[inputFieldRule]'
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.description'
-            label='Description'
-            type='textarea'
-            rows='2'
-            maxlength='200'
-            counter
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.landmark'
-            label='Landmark'
-            type='textarea'
-            rows='3'
-            maxlength='300'
-            counter
-          />
-          <q-checkbox
-            v-model='formData.allowedPartialPayment'
-            label='Allowed Parital Payment'
-            color='primary'
-          />
-          <q-checkbox
-            v-model='formData.allowedInspection'
-            label='Allowed Inspection'
-            color='secondary'
-          /> 
-           <q-input
-              filled
-              bottom-slots
-              v-model='formData.inspectionTime'
-              type='time'
-              label='Inspection Time'
-              :dense='dense'  
-            /> 
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.productStatus'
-            :options='productStatusList'
-            label='Select Product Status'
-            :dense='dense' 
-            :rules='[requiredRule]'
-          />
-          <q-input
-            filled
-            bottom-slots
-            v-model='formData.totalMeasurement'
-            label='Enter Total Size'
-            type='number'
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.dimension'
-            :options='dimensions'
-            label='Select Dimension'
-            :dense='dense' 
-            :rules='[requiredRule]'
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.country'
-            :options='countries'
-            label='Select Country'
-            @update:model-value='handleCountryChange'
-            :dense='dense' 
-            :rules='[requiredRule]'
-             use-input
-            input-debounce='200'
-            clearable
-            @filter='filterCountries'
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.state'
-            :options='stateList'
-            label='Select State'
-            @update:model-value='handleStateChange'
-            :dense='dense'
-            :rules='[requiredRule]'
-             use-input
-            input-debounce='200'
-            clearable
-            @filter='filterStates'
-          />
-          <q-select
-            filled
-            bottom-slots
-            v-model='formData.county'
-            :options='counties'
-            label='Select County'
-            :dense='dense'
-            :rules='[requiredRule]'
-            use-input
-            input-debounce='200'
-            clearable
-            @filter='filterCounties'
-          />  
-          <div v-if='showBytes'>
-            <q-card>
-              <q-card-section>
-              <q-uploader 
-                  label='Drag and drop Image file or click to select one'
-                  single 
-                  @added='handleImageFilesAdded'
-                /> 
-              </q-card-section>
-            </q-card>
-            <q-card>
-              <q-card-section>
-              <q-uploader 
-                  label='Drag and drop Subscription file or click to select one'
-                  single 
-                  @added='handleSubscriptionFilesAdded'
-                /> 
-            </q-card-section>
-            </q-card>
-            <q-card>
-            <q-card-section>
-            <q-uploader 
-                label='Drag and drop Video file or click to select one'
-                single 
-                @added='handleVideoFilesAdded'
-              /> 
-            </q-card-section>
-            <q-card-section>
-            <q-video
-              :src='formData.videoUrl'
-              autoplay='false'
-              controls 
-            />  
-            </q-card-section>
-            </q-card>
-           </div>
-          </div>
-
-          <q-card-actions align='center'>
-          <div class='row'>
-            <q-btn id='closeBtn'
-                  rounded  
-                  label='Close'
-                  icon='close'
-                  v-close-popup
-                  class='pwan-blue top-margin full-width'
-                />  
-            <q-btn
-                  :label='actionLabel'
-                  rounded
-                  type='submit'
-                  icon='save' 
-                  class='pwan-button top-margin full-width'
-                />
-          </div>
-          </q-card-actions>
+              <q-btn type="submit" label="Continue" color="primary" />
+            </div>
+          </q-stepper-navigation>
         </q-form>
-      </q-card-section>
-    </q-card>
-  </q-dialog>
+      </q-step>
+      <q-step :name="2" :title="$q.screen.lt.md ? '' : 'Address'" icon="info">
+        <div v-if="$q.screen.lt.md">
+          <p>Address'</p>
+          <hr />
+        </div>
+        <q-form @submit.prevent="validateAddressInfo" ref="addressfoForm">
+          <q-input
+            filled
+            bottom-slots
+            v-model="useStore.formData.address"
+            label="Address"
+            :dense="dense"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.country"
+            :options="countries"
+            label="Select Country"
+            @update:model-value="handleCountryChange"
+            :dense="dense"
+            :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCountries"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.state"
+            :options="stateList"
+            label="Select State"
+            @update:model-value="handleStateChange"
+            :dense="dense"
+            :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterStates"
+          />
+          <q-select
+            filled
+            bottom-slots
+            v-model="useStore.formData.county"
+            :options="counties"
+            label="Select County"
+            :dense="dense"
+            :rules="[requiredRule]"
+            use-input
+            input-debounce="200"
+            clearable
+            @filter="filterCounties"
+          />
+          <q-stepper-navigation>
+            <div class="row justify-end q-gutter-sm">
+              <q-btn
+                size="md"
+                color="negative"
+                label="Cancel"
+                @click="cancel"
+              />
+              <q-btn @click="step = 1" label="Back" />
+              <q-btn type="submit" label="Continue" color="primary" />
+            </div>
+          </q-stepper-navigation>
+        </q-form>
+      </q-step>
+      <q-step
+        :name="3"
+        :title="$q.screen.lt.md ? '' : 'Image and Video'"
+        icon="person"
+      >
+        <div v-if="$q.screen.lt.md">
+          <p>Flyer, Subscription Form and Video'</p>
+          <hr />
+        </div>
+        <q-form @submit.prevent="submitForm" ref="uploadForm">
+          <div class="row">
+            <div class="cols-6 col-12">
+              <q-file
+                bottom-slots
+                filled
+                v-model="useStore.formData.imageByte"
+                label="Product Flyer"
+                clearable
+                accept=".jpg,.jpeg,.png"
+                @update:model-value="validateImageFile"
+              >
+                <template v-slot:append>
+                  <q-icon name="attach_file" />
+                </template>
+              </q-file>
+            </div>
+            <!-- Error message -->
+            <div v-if="imgError" class="text-negative text-caption q-mt-sm">
+              {{ imgError }}
+            </div>
+
+            <!-- Preview for images -->
+            <div class="cols-6 col-12 q-mt-md">
+              <q-img
+                v-if="previewImageUrl"
+                :src="previewImageUrl"
+                spinner-color="primary"
+                style="width: 100%; height: 50%"
+              />
+            </div>
+          </div>
+
+          <br />
+          <hr />
+
+          <div class="row">
+            <div class="cols-6 col-12">
+              <q-file
+                bottom-slots
+                filled
+                v-model="useStore.formData.subscriptionFormByte"
+                label="Subscription Form"
+                clearable
+                accept=".pdf"
+                @update:model-value="validatePdfFile"
+              >
+                <template v-slot:append>
+                  <q-icon name="attach_file" />
+                </template>
+              </q-file>
+            </div>
+            <!-- Error message -->
+            <div v-if="pdfError" class="text-negative text-caption q-mt-sm">
+              {{ pdfError }}
+            </div>
+
+            <!-- PDF Preview -->
+            <div v-if="previewPdfUrl" class="cols-6 col-12 q-mt-md">
+              <object
+                :data="previewPdfUrl"
+                type="application/pdf"
+                width="100%"
+                height="400px"
+              >
+                <p>
+                  Your browser does not support PDF preview.
+                  <a :href="previewPdfUrl" target="_blank">Download PDF</a>
+                </p>
+              </object>
+            </div>
+          </div>
+          <br />
+          <hr />
+          <div class="row">
+            <div class="cols-6 col-12">
+              <q-file
+                bottom-slots
+                filled
+                v-model="useStore.formData.videoByte"
+                label="Product video"
+                clearable
+                accept="video/*"
+                @update:model-value="validateVideoFile"
+              >
+                <template v-slot:append>
+                  <q-icon name="attach_file" />
+                </template>
+              </q-file>
+            </div>
+            <!-- Error message -->
+            <div v-if="videoError" class="text-negative text-caption q-mt-sm">
+              {{ videoError }}
+            </div>
+
+            <!-- Preview for videos -->
+            <div v-if="previewVideoUrl" class="cols-6 col-12 q-mt-md">
+              <video
+                :src="previewVideoUrl"
+                spinner-color="primary"
+                style="width: 100%; height: 400px"
+                autoplay="false"
+                controls
+              >
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+          <q-stepper-navigation>
+            <div class="row justify-end q-gutter-sm">
+              <q-btn
+                size="md"
+                color="negative"
+                label="Cancel"
+                @click="cancel"
+              />
+              <q-btn @click="step = 2" label="Back" />
+              <q-btn
+                v-if="showButton"
+                :label="actionLabel"
+                :color="colourLabel"
+                type="submit"
+              />
+            </div>
+          </q-stepper-navigation>
+        </q-form>
+      </q-step>
+    </q-stepper>
+  </q-page>
 </template>
 
 <script>
-import { ref, computed } from 'vue'; 
-import { useI18n } from 'vue-i18n'
-import { LocalStorage, SessionStorage } from 'quasar';
-import axios from 'axios';
-import path from 'src/router/urlpath';
-import debug from 'src/router/debugger'; 
-import HeaderPage from 'src/components/HeaderPage.vue'; 
-import { isRequired ,inputFieldRequired} from 'src/validation/validation';
+import { LocalStorage, SessionStorage, Loading, QSpinnerGears } from "quasar";
+import { useI18n } from "vue-i18n";
+import { ref, computed } from "vue";
+import axios from "axios";
+import path from "src/router/urlpath";
+import { useProductTypeDefinitionStore } from "src/stores/productTypeDefinitionStore";
+import { useRouter } from "vue-router";
+import helper from "src/utils/helper";
+import { useQuasar } from "quasar";
+import HeaderPage from "src/components/HeaderPage.vue";
+import { isRequired, inputFieldRequired } from "src/validation/validation";
 
 export default {
-  components:{
-    HeaderPage
-  }, 
-  name: 'ProductTypeFormDialog',
-  props: {
-    onClick: {
-      type: Function,
-      required: true,
-    },
-    label: {
-      type: String,
-      required: true,
-    },
-    searchValue: {
-      type: String, // Specify the data type of the prop
-      required: true, // Indicates whether the prop is required or not
-    },
-    action: {
-      type: String,
-      required: true,
-    },
-    actionLabel: {
-      type: String,
-      required: true,
-    },
-    urlLink: {
-      type: String,
-      required: true,
-    },  
-    showBytes: {
-      type: Boolean,
-      required: true,
-    },  
-    
+  components: {
+    HeaderPage,
   },
+  name: "ProductTypeFormDialog",
+
   data() {
-    const { t } = useI18n() 
-    const pageName = computed(()=> t('producttypedefform.pagename'))
-    const hint = computed(()=> t('producttypedefform.hint'))
+    const useStore = useProductTypeDefinitionStore();
+    const router = useRouter();
+    const $q = useQuasar();
+    const { t } = useI18n();
+    const pageName = computed(() => t("producttypedef.pagename"));
+    const hint = computed(() => t("producttypedef.hint"));
     const viewportWidth =
       window.innerWidth || document.documentElement.clientWidth;
     const viewportHeight =
@@ -276,22 +362,38 @@ export default {
     // Set the width and height of the dialog to cover the viewport
     const controlWidth = viewportWidth * 0.9; // 90% of the viewport width
     const controlHeight = viewportHeight * 0.9; // 90% of the viewport height
-    const dialogWidth = controlWidth + 'px';
-    const dialogHeight = controlHeight + 'px';
+    const dialogWidth = controlWidth + "px";
+    const dialogHeight = controlHeight + "px";
+    const userEmail = LocalStorage.getItem("userEmail");
+    const headers = SessionStorage.getItem("headers");
+    const profile = LocalStorage.getItem("turnelParams");
 
-    const profile = LocalStorage.getItem('turnelParams');
-    const headers = SessionStorage.getItem('headers');
-    const formData = ref({ 
-      client: '',
-      organisation: '',
-      createdBy: '',
+    const file = ref(null);
+    const previewImageUrl = ref(null);
+    const previewVideoUrl = ref(null);
+    const previewPdfUrl = ref(null);
+
+    const imgError = ref(null);
+    const videoError = ref(null);
+    const pdfError = ref(null);
+
+    const formData = ref({
+      code: "",
+      name: "",
     });
     const form = ref({
-      label: '',
-      width: '10px',
-      height: '10px',
+      label: "",
+      width: "10px",
+      height: "10px",
+    });
+    const meeting = ref({
+      day: "",
+      startTime: "",
+      endTime: "",
+      meetingName: "",
     });
     const showDialog = ref(false);
+    const step = ref(1);
 
     return {
       formData,
@@ -299,35 +401,61 @@ export default {
       form,
       dialogWidth,
       dialogHeight,
-      profile,
+      clients: [],
+      allClients: [],
+      userEmail,
       headers,
-      time: '10:00',
-      dense: true,
       countries: [],
-      allCountries:[],
+      allCountries: [],
       stateList: [],
-      allStates :[],
+      allStates: [],
       counties: [],
-      allCounties : [],
-      productTypes:[],
+      allCounties: [],
+      dense: true,
       isReadonly: false,
-      imageUrl: null,
-      videoUrl: null,
-      subscriptionUrl: null,
       pageName,
-      hint, 
-      showSpinner: false,  
-      requiredRule: value => isRequired(value), 
-      inputFieldRule: value => inputFieldRequired(value), 
-      imageUpload :path.IMAGE_UPLOAD, 
-      videoUpload :path.VIDEO_UPLOAD, 
-      lastUploadedFile: null,
+      hint,
+      profile,
+      requiredRule: (value) => isRequired(value),
+      inputFieldRule: (value) => inputFieldRequired(value),
+      productTypes: [],
+      useStore,
+      actionLabel: "Create",
+      colourLabel: "posotive",
+      router,
+      $q,
+      step,
+      showButton: true,
+      dimensions: [],
+      previewImageUrl,
+      previewVideoUrl,
+      file,
+      imgError,
+      videoError,
+      previewPdfUrl,
+      pdfError,
     };
   },
   methods: {
+    filterClients(val, update) {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
+        update(() => {
+          this.clients = this.allClients;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.clients = this.allClients.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    },
     filterCountries(val, update) {
-        console.log('>>>>val>>>>>>',val)
-      if (val === '') {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
         update(() => {
           this.countries = this.allCountries;
         });
@@ -340,11 +468,11 @@ export default {
           option.label.toLowerCase().includes(needle)
         );
       });
-    }, 
+    },
 
     filterStates(val, update) {
-        console.log('>>>>val>>>>>>',val)
-      if (val === '') {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
         update(() => {
           this.stateList = this.allStates;
         });
@@ -357,10 +485,10 @@ export default {
           option.label.toLowerCase().includes(needle)
         );
       });
-    }, 
+    },
     filterCounties(val, update) {
-        console.log('>>>>val>>>>>>',val)
-      if (val === '') {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
         update(() => {
           this.counties = this.allCounties;
         });
@@ -373,40 +501,112 @@ export default {
           option.label.toLowerCase().includes(needle)
         );
       });
-    }, 
-    showTimePopup() {
-      this.$refs.timePopup.show();
     },
-    hideTimePopup() {
-      this.$refs.timePopup.hide();
+    getPosition() {
+      try {
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              // Success callbac
+              this.useStore.formData.latitude = position.coords.latitude;
+              this.useStore.formData.longitude = position.coords.longitude;
+            },
+            (error) => {
+              // Error callback
+              console.log(error);
+            }
+          );
+        } else {
+          console.log("Geolocation is not supported by this browser");
+        }
+      } catch (error) {
+        console.log(">>>>>>>>>>>>>>>error>>>>>>>>>>>>>>>", error);
+      }
     },
+    validateInfo() {
+      if (this.$refs.productInfoForm.validate()) {
+        this.step = 2;
+      }
+    },
+    validateAddressInfo() {
+      if (this.$refs.addressfoForm.validate()) {
+        this.step = 3;
+      }
+    },
+    submitForm() {
+      if (this.$refs.uploadForm.validate()) {
+        Loading.show({
+          message: "Application is processing, please wait...",
+          spinner: QSpinnerGears, // You can use other spinners
 
-    saveRecord() {
-      //this.onClick(formData.value);
-     if (this.$refs.productTypeDefinitionForm.validate()) { 
-        this.showSpinner = true;
-        let data = this.formData;  
-        let productType = this.formData.productType.value;   
-        data.productType = productType;
-        data.dimension = this.formData.dimension.value;
-        data.code = productType; //this.formData.productType.value;
-        data.productStatus = this.formData.productStatus.value;
-        data.county = this.formData.county.value;
-        data.country = this.formData.country.value;
-        data.state = this.formData.state.value; 
-        data.status = 'A'; 
+          spinnerColor: "secondary",
+          spinnerSize: 60,
+        });
+        let data = Object.assign({}, this.useStore.formData);
+        console.log(">>>>meetingDays >>>>>>", data);
+
+        data.county = data.county.value;
+        data.country = data.country.value;
+        data.state = data.state.value;
+        data.status = "A";
+        data.createdBy = this.profile.email;
         data.client = this.profile.client;
         data.organisation = this.profile.organisation;
-        data.createdBy = this.profile.email; 
-        const requestData = new FormData(); 
-        for (let key in data) {  
-          requestData.append(key, data[key]);
-        } 
-        this.$emit('formDataSubmitted', requestData); 
-        document.getElementById('closeBtn').click();
-        this.showDialog = true; 
-         this.showSpinner = false;  
-     }
+        data.destination = path.UPLOAD_DESINATION;
+        data.productType = data.productType.value;
+        data.dimension = data.dimension.value;
+
+        data.productStatus = data.productStatus.value;
+        const record = new FormData();
+        for (let key in data) {
+          record.append(key, data[key]);
+        }
+
+        console.log(">>>>>>>>>>>rrecord 111111 >>>>>>>>", record);
+        let promise = "";
+        if (this.useStore.mode == "create") {
+          record.status = "A";
+          promise = axios.post(path.PRODUCTDEF_CREATE, record, this.headers);
+        }
+        if (this.useStore.mode == "update") {
+          promise = axios.put(path.PRODUCTDEF_UPDATE, record, this.headers);
+        } else if (this.useStore.mode == "delete") {
+          console.log("calling deactivate >>>>>>>>>>>>>");
+          promise = axios.post(path.PRODUCTDEF_REMOVE, record, this.headers);
+        }
+        console.log(">>>>>>promise>>>>>", promise);
+
+        promise
+          .then((response) => {
+            const result = response.data;
+            console.log(">>>>>>result>>>>>>>>", result);
+            //Loading.hide();
+            if (result.success) {
+              this.useStore.reload = true;
+              this.$q.notify({
+                type: "positive",
+                message: result.message,
+                position: "center",
+              });
+            } else {
+              this.$q.notify({
+                type: "negative",
+                message: result.message,
+                position: "center",
+              });
+            }
+
+            this.router.push("/productdef");
+          })
+          .catch((error) => {
+            console.error("Error fetching options:", error);
+            this.$q.notify({
+              type: "negative",
+              message: error.message,
+              position: "center",
+            });
+          });
+      }
     },
     handleCountryChange(selectedItem) {
       const requestParams = {
@@ -418,117 +618,192 @@ export default {
         .get(path.STATE_SEARCH, requestParams, this.headers)
         .then((response) => {
           // Assuming the response data is an array of objects with 'value' and 'label' properties
+          console.log("stateList>>", response.data);
           this.stateList = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
-           this.allStates = this.stateList;
-          console.log('this.state List >>>>>>>>>>>>', this.stateList);
+          this.allStates = this.stateList;
+          console.log("this.state List >>>>>>>>>>>>", this.stateList);
         })
         .catch((error) => {
-          console.error('Error fetching options:', error);
+          console.error("Error fetching options:", error);
         });
     },
     handleStateChange(selectedItem) {
       const requestParams = {
         params: {
-          countryCode: this.formData.country.value,
+          countryCode: this.useStore.formData.country.value,
           stateCode: selectedItem.value,
         },
       };
       axios
         .get(path.COUNTY_SEARCH, requestParams, this.headers)
-        .then((response) => { 
-          console.log('>>>response.data>>>',response.data)
-          this.counties = response.data.map((option) => ({
+        .then((response) => {
+          // Assuming the response data is an array of objects with 'value' and 'label' properties
+          this.counties = response.data.data.map((option) => ({
             label: option.name,
             value: option.code,
           }));
           this.allCounties = this.counties;
         })
         .catch((error) => {
-          console.log(error)
+          console.log(error);
         });
-    },
-    
-   
-     handleImageFilesAdded(files) { 
-        files.forEach(file => { 
-          console.log('>>>this.formdata', this.formData)
-                const formData = new FormData();
-                formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append('id',this.formData.id)
-                formData.append('destination',path.UPLOAD_DESINATION)
-                formData.append('client',this.profile.client)
-                formData.append('organisation',this.profile.organisation)
-                // Use Axios to send the file
-                axios.post(path.PRODUCTDEF_UPDATE_IMAGE, formData)
-                  .then(response => {
-                    console.log('Upload successful:', response.data);
-                  })
-                  .catch(error => {
-                    console.error('Upload error:', error);
-                  });
-        });
-    },
-     handleSubscriptionFilesAdded(files){
-       files.forEach(file => { 
-        
-      console.log('>>>this.formdata', this.formData)
-             const formData = new FormData();
-                formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append('id',this.formData.id)
-                formData.append('destination',path.UPLOAD_DESINATION)
-                formData.append('client',this.profile.client)
-                formData.append('organisation',this.profile.organisation)
-                // Use Axios to send the file
-                axios.post(path.PRODUCTDEF_UPDATE_SUBSCRIPTION, formData)
-                  .then(response => {
-                    console.log('Upload successful:', response.data);
-                  })
-                  .catch(error => {
-                    console.error('Upload error:', error);
-                  }); 
-             });
     },
 
-     handleVideoFilesAdded(files){
-       files.forEach(file => { 
-        
-      console.log('>>>this.formdata', this.formData)
-             const formData = new FormData();
-                formData.append('imageFile', file); // 'file' should match the multer field name
-                formData.append('id',this.formData.id)
-                formData.append('destination',path.UPLOAD_DESINATION)
-                formData.append('client',this.profile.client)
-                formData.append('organisation',this.profile.organisation)
-                // Use Axios to send the file
-                axios.post(path.PRODUCTDEF_UPDATE_VIDEO, formData)
-                  .then(response => {
-                    console.log('Upload successful:', response.data);
-                  })
-                  .catch(error => {
-                    console.error('Upload error:', error);
-                  }); 
-             });
+    cancel() {
+      this.useStore.reload = false;
+      this.router.push("/productdef");
     },
-  
+    validateImageFile(files) {
+      console.log(">>>>>>>inside validte File>>>>>>>>>>", files);
+      this.imgError = null;
+      this.previewImageUrl = null;
+
+      const f = files[0] || files;
+      console.log(">>>>>>>f>>>>>>>>>>", f);
+      if (!f) return;
+
+      // 1. Check size (e.g. max 2MB)
+      const maxSize = 5 * 1024 * 1024;
+      console.log(">>>>>f size >>>>>>>>", f.size);
+      if (f.size > maxSize) {
+        this.imgError = "File size must be less than 2MB";
+        this.file = null;
+        return;
+      }
+
+      // 2. Check type
+      const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+      if (!allowedTypes.includes(f.type)) {
+        this.imgError = "Only JPG, PNG, and PDF files are allowed";
+        this.file = null;
+        return;
+      }
+
+      // 3. Generate preview if it's an image
+      if (f.type.startsWith("image/")) {
+        this.previewImageUrl = URL.createObjectURL(f);
+        console.log(">>>>>this.previewImageUrl>>>>>>>", this.previewImageUrl);
+      }
+    },
+
+    validateVideoFile(files) {
+      console.log(">>>>>>>inside video validate File>>>>>>>>>>", files);
+      this.videoError = null;
+      this.previewVideoUrl = null;
+
+      const f = files[0] || files;
+      console.log(">>>>>>>f>>>>>>>>>>", f);
+      if (!f) return;
+
+      // 1. Check size (e.g. max 2MB)
+      const maxSize = 20 * 1024 * 1024;
+      console.log(">>>>>f size >>>>>>>>", f.size);
+      if (f.size > maxSize) {
+        this.videoError = "File size must be less than 10MB";
+        this.file = null;
+        return;
+      }
+
+      // 2. Check type
+      const allowedTypes = ["video/mp3", "video/mp4", "application/pdf"];
+      if (!allowedTypes.includes(f.type)) {
+        this.videoError = "Only mp3, mp4, and vlc files are allowed";
+        this.file = null;
+        return;
+      }
+
+      // 3. Generate preview if it's an image
+      if (f.type.startsWith("video/")) {
+        this.previewVideoUrl = URL.createObjectURL(f);
+        console.log(">>>>>this.previewVideoUrl>>>>>>>", this.previewVideoUrl);
+      }
+    },
+    validatePdfFile(files) {
+      console.log(">>>>>>>inside video validate File>>>>>>>>>>", files);
+      this.pdfError = null;
+      this.previewPdfUrl = null;
+
+      const f = files[0] || files;
+      console.log(">>>>>>>f>>>>>>>>>>", f);
+      if (!f) return;
+
+      // 1. Check size (e.g. max 2MB)
+      const maxSize = 5 * 1024 * 1024;
+      console.log(">>>>>f size >>>>>>>>", f.size);
+      if (f.size > maxSize) {
+        this.pdfError = "File size must be less than 10MB";
+        this.file = null;
+        return;
+      }
+
+      // 2. Check type
+      const allowedTypes = ["application/pdf"];
+      if (!allowedTypes.includes(f.type)) {
+        this.pdfError = "Only pdf files are allowed";
+        this.file = null;
+        return;
+      }
+
+      // 3. Generate preview if it's an image
+      if (f.type.startsWith("application/")) {
+        this.previewPdfUrl = URL.createObjectURL(f);
+        console.log(">>>>>this.previewPdfUrl>>>>>>>", this.previewPdfUrl);
+      }
+    },
+    updateData() {
+      console.log(">>>>>>at updated value >>>>>>>>>", this.useStore.formData);
+      this.isReadonly = false;
+      if (this.useStore.mode == "view") {
+        this.showButton = false;
+      } else {
+        this.showButton = true;
+      }
+      this.actionLabel = this.useStore.mode;
+      if (this.useStore.mode == "delete") {
+        this.colourLabel = "negative";
+      } else {
+        this.colourLabel = "secondary";
+      }
+      if (this.useStore.mode != "create") {
+        this.isReadonly = true;
+      }
+      if (this.useStore.formData.imageUrl) {
+        this.previewImageUrl = this.useStore.formData.imageUrl;
+      } else {
+        this.previewImageUrl = null;
+      }
+
+      if (this.useStore.formData.subscriptionFormUrl) {
+        this.previewPdfUrl = this.useStore.formData.subscriptionFormUrl;
+      } else {
+        this.previewPdfUrl = null;
+      }
+
+      if (this.useStore.formData.videoUrl) {
+        this.previewVideoUrl = this.useStore.formData.videoUrl;
+      } else {
+        this.previewVideoUrl = null;
+      }
+    },
   },
 
   beforeCreate() {
-    debug('beforeCreate');
+    console.log("beforeCreate");
   },
   created() {
-    debug('created');
+    console.log("created");
   },
   beforeMount() {
-    console.log('before Mount');
+    console.log("before Mount");
   },
-  mounted() { 
-     const requestParams = {
+  mounted() {
+    const requestParams = {
       params: {
         client: this.profile.client,
-        organisation: this.profile.organisation, 
+        organisation: this.profile.organisation,
       },
     };
 
@@ -543,20 +818,23 @@ export default {
         this.allCountries = this.countries;
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
     axios
       .get(path.PRODUCTTYPE_SEARCH, requestParams, this.headers)
       .then((response) => {
         // Assuming the response data is an array of objects with 'value' and 'label' properties
-        console.log('>>>>>>>product type response>>>>>>>>>',response.data.data)
+        console.log(
+          ">>>>>>>product type response>>>>>>>>>",
+          response.data.data
+        );
         this.productTypes = response.data.data.map((option) => ({
           label: option.name,
           value: option.code,
         }));
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
 
     axios
@@ -569,7 +847,7 @@ export default {
         }));
       })
       .catch((error) => {
-        console.error('Error fetching options:', error);
+        console.error("Error fetching options:", error);
       });
 
     axios
@@ -582,78 +860,16 @@ export default {
         }));
       })
       .catch((error) => {
-        console.log(error)
+        console.log(error);
       });
+    this.updateData();
   },
   unmounted() {
-    debug('Calling unmounted>>>>>>>>>>'); 
-
+    console.log("Calling unmounted>>>>>>>>>>");
   },
   updated() {
-    this.form.label = this.label;
-    this.form.width = this.dialogWidth;
-    this.form.height = this.dialogHeight;
-      const requestParams = {
-          params: {
-            id: this.searchValue,
-            client: this.profile.client,
-            organisation: this.profile.organisation,
-          },
-        };  
-    if (this.action == 'edit' || this.action == 'view') {
-      this.isReadonly = true;
-      try { 
-        const promise = axios.get(this.urlLink, requestParams, this.headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-
-            if (result.success) {
-              debug('fetched product Type Definition>>>>>>', result.data[0]);
-              this.formData = result.data[0];
-              this.formData.country = {
-                value: result.data[0].country.code,
-                label: result.data[0].country.name,
-              };
-              this.formData.state = {
-                value: result.data[0].state.code,
-                label: result.data[0].state.name,
-              };
-              this.formData.county = {
-                value: result.data[0].county.code,
-                label: result.data[0].county.name,
-              };
-
-              this.formData.dimension = {
-                value: result.data[0].dimension.code,
-                label: result.data[0].dimension.name,
-              };
-
-              this.formData.productStatus = {
-                value: result.data[0].productStatus.code,
-                label: result.data[0].productStatus.name,
-              };
-
-              this.formData.productType = {
-                value: result.data[0].productType.code,
-                label: result.data[0].productType.name,
-              };
-              this.formData.status = {
-                value: result.data[0].status.code,
-                label: result.data[0].status.name,
-              };
-              
-            }
-          })
-          .catch((error) => {
-            debug(error);
-          });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    
-    }
+    console.log(">>>>>>>>updated >>>>>>>>>>>>>>>", this.useStore);
+    this.updateData();
   },
 };
 </script>

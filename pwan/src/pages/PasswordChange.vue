@@ -210,8 +210,7 @@ export default {
           const authenticated = response.data['access']; 
           LocalStorage.set('token', response.data);
           const headers = {
-            Authentication: 'Bearer ' + response.data['access'],
-            'Access-Control-Allow-Origin': path.ORIGIN_PATH,
+            Authorization: 'Bearer ' + response.data['access'] 
           };  
           SessionStorage.set('headers', headers); 
           if (authenticated) {

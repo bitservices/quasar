@@ -279,6 +279,14 @@ export default {
         }
       } catch (error) {
         console.error('Error submitting form:', error);
+         childRef.value = {
+              message: error.message,
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
+            };
+            showMessageDialog.value = true;
       }
     };
 

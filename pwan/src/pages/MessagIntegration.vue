@@ -233,8 +233,7 @@ export default {
                     } 
                     this.showSpinner = false;  
                   })
-                  .catch((error) => {
-                    debug('Error:', error);
+                  .catch((error) => { 
                       this.childRef = {
                       message: error.message,
                       label: 'Success',

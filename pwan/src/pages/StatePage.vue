@@ -1,336 +1,356 @@
 <template>
   <q-page padding>
-    <div class='q-pa-md'>
-      <q-table
-        class='my-sticky-header-table'
-        flat
-        bordered
-        title='State'
-        :rows='rows'
-        :columns='columns'
-        row-key='name'
-        :selected-rows-label='getSelectedString'
-        selection='multiple'
-        v-model:selected='selected'
+    <div class="q-pa-md">
+      <q-card>
+        <q-card-section class="pwan-blue text-white">
+          <HeaderPage :label="pageName" :hint="hint" />
+        </q-card-section>
+      </q-card>
+      <q-form>
+        <q-select
+          filled
+          bottom-slots
+          v-model="formData.countryCode"
+          :options="countries"
+          label="Select Country"
+          @update:model-value="handleCountryChange"
+          :dense="dense"
+          use-input
+          input-debounce="200"
+          clearable
+          @filter="filterCountries"
+        />
+      </q-form>
+      <BaseTable
+        ref="tableRef"
+        :columns="columns"
+        :data="rows"
+        :rowKey="(row) => row.id"
+        :selection="selection"
+        :title="title"
+        :pagination="pagination"
+        :max-height-offset="260"
       >
-        <template v-slot:top>
-          <q-label>State</q-label>
+        <template #top-right>
           <q-space />
-          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
-          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
+          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
+          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
           <q-btn
             rounded
-            color='info'
-            icon='visibility'
-            size='sm'
-            @click='viewItem'
-          />
-          <div v-if='loadForm'> 
-            <StateFormDialog
-              v-model='showFormDialog'
-              :onClick='saveRecord'
-              @formDataSubmitted='saveRecord'
-              label='State'
-              :searchValue='searchValue'
-              :action='action'
-              :actionLabel='actionLabel'
-              :urlLink='urlLink'
-            /> 
-         </div>
-          <ResponseDialog
-            v-model='showMessageDialog'
-            :cardClass='childRef.cardClass'
-            :textClass='childRef.textClass'
-            :label='childRef.label'
-            :message='childRef.message'
-            :buttonClass='childRef.buttonClass'
+            color="info"
+            icon="visibility"
+            size="sm"
+            @click="viewItem"
           />
           <q-btn
             rounded
-            color='red'
-            icon='delete'
-            size='sm'
-            @click='showDialog'
-          >
-            <q-dialog v-model='medium_dialog'>
-              <q-card style='width: 700px' class='bg-info text-white'>
-                <q-card-section>
-                  <div class='text-h6'>Delete Item(s)</div>
-                </q-card-section>
-
-                <q-card-section class='q-pt-none'>
-                  Are you sure you want to delete selected item(s)
-                </q-card-section>
-                <q-card-actions align='center' class='bg-white text-teal'>
-                  <q-btn
-                    @click='deleteItem'
-                    flat
-                    label='Yes'
-                    v-close-popup
-                    class='bg-negative text-white'
-                    rounded
-                  />
-                  <q-btn
-                    flat
-                    label='No'
-                    class='bg-secondary text-white'
-                    v-close-popup
-                    rounded
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </q-btn>
+            color="red"
+            icon="delete"
+            size="sm"
+            @click="deleteItem"
+          />
         </template>
-      </q-table>
+      </BaseTable>
+      <!--<CountyFormDialog
+        v-model="showFormDialog"
+        :onClick="saveRecord"
+        @formDataSubmitted="saveRecord"
+        label="County"
+        :searchValue="searchValue"
+        :action="action"
+        :actionLabel="actionLabel"
+        :urlLink="urlLink"
+      />-->
+      <ResponseDialog
+        v-model="showMessageDialog"
+        :cardClass="childRef.cardClass"
+        :textClass="childRef.textClass"
+        :label="childRef.label"
+        :message="childRef.message"
+        :buttonClass="childRef.buttonClass"
+      />
+
+      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { SessionStorage } from 'quasar';
-import axios from 'axios';
-import { ref } from 'vue';
-import StateFormDialog from 'src/components/StateFormDialog.vue';
-import ResponseDialog from 'src/components/ResponseDialog.vue';
-import path from 'src/router/urlpath';
+import { SessionStorage } from "quasar";
+import axios from "axios";
+import { ref, computed } from "vue";
+import ResponseDialog from "src/components/ResponseDialog.vue";
+import Done from "src/components/Done.vue";
+import path from "src/router/urlpath";
+import HeaderPage from "src/components/HeaderPage.vue";
+import BaseTable from "src/components/consumables/BaseTable.vue";
+import { useStateStore } from "src/stores/stateStore";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
 
 export default {
+  name: "StatePage",
   components: {
-    StateFormDialog,
     ResponseDialog,
+    Done,
+    BaseTable,
+    HeaderPage,
   },
-  setup() {
-    const headers = SessionStorage.getItem('headers');
+
+  data() {
+    const { t } = useI18n();
+    const pageName = computed(() => t("state.pagename"));
+    const hint = computed(() => t("state.hint"));
+    const stateStore = useStateStore();
+    const router = useRouter();
+    const headers = SessionStorage.getItem("headers");
+    const title = ref("State");
+    const selection = ref("single");
+    const pagination = ref({
+      // sortBy: "name",
+      descending: false,
+      page: 1,
+      rowsPerPage: 50,
+      rowsNumber: 50,
+      keyword: "",
+    });
     const columns = [
       {
-        name: 'code',
+        name: "code",
         required: false,
-        label: 'Code',
-        align: 'left',
+        label: "Code",
+        align: "left",
         field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: 'name',
-        align: 'center',
-        label: 'Name',
+        name: "name",
+        required: false,
+        label: "Name",
+        align: "left",
         field: (row) => row.name,
+        format: (val) => `${val}`,
         sortable: true,
       },
+
       {
-        name: 'country',
-        align: 'center',
-        label: 'Country',
+        name: "country",
+        align: "center",
+        label: "Country",
         field: (row) => row.countryCode.name,
         sortable: true,
       },
-    ]; 
-    const loadForm = ref(false)
-    const urlLink = ref(path.STATE_SEARCH);
+      {
+        name: "status",
+        align: "center",
+        label: "Status",
+        field: (row) => row.status.name,
+        sortable: true,
+      },
+    ];
     const showFormDialog = ref(false);
-    const showMessageDialog = ref(false);
-    const action = ref('');
-    const searchValue = ref('');
+    const action = ref("");
     const rows = ref([]);
-    const selected = ref([]);
-    const actionLabel = ref('Submit');
     const medium_dialog = ref(false);
     const childRef = ref({
-      label: '',
-      message: '',
-      textClass: '',
-      cardClass: '',
-      buttonClass: '',
+      label: "",
+      message: "",
+      textClass: "",
+      cardClass: "",
+      buttonClass: "",
       data: {},
     });
 
-    const fetchData = async () => {
-      try { 
-        const response = await axios.get(path.STATE_SEARCH,
-          headers
-        );
-        if (response.data) {
-          console.log('response data >>>>>>', response.data);
-          rows.value = response.data.data;
-          selected.value = []; 
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-    const saveRecord = (record) => {
-      if (action.value == 'add') {
-        createRecord(record);
-      } else if (action.value == 'edit') {
-        updateRecord(record);
-      }
-    };
-    const createRecord = (record) => {
-      try {
-        const promise = axios.post(path.STATE_CREATE, record, headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: 'Error',
-              cardClass: 'bg-negative text-white error',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-          });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    const updateRecord = (record) => {
-      try {
-        console.log('calling Update Record from Child Component', record);
-        const promise = axios.put(path.STATE_UPDATE,
-          record,
-          headers
-        );
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            console.log(result);
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: 'Error',
-              cardClass: 'bg-negative text-white error',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-          });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    const showDialog = () => {
-      if (selected.value.length > 0) {
-        medium_dialog.value = true;
-      } else {
-        medium_dialog.value = false;
-      }
-    };
-    const addItem = () => {
-      loadForm.value= true;
-      showFormDialog.value = true;
-      action.value = 'add';
-      actionLabel.value = 'Submit';
-    };
-    const editItem = () => {
-      loadForm.value= true
-      if (selected.value.length > 0) {
-        showFormDialog.value = true;
-        searchValue.value = selected.value[0]['code'];
-        action.value = 'edit';
-        actionLabel.value = 'Update';
-      }
-    };
-    const viewItem = () => {
-      loadForm.value= true
-      if (selected.value.length > 0) {
-        showFormDialog.value = true;
-        searchValue.value = selected.value[0]['code'];
-        action.value = 'view';
-        actionLabel.value = 'Done';
-      }
-    };
-    const deleteItem = async () => {
-      try {
-        const data = selected.value;
-        const response = await axios.post(path.STATE_REMOVE,
-          data,
-          headers
-        );
-        if (response.data.success) {
-          fetchData();
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-
     return {
-      fetchData,
-      saveRecord,
-      createRecord,
-      updateRecord,
-      addItem,
-      editItem,
-      viewItem,
-      deleteItem,
-      showDialog,
-      urlLink,
-      actionLabel,
-      searchValue,
-      showMessageDialog,
+      formData: {
+        stateCode: "select State",
+      },
       childRef,
-      selected,
       columns,
       rows,
       headers,
       medium_dialog,
       action,
-      showFormDialog, 
-      loadForm,
+      showFormDialog,
+      selection,
+      title,
+      pagination,
+      stateStore,
+      router,
+      pageName,
+      hint,
+      countries: [],
+      allCountries: [],
     };
   },
+  methods: {
+    filterCountries(val, update) {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    },
+
+    fetchData() {
+      try {
+        axios.get(path.STATE_ALL, this.headers).then((response) => {
+          // Assuming the response data is an array of objects with 'value' and 'label' properties
+          console.log(">>>>>>>>>response.data>>>>>>>>>", response.data);
+          if (response.data) {
+            this.stateStore.data = [...response.data];
+            this.rows = response.data;
+            this.$refs.tableRef.selected = [];
+          }
+        });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+
+    addItem() {
+      const defaultCountry = { label: "Select Country", value: "" };
+      this.stateStore.formData.countryCode = defaultCountry;
+      this.stateStore.reload = false;
+      this.stateStore.mode = "create";
+      this.stateStore.data = this.rows;
+
+      this.router.push("/state/form");
+    },
+    editItem() {
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+
+        const country = {
+          label: record.countryCode.name,
+          value: record.countryCode.code,
+        };
+        this.stateStore.formData = record;
+        this.stateStore.formData.countryCode = country;
+        this.stateStore.reload = false;
+        this.stateStore.mode = "update";
+        this.router.push("/state/form");
+      }
+    },
+    viewItem() {
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+
+        const country = {
+          label: record.countryCode.name,
+          value: record.countryCode.code,
+        };
+        this.stateStore.formData = record;
+        this.stateStore.formData.countryCode = country;
+        this.stateStore.reload = false;
+        this.stateStore.mode = "view";
+        this.router.push("/state/form");
+      }
+    },
+    deleteItem() {
+      console.log(">>>>>calling delete item >>>>>>>>>>>");
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+
+        const country = {
+          label: record.countryCode.name,
+          value: record.countryCode.code,
+        };
+        this.stateStore.formData = record;
+        this.stateStore.formData.countryCode = country;
+        this.stateStore.reload = false;
+        this.stateStore.mode = "delete";
+        this.router.push("/state/form");
+      }
+    },
+
+    getSelectedString() {
+      try {
+        return null;
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+
+    handleCountryChange(selectedItem) {
+      console.log(">>>>>selectedItem>>>>>>>>", selectedItem);
+
+      const requestParams = {
+        params: {
+          countryCode: this.formData.countryCode.value,
+        },
+      };
+      axios
+        .get(path.STATE_SEARCH, requestParams, this.headers)
+        .then((response) => {
+          this.stateStore.data = [...response.data.data];
+          this.rows = response.data.data;
+
+          this.$refs.tableRef.selected = [];
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+  },
   beforeCreate() {
-    console.log('beforeCreate');
+    console.log("beforeCreate");
   },
   created() {
-    console.log('created');
+    console.log("created");
   },
   beforeMount() {
-    console.log('beforeMount');
+    console.log("beforeMount");
   },
   mounted() {
-    console.log('mounted');
-    this.fetchData();
+    console.log("this.stateStore.formData.reload>>>>>", this.stateStore.reload);
+    if (!this.stateStore.reload && this.stateStore.data.length > 0) {
+      this.rows = [...this.stateStore.data];
+    } else {
+      console.log("Try to reload");
+      this.stateStore.$reset();
+      this.fetchData();
+    }
+    axios
+      .get(path.COUNTRY_ALL)
+      .then((response) => {
+        this.countries = response.data.map((option) => ({
+          label: option.name,
+          value: option.code,
+        }));
+        this.allCountries = this.countries;
+        console.log("this.countries >>>>>>>>>>>>", this.countries);
+      })
+      .catch((error) => {
+        console.error("Error fetching options:", error);
+      });
   },
-  updated() {},
+  updated() {
+    console.log(">>>>>>this.stateStore.reload>>>>>>>>", this.stateStore.reload);
+    if (!this.stateStore.reload && this.stateStore.data.length > 0) {
+      this.rows = [...this.stateStore.data];
+    } else {
+      console.log("Try to reload");
+      this.fetchData();
+    }
+  },
 };
 </script>
 
-<style lang='sass'>
+<style lang="sass">
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px

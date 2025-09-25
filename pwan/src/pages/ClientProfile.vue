@@ -167,13 +167,8 @@ export default {
   },
   methods: {
     saveRecord() {     
-       if (this.$refs.userCreationForm.validate()) {
-          this.showSpinner = true;
-          this.formData.gender = this.formData.gender.value;
-          this.formData.username = this.formData.email;
-          this.formData.client = this.profile.client;
-          this.formData.organisation = this.profile.organisation;
-          this.formData.createdBy = LocalStorage.getItem('userEmail');
+       if (this.$refs.clientForm.validate()) {
+          this.showSpinner = true;   
           console.log(this.formData)
           const requestData = new FormData();
           for (let key in this.formData) {  
@@ -182,7 +177,7 @@ export default {
           
           try { 
             console.log('>>>>reqeust data>>>>>>>',requestData)
-            const promise = axios.post(path.USER_CREATE, requestData, this.headers);
+            const promise = axios.put(path.CLIENT_UPDATE, requestData, this.headers);
             promise
               .then((response) => {
                 // Extract data from the response
@@ -301,6 +296,7 @@ export default {
           },
         };
         console.log('client code >>>>>>',requestParams)
+         console.log('>>>>>>>headers >>>>>>',this.headers)
         const promise = axios.get(path.CLIENT_SEARCH, requestParams, this.headers); 
         promise
           .then((response) => {

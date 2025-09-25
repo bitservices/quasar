@@ -234,14 +234,15 @@ export default {
     const updateRecord = (record) => {
       try { 
         console.log(">>>>headers>>>>>",headers)
-        headers['Content-Type'] = 'multipart/form-data'; 
+        headers["headers"]['Content-Type'] = 'multipart/form-data'; 
         console.log(">>>>>submitted record>>>>>>>>>>",record)
         const requestData = new FormData();
           for (let key in record) {  
             requestData.append(key, record[key]);
           }
 
-          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData)
+          console.log(">>>>>submitted requestData >>>>>>>>>>",requestData, ">>>>headers>>>>>>>",headers)
+          
         const promise = axios.post(path.SUBSCRIPTION_ADDPAYMENT, requestData, headers);
         promise
           .then((response) => {

@@ -27,7 +27,7 @@
                 v-model='formData.smtp_port'
                 filled
                 type="number"
-                label='Enter SMTP Host'     
+                label='Enter SMTP Port'     
               />
                <q-input
                 v-model='formData.smtp_user'
@@ -53,7 +53,17 @@
                   @click='isPwd = !isPwd'
                 />
               </template>
-            </q-input>  
+            </q-input> 
+            <q-checkbox
+              v-model='formData.use_ssl'
+              label='Use SSL'
+              color='primary'
+            />
+            <q-checkbox
+              v-model='formData.use_tls'
+              label='Use Tls'
+              color='primary'
+            />  
 
           <q-card-actions align='center'>
           <q-btn
@@ -391,15 +401,7 @@ export default {
       }
     },
     setformData(){
-       this.formData.paymentChannel = {
-          label : this.selected[0].paymentChannel.name,
-          value : this.selected[0].paymentChannel.code
-        };
-        this.formData.id = this.selected[0].id
-        this.formData.publicKey = this.selected[0].publicKey;
-        this.formData.client = this.selected[0].client.code;
-         this.formData.organisation = this.selected[0].organisation.code;
-         this.formData.createdBy = this.selected[0].createdBy.userName;
+       this.formData = this.selected[0]
     },
   },
   beforeCreate() {

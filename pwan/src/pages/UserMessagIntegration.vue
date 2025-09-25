@@ -46,6 +46,14 @@
                 label='Buy Unit(s)'  
                 type='submit' 
               />
+              <ResponseDialog
+                v-model='showMessageDialog'
+                :cardClass='childRef.cardClass'
+                :textClass='childRef.textClass'
+                :label='childRef.label'
+                :message='childRef.message'
+                :buttonClass='childRef.buttonClass'
+              />
               <Done />
             </q-card-actions>
         </q-form>

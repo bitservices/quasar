@@ -26,6 +26,15 @@
                 :rule=[requiredRule]
               />
               
+              <q-select
+            filled
+            bottom-slots
+            v-model='formData.messagingChannel'
+            :options='messageChannelList'
+            label='Select Messsage Channel' 
+            :dense='dense'    
+          /> 
+                
              <q-input
               filled
               bottom-slots
@@ -37,22 +46,7 @@
               :rules='[inputFieldRule]'
               counter 
             />
-             <q-select
-            filled
-            bottom-slots
-            v-model='messagingChannels'
-            :options='messageChannelList'
-            label='Select Messaging Channels' 
-            :dense='dense' 
-            multiple
-            emit-value
-            map-options 
-            use-input
-            input-debounce='300'
-            stack-label
-            class='q-mb-md'
-           /> 
-
+            
           <q-card-actions align='center'>
           <q-btn
             rounded
@@ -161,8 +155,7 @@ export default {
           row.messageType.name,
         format: (val) => `${val}`,
         sortable: true,
-      },
-     
+      },     
       {
         name: 'message',
         align: 'left',
@@ -173,8 +166,8 @@ export default {
       {
         name: 'messagingChannel',
         align: 'left',
-        label: 'Messaging Channels',
-        field: (row) => row.messagingChannels,
+        label: 'Messaging Channel',
+        field: (row) => row.messagingChannel.name,
         sortable: true,
       },
        
@@ -207,8 +200,7 @@ export default {
       showMessageDialog, 
       action: 'add',
       actionLabel:'Create',
-      messageTypes:[],
-      messagingChannels:[],
+      messageTypes:[], 
       messageChannelList:[],
       childRef, 
     };
@@ -231,9 +223,9 @@ export default {
         promise
           .then((response) => {
             // Extract data from the response 
-            
+            const result = response.data;
             console.log('response.data.data>>>>>>>>>',response.data.data)
-            this.rows = response.data.data;  
+            this.rows = result.data;   
             this.selected = [];
           })
           .catch((error) => {
@@ -254,7 +246,8 @@ export default {
           this.formData.organisation= this.profile.organisation;
           this.formData.createdBy = this.profile.email;
           this.formData.messageType = this.formData.messageType.value;
-          this.formData.messagingChannels = JSON.stringify(this.messagingChannels)
+          this.formData.messagingChannel =  this.formData.messagingChannel.value
+          console.log('this.formData 111111>>>>>>',this.formData)
           if(this.action == 'add'){
                 promise = axios.post(
             path.MESSAGINGSETUP_CREATE,
@@ -329,13 +322,12 @@ export default {
     resetForm(){ 
       this.formData = {messageType:'',message:'', createdBy : this.profile.email, organisation:this.profile.organisation, client:this.profile.client}; 
       this.action = 'add';
-      this.actionLabel='Create';
-      this.messagingChannels = [];
+      this.actionLabel='Create'; 
     },
     editItem() {
       if (this.selected.length > 0) { 
         this.setformData()
-         console.log('>>>>this.formData>>>>',this.formData)
+        console.log('>>>>this.formData>>>>',this.formData)
         this.action = 'edit';
         this.actionLabel=' Edit '; 
       }
@@ -353,21 +345,26 @@ export default {
        if (this.selected.length > 0) { 
          this.setformData()
         this.action = 'delete';
-        this.actionLabel='Delete'; 
-        document.getElementById('actionBtn').click();
+        this.actionLabel='Delete';  
       }
     },
     setformData(){
-       this.formData.messageType = {
+     
+     const selectedRecord = {
+      messageType : this.selected[0].messageType,
+      messagingChannel : this.selected[0].messagingChannel,
+      message : this.selected[0].message,
+      id : this.selected[0].id
+     } 
+      this.formData = selectedRecord;  
+      this.formData.messageType = {
           label : this.selected[0].messageType.name,
           value : this.selected[0].messageType.code
-        };
-        this.formData.id = this.selected[0].id
-        this.formData.message = this.selected[0].message;
-        this.formData.client = this.selected[0].client.code;
-         this.formData.organisation = this.selected[0].organisation.code;
-         this.formData.createdBy = this.selected[0].createdBy.userName;
-         this.messagingChannels = JSON.parse(this.selected[0].messagingChannels);
+        }; 
+        this.formData.messagingChannel = {
+          label : this.selected[0].messagingChannel.name,
+          value : this.selected[0].messagingChannel.code
+        }; 
     },
   },
   beforeCreate() {
@@ -415,7 +412,10 @@ export default {
 
 
   },
-  updated() {},
+  updated() {
+
+    console.log(">>>>>updated entry>>>>", this.selected[0]) 
+  },
 };
 </script>
 

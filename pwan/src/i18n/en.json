@@ -1,262 +1,273 @@
 {
-    "greeting": "Hola in English",
-    "dashboard":{
-        "pagename": "Dash Board",
-        "hint":"This page shows detailed information about the user's transactions. It includes payment details, the total amount contributed, attendance records, and the total amount received from various organizations to which the user belongs."
-    },
-    "signin":{
-        "pagename": "Sign In",
-        "hint":"This page enables users to access the application by entering their email and password, followed by clicking the 'Login' button" ,
-        "invalduser":"Invalid Username or Password" ,
-        "validation":{
-            "invalidemail": "Invalide Email",
-            "passwordrequired" : "Password is Required"
-        }
-    }, 
-    "selfpaymentereport":{
-        "pagename": "Self Payment Report",
-        "hint":"Self Payment Report is a report Page used by a user to search for details of the payment he or she has made to the various organizations to which the user belongs. "   
-    }, 
-    "registeruser":{
-        "pagename": "User Registration",
-        "hint":"The page is used to register User, Fill in the Form and click on regiser. A Validation Code will be sent into the user Email which will be used to activate the registration "   
-    },
-    "forgotpassword":{
-        "pagename": "Forgot Password",
-        "hint":"Please enter your email address and click the submit button. A validation code will be sent to your email. A new page will appear with fields for the validation code and a new password. Enter the validation code you received and your new password, then click the submit button to complete your password change request"   
-    },
-    "passwordchange":{
-        "pagename": "Password Change Confirmation",
-        "hint":"Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"   
-    },
-    "userregistration":{
-        "pagename": "User Registration",
-        "hint":"Fill in the form and Click on register button, to register a new User. A code will be sent to the email supplied. Use the code to complete your registration.",
-        "validationmsg":"Enter the validation Code you received in your email, then click on submit button to complete the User registration"   
-    },
-    "clientform":{
-        "pagename": "Client Form",
-        "hint":"Fill in the form and Click on Submit button to Create the a new Client."
-      },
-      "organisationform":{
-        "pagename": "Organisation Form",
-        "hint":"This page is use to create, Edit and or view Organisation. Fill in the required Field and click on the approprate button."
-      },
-
-      "userprofile":{
-        "pagename": "User Profile Form",
-        "hint":"Fill in the form and Click on Submit button to Update the User Profile."
-      },
-      "client":{
-        "pagename": "Client Page",
-        "hint":"This Page displays the List of all the client registered by the user through which he or she can create a new client, edit or view an existing one."
-      },
-      "organisation":{
-        "pagename": "Organisation Page",
-        "hint":"This Page displays the List of all the Organisation/Center registered by the user through which he or she can create a new Organisation/Center, edit or view an existing one."
-      },
-      "attendance":{
-        "pagename": "Attendance Page",
-        "hint":"This Page is used by an organisation/center to record member's attendance. Search for the member you want to capture his or her attendance, then click on record attendance button by toggling to the scanning option, then scan the QR Code to record attendance"
-      },
-      "selfattendance":{
-        "pagename": "User Attendance Page",
-        "hint":"This Page is begin used to record attendance. Click on the scan button to scan the QR Code to be able to record attendance or by toggling to the form option, then You can record attendance by selecting Client and oraganisation/Center and then click on Record Attendance Buttone"
-      },
-      "turnel":{
-        "pagename": "Turnelling Page",
-        "hint":"This Page is  used to Turnel to the Organisation/Center where the User belongs to."
-     
-      },
-      "commissionsettings":{
-        "pagename": "Commission Settings Page",
-        "hint":"This Page is used by an Organisation/Centre to setup the commission rates of different commision levels"
-     
-      },
-      "commission":{
-        "pagename": "Commission Calculation Page",
-        "hint":"User uses this page to calculation commission to enable him or her know exact amount he is expecting from the Affilate/Estate Company"
-     
-      },
-      "userqrcode":{
-        "pagename": "QR Code",
-        "hint":"This Page display the QR Code of the User. Scan the Code to retrieve the details of the User."
-     
-      },
-      "attendancereport":{
-        "pagename": "Attendance Report",
-        "hint":"Attendance Report Page is used by an Admin User to search for Members that attended a particular meeting by selecting the search criteria. "   
-    },
-    "producttypeform":{
-        "pagename": "Product Type Form",
-        "hint":"The Page is used to create all the Products and Services the Organisation Provides. "   
-    },
-      
-    "producttype":{
-      "pagename": "Product Type",
-      "hint":"The Page list all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one "   
-  },  
-  "producttypedefform":{
-    "pagename": "Product Type Definition Form",
-    "hint":"The Page is used to create detail of the Products and Services the Organisation Provides which includes amount for the products or services "   
-},     
-"producttypedefinition":{
-  "pagename": "Product Type Definition",
-  "hint":"The Page list details of all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one "   
-},
-"properties":{
-  "pagename": "Properties Search",
-  "hint":"The page allows users to search for properties based on location, price, and the company or affiliate managing the property."   
-},
-
-"userpayment":{
-  "pagename": "User Payment Recording",
-  "hint":"The page allows financial Secretary or an Accountant to record the payment of the members or staff of the organisation. You can either scan the User QR code to record the member's due or you can click on the toggle to capture individual member's account record."   
-},
-"testimonial":{
-  "pagename": "User Testimonial",
-  "hint":"The page is used to record the testimonies by a realtor or Agent for the success of his or her business."   
-},
- "changepassword":{
-        "pagename": "Change Password",
-        "hint":"Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"   
-},
-"upserupload":{
-       "pagename": "User Upload",
-       "hint":"This page is used to upload Users, Generate a CSV file in the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"   
-},
-"producttypedef":{
-    "pagename": "Product Type Definition",
-    "hint":"The Page is List all the Products and Services the Organisation Provides "   
-},
-"orgprofile":{
-  "pagename": "Organisational Profile",
-  "hint":"This Page is used to edit the Information of an Organisation by an Administrator"
-},
-"paymenttypeform":{
-  "pagename": "Payment Type",
-  "hint":"This Page is used to create, edit or view all types of Payment been paid in the Organisation"
-},
-"paymenttypedefform":{
-  "pagename": "Payment Type Definition",
-  "hint":"This Page is used to Define all the payments Types that is paid in organisation"
-},
-
-"orgpmtform":{
-  "pagename": "Organisation Annual Payment Setup",
-  "hint":"This Page is used to configue all the Annually Payments of an Orgnisation/Center"
-},
-"useroutstandingform":{
-  "pagename": "User Outstanding Debt",
-  "hint":"This Page is used to capture all the Members of the Organisation, their outstanding Debt"
-},
-"orgupload":{
-       "pagename": "Organisation Upload",
-       "hint":"This page is used to upload Organisation/Centers, Generate a CSV file in the following format: ['organisationCode','name', 'website', 'address', 'radius', 'meetingDays', 'slogan', 'allowSeatAllocation','validateMeetingStartTime', 'reservedSeats', 'seatPrefix', 'seatSufix', 'countryCode','stateCode', 'countyCode', 'client']"   
-}, 
-"productdefupload":{
-  "pagename": "Product/Services Upload",
-  "hint":"This page is used to upload Products/Services provided by a particular client and organisation, Generate a CSV file in the following format: ['productType','name',  'productCategory','description', 'address', 'landmark', 'imageUrl', 'videoUrl','subscriptionFormUrl', 'amount', 'measurement', 'dimension', 'countryCode','stateCode', 'countyCode']"   
-},
-"integration":{
-  "pagename": "Payment Integration",
-  "hint":"This page is used to setup Organisation Integration accounts. Fill in the form as required and click on save to setup integration accounts with respect of payment channels"   
-},
-"paymentdetails":{
-  "pagename": "Payment Details",
-  "hint":"This page is used to view all the paymennt across the Organisation where the user belong and from there the user can proceed to making online payment."   
-},
-"selfpayment":{
-  "pagename": "Outstanding Payment",
-  "hint":"This page is used by a user to make his/her outstanding payment Transaction through the app. Select the Payment Items you want and you can equally change the payment amount. Then click on the Payment Channel you want to complete you payment"   
-},
-"msgintegration":{
-  "pagename": "Message Integration",
-  "hint":"This page is used to setup all the message channel the organisaion supports and also to buy the required units need to be used in sending message."   
-},
-"sendmsg":{
-  "pagename": "Send Message",
-  "hint":"This page is used by an Organisation/Center to send Message to all her Members and those that attended any of her previous meetings/Seminars."   
-},
-"msgingsetup":{
-  "pagename": "Message Setup",
-  "hint":"This page is used by an Organisation/Center to configure the messages needed to be sending to people Periodically. eg. Birthday Message, Wedding Anniversary Message etc"   
-},
-"useroutstandingpayment":{
-  "pagename": "User Outstanding Paymentss",
-  "hint":"This page is used by an Organisation/Center to create the outstanding payment for all their members."   
-},
-"dannumber":{
-  "pagename": "Dynamic Authentication Number",
-  "hint":"This page allows users to configure their dynamic authentication number (DAN) within an organization, which will be used to authorize specific transactions. Users can set up different DANs for various organizational operations"   
-},
-"usermsgintegration":{
-  "pagename": "User Message Integration",
-  "hint":"This page is used by user to buy the required units need to be used in sending messages through SMS, Whatsapp and Email etc"   
-},
-"websitesetup":{
-  "pagename": "Real Estate Website Setup",
-  "hint":"This page allows users to set up or renew their real estate website, where they can showcase and market their properties."   
-},
- "donator":{
-        "pagename": "Donator",
-        "hint":"Fill in the form and Click on create or Update button, to create or update a  Donator. A Donator must have one or more one donating Item"
-    },
-
-    "contactconfigsetting":{
-        "pagename": "Contact Configuration Settings",
-        "hint":"This Page is used by an Organisation to setup the different Incremental format of different Contact Types"
-    },
-    "salestransaction":{
-      "pagename": "Sales Transaction",
-      "hint":"This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
-    },
-    "donationport":{
-        "pagename": "Donation Report",
-        "hint":"Donation Report Page is used by an Admin User to search for different donation criteria such as pledged, transfered etc and different payment types such those that did a particular donation"
-    },
-     "subscriber":{
-        "pagename": "SubScriber",
-        "hint":"SubScriber Page is used by an Realtor or User to Create the Client that is Subscribing for a Property"
-    },
-    "nextofkin":{
-        "pagename": "Next Of Kin",
-        "hint":"Next of Kin Page is used by an Realtor or User to attach or Create Subscriber's next of Kin"
-    },
-     "subscription":{
-      "pagename": "Subscription",
-      "hint":"This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
-    },
-     "smtpconfig":{
-      "pagename": "Client SMTP Configuration",
-      "hint":"This Page is used by a Client to setup her Email SMTP Messaging credentials"
+  "greeting": "Hola in English",
+  "dashboard": {
+    "pagename": "Dash Board",
+    "hint": "This page shows detailed information about the user's transactions. It includes payment details, the total amount contributed, attendance records, and the total amount received from various organizations to which the user belongs."
+  },
+  "signin": {
+    "pagename": "Sign In",
+    "hint": "This page enables users to access the application by entering their email and password, followed by clicking the 'Login' button",
+    "invalduser": "Invalid Username or Password",
+    "validation": {
+      "invalidemail": "Invalide Email",
+      "passwordrequired": "Password is Required"
     }
-    
+  },
+  "county": {
+    "pagename": "County List",
+    "hint": "This Page List all the County/Local Government Areas "
+  },
+  "selfpaymentereport": {
+    "pagename": "Self Payment Report",
+    "hint": "Self Payment Report is a report Page used by a user to search for details of the payment he or she has made to the various organizations to which the user belongs. "
+  },
+  "registeruser": {
+    "pagename": "User Registration",
+    "hint": "The page is used to register User, Fill in the Form and click on regiser. A Validation Code will be sent into the user Email which will be used to activate the registration "
+  },
+  "forgotpassword": {
+    "pagename": "Forgot Password",
+    "hint": "Please enter your email address and click the submit button. A validation code will be sent to your email. A new page will appear with fields for the validation code and a new password. Enter the validation code you received and your new password, then click the submit button to complete your password change request"
+  },
+  "passwordchange": {
+    "pagename": "Password Change Confirmation",
+    "hint": "Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"
+  },
+  "userregistration": {
+    "pagename": "User Registration",
+    "hint": "Fill in the form and Click on register button, to register a new User. A code will be sent to the email supplied. Use the code to complete your registration.",
+    "validationmsg": "Enter the validation Code you received in your email, then click on submit button to complete the User registration"
+  },
+  "clientform": {
+    "pagename": "Client Form",
+    "hint": "Fill in the form and Click on Submit button to Create the a new Client."
+  },
+  "organisationform": {
+    "pagename": "Organisation Form",
+    "hint": "This page is use to create, Edit and or view Organisation. Fill in the required Field and click on the approprate button."
+  },
 
+  "userprofile": {
+    "pagename": "User Profile Form",
+    "hint": "Fill in the form and Click on Submit button to Update the User Profile."
+  },
+  "client": {
+    "pagename": "Client Page",
+    "hint": "This Page displays the List of all the client registered by the user through which he or she can create a new client, edit or view an existing one."
+  },
+  "organisation": {
+    "pagename": "Organisation Page",
+    "hint": "This Page displays the List of all the Organisation/Center registered by the user through which he or she can create a new Organisation/Center, edit or view an existing one."
+  },
+  "attendance": {
+    "pagename": "Attendance Page",
+    "hint": "This Page is used by an organisation/center to record member's attendance. Search for the member you want to capture his or her attendance, then click on record attendance button by toggling to the scanning option, then scan the QR Code to record attendance"
+  },
+  "selfattendance": {
+    "pagename": "User Attendance Page",
+    "hint": "This Page is begin used to record attendance. Click on the scan button to scan the QR Code to be able to record attendance or by toggling to the form option, then You can record attendance by selecting Client and oraganisation/Center and then click on Record Attendance Buttone"
+  },
+  "turnel": {
+    "pagename": "Turnelling Page",
+    "hint": "This Page is  used to Turnel to the Organisation/Center where the User belongs to."
+  },
+  "commissionsettings": {
+    "pagename": "Commission Settings Page",
+    "hint": "This Page is used by an Organisation/Centre to setup the commission rates of different commision levels"
+  },
+  "commission": {
+    "pagename": "Commission Calculation Page",
+    "hint": "User uses this page to calculation commission to enable him or her know exact amount he is expecting from the Affilate/Estate Company"
+  },
+  "userqrcode": {
+    "pagename": "QR Code",
+    "hint": "This Page display the QR Code of the User. Scan the Code to retrieve the details of the User."
+  },
+  "attendancereport": {
+    "pagename": "Attendance Report",
+    "hint": "Attendance Report Page is used by an Admin User to search for Members that attended a particular meeting by selecting the search criteria. "
+  },
+  "producttypeform": {
+    "pagename": "Product Type Form",
+    "hint": "The Page is used to create all the Products and Services the Organisation Provides. "
+  },
 
+  "producttype": {
+    "pagename": "Product Type",
+    "hint": "The Page list all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one ",
+    "maintain": {
+      "hint": "This page is used to either Create, Edit or Delete Product Type for an Organisation "
+    }
+  },
+  "producttypedefform": {
+    "pagename": "Product Type Definition Form",
+    "hint": "The Page is used to create detail of the Products and Services the Organisation Provides which includes amount for the products or services "
+  },
+  "producttypedefinition": {
+    "pagename": "Product Type Definition",
+    "hint": "The Page list details of all the Products and Services the Organisation Provides from where you can create a new one or edit an existing one "
+  },
+  "properties": {
+    "pagename": "Properties Search",
+    "hint": "The page allows users to search for properties based on location, price, and the company or affiliate managing the property."
+  },
 
+  "userpayment": {
+    "pagename": "User Payment Recording",
+    "hint": "The page allows financial Secretary or an Accountant to record the payment of the members or staff of the organisation. You can either scan the User QR code to record the member's due or you can click on the toggle to capture individual member's account record."
+  },
+  "testimonial": {
+    "pagename": "User Testimonial",
+    "hint": "The page is used to record the testimonies by a realtor or Agent for the success of his or her business."
+  },
+  "changepassword": {
+    "pagename": "Change Password",
+    "hint": "Please enter the validation code you received in your email and your new password, confirm the new Password, then click the submit button to complete your password change request"
+  },
+  "upserupload": {
+    "pagename": "User Upload",
+    "hint": "This page is used to upload Users, Generate a CSV file in the following format: [lastName, firstName, middleName, email, phoneNmber, gender, date of Birth]"
+  },
+  "producttypedef": {
+    "pagename": "Product Type Definition",
+    "hint": "The Page is List all the Products and Services the Organisation Provides "
+  },
+  "orgprofile": {
+    "pagename": "Organisational Profile",
+    "hint": "This Page is used to edit the Information of an Organisation by an Administrator"
+  },
+  "paymenttypeform": {
+    "pagename": "Payment Type",
+    "hint": "This Page is used to create, edit or view all types of Payment been paid in the Organisation"
+  },
+  "paymenttypedefform": {
+    "pagename": "Payment Type Definition",
+    "hint": "This Page is used to Define all the payments Types that is paid in organisation"
+  },
 
+  "orgpmtform": {
+    "pagename": "Organisation Annual Payment Setup",
+    "hint": "This Page is used to configue all the Annually Payments of an Orgnisation/Center"
+  },
+  "useroutstandingform": {
+    "pagename": "User Outstanding Debt",
+    "hint": "This Page is used to capture all the Members of the Organisation, their outstanding Debt"
+  },
+  "orgupload": {
+    "pagename": "Organisation Upload",
+    "hint": "This page is used to upload Organisation/Centers, Generate a CSV file in the following format: ['organisationCode','name', 'website', 'address', 'radius', 'meetingDays', 'slogan', 'allowSeatAllocation','validateMeetingStartTime', 'reservedSeats', 'seatPrefix', 'seatSufix', 'countryCode','stateCode', 'countyCode', 'client']"
+  },
+  "productdefupload": {
+    "pagename": "Product/Services Upload",
+    "hint": "This page is used to upload Products/Services provided by a particular client and organisation, Generate a CSV file in the following format: ['productType','name',  'productCategory','description', 'address', 'landmark', 'imageUrl', 'videoUrl','subscriptionFormUrl', 'amount', 'measurement', 'dimension', 'countryCode','stateCode', 'countyCode']"
+  },
+  "integration": {
+    "pagename": "Payment Integration",
+    "hint": "This page is used to setup Organisation Integration accounts. Fill in the form as required and click on save to setup integration accounts with respect of payment channels"
+  },
+  "paymentdetails": {
+    "pagename": "Payment Details",
+    "hint": "This page is used to view all the paymennt across the Organisation where the user belong and from there the user can proceed to making online payment."
+  },
+  "selfpayment": {
+    "pagename": "Outstanding Payment",
+    "hint": "This page is used by a user to make his/her outstanding payment Transaction through the app. Select the Payment Items you want and you can equally change the payment amount. Then click on the Payment Channel you want to complete you payment"
+  },
+  "msgintegration": {
+    "pagename": "Message Integration",
+    "hint": "This page is used to setup all the message channel the organisaion supports and also to buy the required units need to be used in sending message."
+  },
+  "sendmsg": {
+    "pagename": "Send Message",
+    "hint": "This page is used by an Organisation/Center to send Message to all her Members and those that attended any of her previous meetings/Seminars."
+  },
+  "msgingsetup": {
+    "pagename": "Message Setup",
+    "hint": "This page is used by an Organisation/Center to configure the messages needed to be sending to people Periodically. eg. Birthday Message, Wedding Anniversary Message etc"
+  },
+  "useroutstandingpayment": {
+    "pagename": "User Outstanding Paymentss",
+    "hint": "This page is used by an Organisation/Center to create the outstanding payment for all their members."
+  },
+  "dannumber": {
+    "pagename": "Dynamic Authentication Number",
+    "hint": "This page allows users to configure their dynamic authentication number (DAN) within an organization, which will be used to authorize specific transactions. Users can set up different DANs for various organizational operations"
+  },
+  "usermsgintegration": {
+    "pagename": "User Message Integration",
+    "hint": "This page is used by user to buy the required units need to be used in sending messages through SMS, Whatsapp and Email etc"
+  },
+  "websitesetup": {
+    "pagename": "Real Estate Website Setup",
+    "hint": "This page allows users to set up or renew their real estate website, where they can showcase and market their properties."
+  },
+  "donator": {
+    "pagename": "Donator",
+    "hint": "Fill in the form and Click on create or Update button, to create or update a  Donator. A Donator must have one or more one donating Item"
+  },
 
-
-
-
-
-
-    
-
-
-      
-      
-
-      
-      
-      
-      
-      
-      
-
-    
-
-    
-
+  "contactconfigsetting": {
+    "pagename": "Contact Configuration Settings",
+    "hint": "This Page is used by an Organisation to setup the different Incremental format of different Contact Types"
+  },
+  "salestransaction": {
+    "pagename": "Sales Transaction",
+    "hint": "This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
+  },
+  "donationport": {
+    "pagename": "Donation Report",
+    "hint": "Donation Report Page is used by an Admin User to search for different donation criteria such as pledged, transfered etc and different payment types such those that did a particular donation"
+  },
+  "subscriber": {
+    "pagename": "SubScriber",
+    "hint": "SubScriber Page is used by an Realtor or User to Create the Client that is Subscribing for a Property"
+  },
+  "nextofkin": {
+    "pagename": "Next Of Kin",
+    "hint": "Next of Kin Page is used by an Realtor or User to attach or Create Subscriber's next of Kin"
+  },
+  "subscription": {
+    "pagename": "Subscription",
+    "hint": "This Page is used by a User or a PBO to subscribed a property on helf of his client  for easy Processing"
+  },
+  "smtpconfig": {
+    "pagename": "Client SMTP Configuration",
+    "hint": "This Page is used by a Client to setup her Email SMTP Messaging credentials"
+  },
+  "cronjob": {
+    "pagename": "Cron Jobs",
+    "hint": "This Page is used by super Administrator to run cron jobs, which will be used to send birth messages and the likes through mails, SMS and Whatsapp"
+  },
+  "usermsgsetup": {
+    "pagename": "User Messaging Seup",
+    "hint": "This Page is used by user/realtor to setup differnt types of message to be sent to his/her client on the day his or her birthday, weding aniversary etc"
+  },
+  "paymentstatus": {
+    "pagename": "Payment Status",
+    "hint": "The Page is used by an admin to list the Payment Status configured in the system ",
+    "maintain": {
+      "hint": "This page is used by an admin to either Create, Edit or Delete Payment Status from the System "
+    }
+  },
+  "productsatatus": {
+    "pagename": "Product Status",
+    "hint": "The Page is used by an admin to list the Product Status configured in the system ",
+    "maintain": {
+      "hint": "This page is used by an admin to either Create, Edit or Delete Product Status from the System "
+    }
+  },
+  "paymentmode": {
+    "pagename": "Payment Mode",
+    "hint": "The Page is used by an admin to list the Payment Mode configured in the system ",
+    "maintain": {
+      "hint": "This page is used by an admin to either Create, Edit or Delete Payment Mode from the System "
+    }
+  },
+  "salestatus": {
+    "pagename": "Sale's Status",
+    "hint": "The Page is used by an admin to list the Sale's Status configured in the system ",
+    "maintain": {
+      "hint": "This page is used by an admin to either Create, Edit or Delete Sale's Status from the System "
+    }
+  }
 }

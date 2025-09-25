@@ -244,7 +244,12 @@ export default {
     if (this.action == 'edit' || this.action == 'view') {
       this.isReadonly = true;
       try { 
-        const promise = axios.get(this.urlLink, this.headers);
+        const requestParams = {
+          params: {
+            id: this.searchValue,
+          },
+        };
+        const promise = axios.get(this.urlLink, requestParams,this.headers);
         promise
           .then((response) => {
             // Extract data from the response

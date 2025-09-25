@@ -8,7 +8,7 @@
         title='Messaging Channel'
         :rows='rows'
         :columns='columns'
-        row-key='name'
+        row-key='code'
         :selected-rows-label='getSelectedString'
         selection='single'
         v-model:selected='selected'
@@ -103,6 +103,7 @@ export default {
   },
   setup() {
     const headers = SessionStorage.getItem('headers');
+    console.log(">>>>>header sending >>>>>>>",headers)
     const columns = [
       {
         name: 'code',
@@ -131,7 +132,7 @@ export default {
         sortable: true,
       },
     ]; 
-    const urlLink = ref(path.MESSAGINGCHANNEL_SEARCH
+    const urlLink = ref(path.USER_MESSAGINGCHANNEL_SEARCH
     );
     const showFormDialog = ref(false);
     const showMessageDialog = ref(false);
@@ -152,6 +153,7 @@ export default {
 
     const fetchData = async () => {
       try { 
+       
         const response = await axios.get(path.USER_MESSAGINGCHANNEL_SEARCH,
           headers
         );
@@ -211,8 +213,9 @@ export default {
       }
     };
     const updateRecord = (record) => {
-      try {
+      try { 
         console.log('calling Update Record from Child Component', record);
+        console.log('submitting header', headers);
         const promise = axios.put(path.USER_MESSAGINGCHANNEL_UPDATE,
           record,
           headers
@@ -281,15 +284,31 @@ export default {
     const deleteItem = async () => {
       try {
         const data = selected.value;
-        const response = await axios.post(path.MESSAGINGCHANNEL_REMOVE,
+        const response = await axios.post(path.USER_MESSAGINGCHANNEL_REMOVE,
           data,
           headers
         );
-        if (response.data.success) {
+        const result = response.data;
+        if (result.success) {
+          childRef.value = {
+              message: result.message,
+              label: 'Success',
+              cardClass: 'bg-positive text-white',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
+            };
           fetchData();
         }
       } catch (error) {
         console.error('Error submitting form:', error);
+         childRef.value = {
+              message: error.message,
+              label: 'Error',
+              cardClass: 'bg-negative text-white error',
+              textClass: 'q-pt-none',
+              buttonClass: 'bg-white text-teal',
+            };
+            showMessageDialog.value = true;
       }
     };
 

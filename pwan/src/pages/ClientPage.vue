@@ -1,456 +1,277 @@
 <template>
   <q-page padding>
-    <div class='q-pa-md'>
-       <Done />
-       <q-card>
-          <q-card-section class='pwan-blue text-white'> 
-            
-            <HeaderPage  
-                :label='pageName'
-                :hint='hint'  
-              />
-          </q-card-section>
-        </q-card>
-        <div class='text-center'> 
-                <q-spinner v-if='showSpinner' color='primary' size='60px' />
-        </div>  
-      <q-table
-        class='my-sticky-header-table'
-        flat
-        bordered
-        title='Client'
-        :rows='rows'
-        :columns='columns'
-        row-key='code'
-        selection='single' 
-        v-model:selected='selected'
+    <div class="q-pa-md">
+      <q-card>
+        <q-card-section class="pwan-blue text-white">
+          <HeaderPage :label="pageName" :hint="hint" />
+        </q-card-section>
+      </q-card>
+      <BaseTable
+        ref="tableRef"
+        :columns="columns"
+        :data="rows"
+        :rowKey="(row) => row.code"
+        :selection="selection"
+        :title="title"
+        :pagination="pagination"
+        :max-height-offset="260"
       >
-        <template v-slot:top>
-          <q-label>Client</q-label>
+        <template #top-right>
           <q-space />
-          <q-btn rounded color='green' icon='add' size='sm' @click='addItem' />
-          <q-btn rounded color='blue' icon='edit' size='sm' @click='editItem' />
+          <q-btn rounded color="green" icon="add" size="sm" @click="addItem" />
+          <q-btn rounded color="blue" icon="edit" size="sm" @click="editItem" />
           <q-btn
             rounded
-            color='info'
-            icon='visibility'
-            size='sm'
-            @click='viewItem'
+            color="info"
+            icon="visibility"
+            size="sm"
+            @click="viewItem"
           />
-          <ClientFormDialog
-            v-model='showFormDialog'
-            :onClick='saveRecord'
-            @formDataSubmitted='saveRecord'
-            label='Client'
-            :searchValue='searchValue'
-            :action='action'
-            :actionLabel='actionLabel'
-            :urlLink='urlLink'
-          />
-          <ResponseDialog
-            v-model='showMessageDialog'
-            :cardClass='childRef.cardClass'
-            :textClass='childRef.textClass'
-            :label='childRef.label'
-            :message='childRef.message'
-            :buttonClass='childRef.buttonClass'
-          />
-          <q-btn v-if='issuperuser'
+          <q-btn
+            v-if="issuperuser"
             rounded
-            color='red'
-            :icon='actionBtn'
-            size='sm'
-            @click='showDialog'
-          >
-            <q-dialog v-model='medium_dialog'>
-              <q-card style='width: 700px' class='bg-info text-white'>
-                <q-card-section>
-                  <div class='text-h6'>{{dialog_header}}</div>
-                </q-card-section> 
-                <q-card-section class='q-pt-none'>
-                  {{dialog_message}}
-                </q-card-section>
-                <q-card-actions align='center' class='bg-white text-teal'>
-                   <q-btn v-if='activate'
-                    @click='activateUser'
-                    flat
-                    label='Activate'
-                    class='bg-secondary text-white'
-                    v-close-popup
-                    rounded 
-                  />
-                   <q-btn v-if='deactivate'
-                    @click='deactivateUser'
-                    flat
-                    label='De-Activate'
-                    v-close-popup
-                    class='bg-negative text-white'
-                    rounded 
-                  />
-                  <q-btn
-                    flat
-                    label='Cancle'
-                    class='bg-primary text-white'
-                    v-close-popup
-                    rounded
-                  />
-                </q-card-actions>
-              </q-card>
-            </q-dialog>
-          </q-btn>
+            color="red"
+            icon="done"
+            size="sm"
+            @click="activate"
+          />
         </template>
-      </q-table>
+      </BaseTable>
+
+      <Done />
     </div>
   </q-page>
 </template>
 
 <script>
-import { ref, computed } from 'vue'; 
-import { useI18n } from 'vue-i18n'
-import HeaderPage from 'src/components/HeaderPage.vue'; 
-import { LocalStorage, SessionStorage } from 'quasar';
-import axios from 'axios'; 
-import ClientFormDialog from 'src/components/ClientFormDialog.vue';
-import ResponseDialog from 'src/components/ResponseDialog.vue';
-import Done from 'src/components/Done.vue';  
-import path from 'src/router/urlpath';
+import { LocalStorage, SessionStorage } from "quasar";
+import axios from "axios";
+import { ref, computed } from "vue";
+import Done from "src/components/Done.vue";
+import path from "src/router/urlpath";
+import HeaderPage from "src/components/HeaderPage.vue";
+import BaseTable from "src/components/consumables/BaseTable.vue";
+import { useClientStore } from "src/stores/clientStore";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+
 export default {
+  name: "StatePage",
   components: {
-    ClientFormDialog,
-    ResponseDialog,
-    HeaderPage,
     Done,
+    BaseTable,
+    HeaderPage,
   },
-  setup() {
-    const headers = SessionStorage.getItem('headers');
-    const userEmail = '';
+
+  data() {
+    const { t } = useI18n();
+    const pageName = computed(() => t("client.pagename"));
+    const hint = computed(() => t("client.hint"));
+    const useStore = useClientStore();
+    const router = useRouter();
+    const headers = SessionStorage.getItem("headers");
+    const title = ref("Client(s)");
+    const selection = ref("single");
+    const pagination = ref({
+      // sortBy: "name",
+      descending: false,
+      page: 1,
+      rowsPerPage: 50,
+      rowsNumber: 50,
+      keyword: "",
+    });
     const columns = [
       {
-        name: 'code',
+        name: "code",
         required: false,
-        label: 'Code',
-        align: 'left',
+        label: "Code",
+        align: "left",
         field: (row) => row.code,
         format: (val) => `${val}`,
         sortable: true,
       },
       {
-        name: 'name',
-        align: 'center',
-        label: 'Name',
+        name: "name",
+        align: "center",
+        label: "Name",
         field: (row) => row.name,
         sortable: true,
       },
       {
-        name: 'isAnAffilate',
-        align: 'center',
-        label: 'Is An Affilate',
+        name: "isAnAffilate",
+        align: "center",
+        label: "Is An Affilate",
         field: (row) => row.isAnAffilate,
         sortable: true,
       },
       {
-        name: 'website',
-        align: 'center',
-        label: 'Web Site',
+        name: "website",
+        align: "center",
+        label: "Web Site",
         field: (row) => row.website,
         sortable: true,
       },
-    ]; 
-    const { t } = useI18n() 
-    const pageName = computed(()=> t('client.pagename'))
-    const hint = computed(()=> t('client.hint'))
-    const urlLink = ref(path.CLIENT_SEARCH);
+    ];
     const showFormDialog = ref(false);
-    const showMessageDialog = ref(false);
-    const action = ref('');
-    const searchValue = ref('');
-    const actionBtn = ref('done');
+    const action = ref("");
     const rows = ref([]);
-    const selected = ref([]);
-    const actionLabel = ref('Submit');
-    const medium_dialog = ref(false);  
-    const issuperuser = ref(false);  
-    const deactivate = ref(true);
-    const activate = ref(false); 
-     const dialog_header = ref(null);
-     const dialog_message= ref(null);
-     const showSpinner = ref(false); 
-
-    const childRef = ref({
-      label: '',
-      message: '',
-      textClass: '',
-      cardClass: '',
-      buttonClass: '',
-      data: {},
-    });
-
-    const loadUser = async () => {
-      try {
-        const userEmail = LocalStorage.getItem('userEmail');
-        const requestParam = {
-          params: {
-            email: userEmail,
-          },
-        };
-        const response = await axios.get(
-          path.USER_SEARCH_BY_EMAIL,
-          requestParam,
-          headers
-        ); 
-        if (response.data) {   
-          issuperuser.value = response.data.data.is_superuser
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-
-    
-    const fetchData = async () => {
-      try {
-        const userEmail = LocalStorage.getItem('userEmail');
-        const requestParam = {
-          params: {
-            createdBy: userEmail,
-          },
-        };
-        const response = await axios.get(
-          path.CLIENT_FIND_BY_CREATOR,
-          requestParam,
-          headers
-        ); 
-        if (response.data) {
-          rows.value = response.data;
-          selected.value = []; 
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-    const saveRecord = (record) => {
-      showSpinner.value=true;
-      if (action.value == 'add') {
-        createRecord(record);
-      } else if (action.value == 'edit') {
-        updateRecord(record);
-      }
-       showSpinner.value=false;
-    };
-    const createRecord = (record) => {
-      try {
-        showSpinner.value=true;
-        const promise = axios.post(path.CLIENT_CREATE, record, headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data;
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            showSpinner.value=false;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: 'Error',
-              cardClass: 'bg-negative text-white error',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            showSpinner.value=false;
-          });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    const updateRecord = (record) => {
-      try { 
-        const promise = axios.put(path.CLIENT_UPDATE, record, headers);
-        promise
-          .then((response) => {
-            // Extract data from the response
-            const result = response.data; 
-            if (result.success) {
-              fetchData();
-            }
-
-            childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            // You can access properties of the response data as needed
-          })
-          .catch((error) => {
-            childRef.value = {
-              message: error.message,
-              label: 'Error',
-              cardClass: 'bg-negative text-white error',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-          });
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    };
-    const showDialog = () => {
-      if (selected.value.length > 0) {
-        medium_dialog.value = true;
-        const clienName = selected.value[0].name
-        if(selected.value[0].status.code == 'A'){
-          deactivate.value = true
-          activate.value = false
-           dialog_header.value='Deactivate Client'
-         dialog_message.value=' Are you Sure you want to Deactivate '+ clienName
-        }else{
-           deactivate.value = false
-          activate.value = true
-          dialog_header.value='Activate Client'
-         dialog_message.value=' Are you Sure you want to Activate '+ clienName
-        }
-      } else {
-        medium_dialog.value = false;
-      }
-    };
-    const addItem = () => {
-      showFormDialog.value = true;
-      action.value = 'add';
-      actionLabel.value = 'Submit';
-    };
-    const editItem = () => {
-      if (selected.value.length > 0) {
-        showFormDialog.value = true;
-        searchValue.value = selected.value[0]['code'];
-        action.value = 'edit';
-        actionLabel.value = 'Update';
-      }
-    };
-    const viewItem = () => {
-      if (selected.value.length > 0) {
-        showFormDialog.value = true;
-        searchValue.value = selected.value[0]['code'];
-        action.value = 'view';
-        actionLabel.value = 'Done';
-      }
-    };
-     
-   const activateUser = async () => {
-      try {
-        showSpinner.value=true;
-        const data = {'code':selected.value[0].code};
-        const response = await axios.post(path.CLIENT_ACTIVATE, data, headers);
-        const result = response.data
-        if (result.success) { 
-          fetchData();
-           childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            showSpinner.value=false;
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-    const deactivateUser = async () => {
-      try {
-        showSpinner.value=true;
-        const data = {'code':selected.value[0].code}; 
-        const response = await axios.post(path.CLIENT_DEACTIVATE, data, headers);
-        const result = response.data
-        if (result.success) { 
-          fetchData();
-           childRef.value = {
-              message: result.message,
-              label: 'Success',
-              cardClass: 'bg-positive text-white',
-              textClass: 'q-pt-none',
-              buttonClass: 'bg-white text-teal',
-            };
-            showMessageDialog.value = true;
-            showSpinner.value=false;
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    };
-
+    const medium_dialog = ref(false);
 
     return {
-      fetchData,
-      saveRecord,
-      createRecord,
-      updateRecord, 
-      addItem,
-      editItem,
-      viewItem, 
-      showDialog, 
-      activate,
-      deactivate,
-      loadUser,
-      activateUser,
-      deactivateUser,
-      urlLink,
-      actionLabel,
-      searchValue,
-      showMessageDialog,
-      childRef,
-      selected,
+      formData: {
+        stateCode: "select State",
+      },
       columns,
       rows,
-      userEmail,
       headers,
       medium_dialog,
       action,
       showFormDialog,
-      actionBtn,
-      issuperuser,  
-      dialog_header,
-      dialog_message, 
+      selection,
+      title,
+      pagination,
+      useStore,
+      router,
       pageName,
-      hint, 
-      showSpinner, 
+      hint,
+      issuperuser: false,
     };
   },
+  methods: {
+    filterCountries(val, update) {
+      console.log(">>>>val>>>>>>", val);
+      if (val === "") {
+        update(() => {
+          this.countries = this.allCountries;
+        });
+        return;
+      }
+
+      const needle = val.toLowerCase();
+      update(() => {
+        this.countries = this.allCountries.filter((option) =>
+          option.label.toLowerCase().includes(needle)
+        );
+      });
+    },
+
+    fetchData() {
+      try {
+        const requestParam = {
+          params: {
+            createdBy: LocalStorage.getItem("userEmail"),
+          },
+        };
+        axios
+          .get(path.CLIENT_FIND_BY_CREATOR, requestParam, this.headers)
+          .then((response) => {
+            // Assuming the response data is an array of objects with 'value' and 'label' properties
+            console.log(">>>>>>>>>response.data>>>>>>>>>", response.data);
+            if (response.data) {
+              this.useStore.data = [...response.data];
+              this.rows = response.data;
+              this.$refs.tableRef.selected = [];
+            }
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+
+    addItem() {
+      this.useStore.data = this.rows;
+      this.useStore.mode = "create";
+      this.setStoreCallRouter(null);
+    },
+    editItem() {
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+        this.useStore.mode = "update";
+        this.setStoreCallRouter(record);
+      }
+    },
+    viewItem() {
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+
+        this.useStore.mode = "view";
+        this.setStoreCallRouter(record);
+      }
+    },
+    activate() {
+      console.log(">>>>>calling delete item >>>>>>>>>>>");
+      if (this.$refs.tableRef.selected.length > 0) {
+        const record = Object.assign({}, this.$refs.tableRef.selected[0]);
+        console.log("Selected Record >>>>", record);
+
+        this.useStore.mode = "activate";
+        this.setStoreCallRouter(record);
+      }
+    },
+
+    setStoreCallRouter(record) {
+      if (record != null) {
+        this.useStore.formData = record;
+      }
+      this.useStore.reload = false;
+      this.router.push("/client/form");
+    },
+    loadUser() {
+      try {
+        const requestParam = {
+          params: {
+            email: LocalStorage.getItem("userEmail"),
+          },
+        };
+        const promise = axios
+          .get(path.USER_SEARCH_BY_EMAIL, requestParam, this.$headers)
+          .then((response) => {
+            this.issuperuser = response.data.data.is_superuser;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
+    },
+  },
   beforeCreate() {
-    console.log('beforeCreate');
+    console.log("beforeCreate");
   },
   created() {
-    console.log('created');
+    console.log("created");
   },
-  beforeMount() { 
+  beforeMount() {
+    console.log("beforeMount");
   },
   mounted() {
-    console.log('mounted');
-    this.fetchData();
+    console.log("this.useStore.formData.reload>>>>>", this.useStore.reload);
+
     this.loadUser();
+    if (!this.useStore.reload && this.useStore.data.length > 0) {
+      this.rows = [...this.useStore.data];
+    } else {
+      console.log("Try to reload");
+      this.useStore.$reset();
+      this.fetchData();
+    }
   },
-  updated() {},
+  updated() {
+    console.log(">>>>>>this.useStore.reload>>>>>>>>", this.useStore.reload);
+    if (!this.useStore.reload && this.useStore.data.length > 0) {
+      this.rows = [...this.useStore.data];
+    } else {
+      console.log("Try to reload");
+      this.fetchData();
+    }
+  },
 };
 </script>
 
-<style lang='sass'>
+<style lang="sass">
 .my-sticky-header-table
   /* height or max-height is important */
   height: 310px
@@ -477,7 +298,5 @@ export default {
   tbody
     /* height of all previous header rows */
     scroll-margin-top: 48px
-  tbody tr:nth-child(even) 
-  
-  
+  tbody tr:nth-child(even)
 </style>
